@@ -30,16 +30,17 @@ KOLIBA_FixDoubles:
 ;
 ;		RAX = address of converted doubles or NULL
 
-	sub	eax, eax
-	test	edx, edx
-	je	.done
-	jrcxz	.done
-
 	mov	rax, rcx	; Do not change, it is the return value
+	jrcxz	.done
+	test	edx, edx
 	mov	ecx, edx	; ECX = count, RAX = doubles
-	jmp	.loop		; This should make it run faster
+	jne	.loop
 
-align 16
+.done:
+
+	ret
+
+align 16, int3
 .loop:
 
 	; A double is just a 64-bit value. We can
@@ -50,9 +51,6 @@ align 16
 	bswap	rdx
 	mov	[rax+(rcx-1)*8], rdx
 	loop	.loop
-
-
-.done:
 
 	ret
 
