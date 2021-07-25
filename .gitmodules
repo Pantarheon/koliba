@@ -1,0 +1,3 @@
+[submodule "libkoliba"]
+	path = libkoliba
+	url = https://github.com/Pantarheon/libkoliba
