@@ -1,0 +1,93 @@
+#	Copyright 2019-2021 G. Adam Stanislav
+#	All rights reserved
+#
+#	Redistribution and use in source and binary forms,
+#	with or without modification, are permitted provided
+#	that the following conditions are met:
+#
+#	1. Redistributions of source code must retain the
+#	above copyright notice, this list of conditions
+#	and the following disclaimer.
+#
+#	2. Redistributions in binary form must reproduce the
+#	above copyright notice, this list of conditions and
+#	the following disclaimer in the documentation and/or
+#	other materials provided with the distribution.
+#
+#	3. Neither the name of the copyright holder nor the
+#	names of its contributors may be used to endorse or
+#	promote products derived from this software without
+#	specific prior written permission.
+#
+#	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS
+#	AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+#	WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+#	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+#	FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+#	SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+#	FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+#	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#	PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+#	DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+#	CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+#	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#	OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+#	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+CC=gcc
+CFLG=-O3 -s
+CFLAGS=$(CFLG) -fPIC -DDLL
+
+build-all: sltconv.exe pullmat.exe invertmat.exe effimat.exe ConvertRecs.exe RotationMatrix.exe quintluts.exe
+
+rebuild: clean build-all
+
+sltconv.exe: sltconv.o lib sltconvres.o
+	$(CC) $(CFLG) -o sltconv.exe sltconv.o sltconvres.o -L. -lkoliba
+
+sltconvres.o: sltconv.rc
+	windres -i sltconv.rc -o sltconvres.o
+
+pullmat.exe: pullmat.o lib
+	$(CC) $(CFLG) -o pullmat.exe pullmat.o -L. -lkoliba
+
+invertmat.exe: invertmat.o lib
+	$(CC) $(CFLG) -o invertmat.exe invertmat.o -L. -lkoliba
+
+effimat.exe: effimat.o lib
+	$(CC) $(CFLG) -o effimat.exe effimat.o -L. -lkoliba
+
+ConvertRecs.exe: ConvertRecs.o lib
+	$(CC) $(CFLG) -o ConvertRecs.exe ConvertRecs.o -L. -lkoliba
+
+RotationMatrix.exe: RotationMatrix.o lib
+	$(CC) $(CFLG) -o RotationMatrix.exe RotationMatrix.o -L. -lkoliba -lm
+
+quintluts.exe: quintluts.o lib
+	$(CC) $(CFLG) -o quintluts.exe quintluts.o -L. -lkoliba
+
+sltconv.o: sltconv.c koliba.h
+	$(CC) $(CFLG) -c sltconv.c -I.
+
+pullmat.o: pullmat.c koliba.h
+	$(CC) $(CFLG) -c pullmat.c -I.
+
+invertmat.o: invertmat.c koliba.h
+	$(CC) $(CFLG) -c invertmat.c -I.
+
+effimat.o: effimat.c koliba.h
+	$(CC) $(CFLG) -c effimat.c -I.
+
+ConvertRecs.o: ConvertRecs.c koliba.h
+	$(CC) $(CFLG) -c ConvertRecs.c -I.
+
+RotationMatrix.o: RotationMatrix.c koliba.h
+	$(CC) $(CFLG) -c RotationMatrix.c -I.
+
+quintluts.o: quintluts.c koliba.h
+	$(CC) $(CFLG) -c quintluts.c -I.
+
+clean:
+	rm -f sltconv.o sltconv.exe sltconv.o pullmat.exe pullmat.o invertmat.exe invertmat.o effimat.exe effimat.o ConvertRecs.exe ConvertRecs.o RotationMatrix.exe RotationMatrix.o quintluts.exe quintluts.o
+
+

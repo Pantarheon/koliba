@@ -1,4 +1,4 @@
-#	Copyright 2019 G. Adam Stanislav
+#	Copyright 2019-2021 G. Adam Stanislav
 #	All rights reserved
 #
 #	Redistribution and use in source and binary forms,
@@ -40,9 +40,9 @@ CFLAGS=$(CFLG) -fPIC
 ASFLAGS=--gstabs
 PREFIX=/usr
 
-build-all: install sltconv pullmat invertmat effimat ConvertRecs
+build: sltconv pullmat invertmat effimat ConvertRecs RotationMatrix quintluts
 
-rebuild: clean build-all
+rebuild: clean build
 
 sltconv: sltconv.o
 	$(CC) $(CFLG) -o sltconv sltconv.o -L$(PREFIX)/lib -lkoliba
@@ -62,6 +62,9 @@ ConvertRecs: ConvertRecs.o
 RotationMatrix: RotationMatrix.o
 	$(CC) $(CFLG) -o RotationMatrix RotationMatrix.o -L$(PREFIX)/lib -lkoliba -lm
 
+quintluts: quintluts.o
+	$(CC) $(CFLG) -o quintluts quintluts.o -L$(PREFIX)/lib -lkoliba
+
 sltconv.o: sltconv.c koliba.h
 	$(CC) $(CFLG) -c sltconv.c -I$(PREFIX)/include
 
@@ -79,6 +82,9 @@ ConvertRecs.o: ConvertRecs.c koliba.h
 
 RotationMatrix.o: RotationMatrix.c koliba.h
 	$(CC) $(CFLG) -c RotationMatrix.c -I$(PREFIX)/include
+
+quintluts.o: quintluts.c koliba.h
+	$(CC) $(CFLG) -c quintluts.c -I$(PREFIX)/include
 
 install-sltconv: sltconv
 	install -p -s sltconv $(PREFIX)/bin
@@ -98,9 +104,12 @@ install-ConvertRecs: ConvertRecs
 install-RotationMatrix: RotationMatrix
 	install -p -s RotationMatrix $(PREFIX)/bin
 
-install-all: install-sltconv install-pullmat install-invertmat install-effimat install-ConvertRecs install-RotationMatrix
+install-quintluts: quintluts
+	install -p -s quintluts $(PREFIX)/bin
+
+install-all: install-sltconv install-pullmat install-invertmat install-effimat install-ConvertRecs install-RotationMatrix install-quintluts
 
 clean:
-	rm -f sltconv.o sltconv sltconv.o pullmat pullmat.o invertmat invertmat.o effimat effimat.o ConvertRecs ConvertRecs.o RotationMatrix RotationMatrix.o
+	rm -f sltconv.o sltconv sltconv.o pullmat pullmat.o invertmat invertmat.o effimat effimat.o ConvertRecs ConvertRecs.o RotationMatrix RotationMatrix.o quintluts quintluts.o
 
 
