@@ -88,6 +88,69 @@ typedef enum {
 	KOLIBA_FUNDAMENTALMALLETS
 } fundmal;
 
+typedef enum {
+	KOLIBA_PlutBlack,
+	KOLIBA_PlutWhite,
+	KOLIBA_PlutRed,
+	KOLIBA_PlutGreen,
+	KOLIBA_PlutBlue,
+	KOLIBA_PlutCyan,
+	KOLIBA_PlutMagenta,
+	KOLIBA_PlutYellow
+} KOLIBA_Pluts;
+
+typedef enum {
+	KQC_red,
+	KQC_scarlet,
+	KQC_vermilion,
+	KQC_persimmon,
+	KQC_orange,
+	KQC_orangepeel,
+	KQC_amber,
+	KQC_goldenyellow,
+	KQC_yellow,
+	KQC_lemon,
+	KQC_lime,
+	KQC_springbud,
+	KQC_chartreuse,
+	KQC_brightgreen,
+	KQC_harlequin,
+	KQC_neongreen,
+	KQC_green,
+	KQC_jade,
+	KQC_erin,
+	KQC_emerald,
+	KQC_springgreen,
+	KQC_mint,
+	KQC_aquamarine,
+	KQC_turquoise,
+	KQC_cyan,
+	KQC_skyblue,
+	KQC_capri,
+	KQC_cornflower,
+	KQC_azure,
+	KQC_cobalt,
+	KQC_cerulean,
+	KQC_sapphire,
+	KQC_blue,
+	KQC_iris,
+	KQC_indigo,
+	KQC_veronica,
+	KQC_violet,
+	KQC_amethyst,
+	KQC_purple,
+	KQC_phlox,
+	KQC_magenta,
+	KQC_fuchsia,
+	KQC_cerise,
+	KQC_deeppink,
+	KQC_rose,
+	KQC_raspberry,
+	KQC_crimson,
+	KQC_amaranth,
+	KQC_COUNT
+} KOLIBA_QUINTARYCOLORS;
+
 /****************************************************************************/
 /*******************                                   **********************/
 /******************* T H E  KOLIBA  D A T A  T Y P E S **********************/
@@ -810,6 +873,14 @@ KLBDC extern const KOLIBA_CHROMA KOLIBA_IdentityChroma;
 KLBDC extern const KOLIBA_PALETTE KOLIBA_IdentityPalette;
 KLBHID extern const KOLIBA_MALLET KOLIBA_IdentityMallet;
 
+// Not exactly a default, but useful, a sLut with all zeros
+// except in the white vertex.
+KLBDC extern const KOLIBA_SLUT KOLIBA_NoFarbaSlut;
+
+// And one with all channels of primary farba at 0, and of
+// secondary farba at 1, which are their "home" values.
+KLBDC extern const KOLIBA_SLUT KOLIBA_HomeSlut;
+
 
 
 
@@ -899,13 +970,31 @@ KLBDC extern const KOLIBA_MATRIX KOLIBA_Noblue;
 // [KOLIBA_MalletCold] | KOLIBA_FundamentalMalletFlags[KOLIBA_MalletRed] would
 // allow you to do it all together.
 
-KLBDC const unsigned char KOLIBA_FundamentalMalletFlags[KOLIBA_FUNDAMENTALMALLETS];
+KLBDC extern const unsigned char KOLIBA_FundamentalMalletFlags[KOLIBA_FUNDAMENTALMALLETS];
 
 // Some lookup tables to speed things up.
 
 KLBDC extern const double KOLIBA_SrgbByteToLinear[256];
 KLBDC extern const double KOLIBA_ByteDiv255[256];
 KLBDC extern const unsigned char KOLIBA_LinearByteToSrgb[256];
+
+// Some help to produce primary through quintary color LUTs
+KLBDC extern const KOLIBA_EFFILUT KOLIBA_QuintaryColorsF[KQC_COUNT];
+KLBDC extern const KOLIBA_EFFILUT KOLIBA_QuintaryColorsX[KQC_COUNT];
+KLBDC extern const char * const KOLIBA_QuintaryColorTokens[KQC_COUNT];
+KLBDC extern const char * const KOLIBA_QuintaryColorNames[KQC_COUNT];
+// But to allow us to extend it beyond quintary if we so
+// choose in the future, this function will give us the
+// number of steps to skip in the above tables to find
+// just the primary colors, or just the primary and secondary
+// colors, etc.
+//
+// The "ary" argument should be 1 for primary, 2 for secondary,
+// etc up to 5 for quintary. If it is larger, it will be trimmed to 5,
+// and if it is 0, it will be made 1.
+KLBDC unsigned int KOLIBA_QuintarySteps(unsigned int ary);
+KLBDC extern const KOLIBA_QUINTARYCOLORS KOLIBA_QuintaryColorCount;
+
 
 // A pass-through buffer of unmodified 8-bit values.
 
@@ -1033,6 +1122,13 @@ KLBDC KOLIBA_SLUT * KOLIBA_ApplyNaturalContrasts(
 	KOLIBA_SLUT * sLut,
 	const KOLIBA_EFFILUT * const eLut
 );
+
+// We can interpolate SLUTs based on Quintary colors:
+KLBDC KOLIBA_SLUT *KOLIBA_ApplySphericalEfficaciesF(KOLIBA_SLUT *sLut, const KOLIBA_SLUT * const slt, KOLIBA_QUINTARYCOLORS index, const KOLIBA_SLUT * const alt);
+KLBDC KOLIBA_SLUT *KOLIBA_ApplySphericalEfficaciesX(KOLIBA_SLUT *sLut, const KOLIBA_SLUT * const slt, KOLIBA_QUINTARYCOLORS index, const KOLIBA_SLUT * const alt);
+// Or for that matter, by any color based on its angle in degrees:
+KLBDC KOLIBA_SLUT *KOLIBA_ApplySphericalAngleEfficaciesF(KOLIBA_SLUT *sLut, const KOLIBA_SLUT * const slt, double angle, const KOLIBA_SLUT * const alt);
+KLBDC KOLIBA_SLUT *KOLIBA_ApplySphericalAngleEfficaciesX(KOLIBA_SLUT *sLut, const KOLIBA_SLUT * const slt, double angle, const KOLIBA_SLUT * const alt);
 
 
 
@@ -1167,6 +1263,9 @@ KLBDC KOLIBA_FLAGS KOLIBA_FlutFlags(
 KLBDC int KOLIBA_IsIdentityFlut(
 	const KOLIBA_FLUT * const fLut
 );
+
+// And sometimes we need to see if a SLUT is Identity SLUT.
+KLBDC int KOLIBA_IsIdentitySlut(const KOLIBA_SLUT * const sLut);
 
 // Apply a chain of n FLUTs to an XYZ vector. If n is zero, just copy the
 // input to the output. In that case, FFLUT may be NULL because it is not used
@@ -2235,6 +2334,14 @@ KLBDC KOLIBA_MATRIX * KOLIBA_InvertMatrix(
 
 KLBDC unsigned int KOLIBA_IsPaletteValid(
 	const KOLIBA_PALETTE * const plt
+);
+// Apply a ring to a palette.
+// Do not change red and black, or overall efficacy.
+
+KLBDC KOLIBA_PALETTE * KOLIBA_ApplyPaletteRing(
+	KOLIBA_PALETTE *output,
+	const KOLIBA_PALETTE * const input,
+	KOLIBA_Pluts plut
 );
 
 // And, as usual, we can convert a palette to a SLUT. We can then convert the
@@ -4533,6 +4640,58 @@ KLBDC KOLIBA_CHROMAT * KOLIBA_ReadChromaticMatrixFromOpenFile(
 KLBDC KOLIBA_CHROMAT * KOLIBA_ReadChromaticMatrixFromNamedFile(
 	KOLIBA_CHROMAT *chrm,
 	char *fname
+);
+
+// Read a Color Filter from an open .cflt file. It needs to be open
+// for reading binary data. It remains open upon return, so
+// the caller needs to close it. Returns matrix on success, NULL
+// on failure. If, however, m3x4 is not NULL, its contents
+// will be filled with zeros on failure.
+
+KLBDC KOLIBA_CFLT * KOLIBA_ReadColorFilterFromOpenFile(
+	KOLIBA_CFLT *cFlt,
+	FILE *f
+);
+
+// Read a Color Filter from a named file. Returns Color Filter on success,
+// NULL on failure. If, however, cFlt is not NULL, its
+// contents will be filled with zeros on failure.
+
+KLBDC KOLIBA_CFLT * KOLIBA_ReadColorFilterFromNamedFile(
+	KOLIBA_CFLT *cFlt,
+	char *fname
+);
+
+typedef	enum {
+	KOLIBA_ftnoslut,
+	KOLIBA_ftnofile,
+	KOLIBA_ftunknown,
+	KOLIBA_ftslut,
+	KOLIBA_ftmatrix,
+	KOLIBA_ftchrm,
+	KOLIBA_ftcflt
+} KOLIBA_ftype;
+
+// Read a sLut from an open compatible file. It needs to be open
+// for reading binary data. It remains open upon return, so
+// the caller needs to close it. Returns sLut on success, NULL
+// on failure. If, however, sLut is not NULL, its contents
+// will be filled with the identity sLut on failure.
+
+KLBDC KOLIBA_SLUT * KOLIBA_ReadSlutFromCompatibleOpenFile(
+	KOLIBA_SLUT *sLut,
+	FILE *f,
+	KOLIBA_ftype *ft
+);
+
+// Read a sLut from a named compatible file. Returns sLut on success,
+// NULL on failure. If, however, sLut is not NULL, its
+// contents will be filled with the identity sLut on failure.
+
+KLBDC KOLIBA_SLUT * KOLIBA_ReadSlutFromCompatibleNamedFile(
+	KOLIBA_SLUT *sLut,
+	char *fname,
+	KOLIBA_ftype *ft
 );
 
 #endif	// USECLIB
