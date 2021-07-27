@@ -40,11 +40,12 @@
 
 */
 
+#define USECLIB
 #include <stdio.h>
 #include <string.h>
 #include <koliba.h>
 
-#define	version	"v.0.2"
+#define	version	"v.0.3"
 
 const char notice[] = "sltconv, " version "\nCopyright 2019 G. Adam Stanislav\nAll rights reserved\n\n";
 
@@ -59,6 +60,19 @@ static const char matrixdesc[] = "# Converted from the matrix:\n#\n"
 	"#\t%.10g %.10g %.10g %.10g\n"
 	"#\t%.10g %.10g %.10g %.10g\n"
 	"#\t%.10g %.10g %.10g %.10g\n"
+	"#\n";
+
+static const char chrmdesc[] = "# Converted from the chromatic matrix:\n#\n"
+	"#\tRGB Model:\n#\n"
+	"#\t\tred        = %.10g\n"
+	"#\t\tgreen      = %.10g\n"
+	"#\t\tblue       = %.10g\n#\n"
+	"#\tChroma:\n#\n"
+	"#\t\tangle      = %.10g degrees\n"
+	"#\t\tmagnitude  = %.10g\n"
+	"#\t\tsaturation = %.10g\n"
+	"#\t\tblack      = %.10g\n"
+	"#\t\twhite      = %.10g\n"
 	"#\n";
 
 static const char cfltdesc[] = "# Converted from the color filter:\n#\n"
@@ -83,14 +97,15 @@ int invalid(FILE *f, char *fname) {
 
 int main(int argc, char *argv[]) {
 	FILE *f;
-	KOLIBA_SLUT2 sLut;
+	KOLIBA_SLUT sLut;
 	union {
-		KOLIBA_MATRIX2 m3x4;
-		KOLIBA_CFLT2 cflt;
+		KOLIBA_CHROMAT chrm;
+		KOLIBA_MATRIX m3x4;
+		KOLIBA_CFLT cflt;
 	} slt;
 	double csum;
 	unsigned char *ptr = (unsigned char *)&sLut;
-	enum fd {slut, matrix, cflt} ftype;
+	enum fd {slut, matrix, cflt, chromat} ftype;
 	int is1d;
 
 	fprintf(stderr, notice);
@@ -104,29 +119,26 @@ int main(int argc, char *argv[]) {
 	if (fread(ptr, 1, SLTCFILEHEADERBYTES, f) < SLTCFILEHEADERBYTES)
 		return invalid(f, argv[1]);
 
+	rewind(f);
+
 	if (memcmp(ptr, KOLIBA_sLutHeader, SLTCFILEHEADERBYTES) == 0) {
-		if ((fread(&sLut, 1, sizeof(sLut), f) != sizeof(sLut)) ||
-		(KOLIBA_FixDoubles((double *)&sLut, sizeof(sLut) / sizeof(double)) == NULL) ||
-		(!KOLIBA_CheckSlut(&sLut.sLut, sLut.checksum)) ||
-		(KOLIBA_FixSlut(&sLut.sLut) == NULL))
+		if (KOLIBA_ReadSlutFromOpenFile(&sLut, f) == NULL)
 			return invalid(f, argv[1]);
 		else ftype = slut;
 	}
 	else if (memcmp(ptr, KOLIBA_m3x4Header, SLTCFILEHEADERBYTES) == 0) {
-		if ((fread(&slt.m3x4, 1, sizeof(KOLIBA_MATRIX2), f) != sizeof(KOLIBA_MATRIX2)) ||
-		(KOLIBA_FixDoubles((double *)&slt.m3x4, sizeof(KOLIBA_MATRIX2) / sizeof(double)) == NULL) ||
-		(!KOLIBA_CheckMat(&slt.m3x4.mat, slt.m3x4.checksum)) ||
-		(KOLIBA_ConvertMatrixToSlut(&sLut.sLut, &slt.m3x4.mat) == NULL) ||
-		(KOLIBA_FixSlut(&sLut.sLut) == NULL))
+		if (KOLIBA_ConvertMatrixToSlut(&sLut, KOLIBA_ReadMatrixFromOpenFile(&slt.m3x4, f)) == NULL)
 			return invalid(f, argv[1]);
 		else ftype = matrix;
 	}
+	else if (memcmp(ptr, KOLIBA_chrmHeader, SLTCFILEHEADERBYTES) == 0) {
+		KOLIBA_MATRIX mat;
+		if (KOLIBA_ConvertMatrixToSlut(&sLut, KOLIBA_ChromaticMatrix(&mat, KOLIBA_ReadChromaticMatrixFromOpenFile(&slt.chrm, f))) == NULL)
+			return invalid(f, argv[1]);
+		else ftype = chromat;
+	}
 	else if (memcmp(ptr, KOLIBA_cFltHeader, SLTCFILEHEADERBYTES) == 0) {
-		if ((fread(&slt.cflt, 1, sizeof(KOLIBA_CFLT2), f) != sizeof(KOLIBA_CFLT2)) ||
-		(KOLIBA_FixDoubles((double *)&slt.cflt, sizeof(KOLIBA_CFLT2) / sizeof(double)) == NULL) ||
-		(!KOLIBA_CheckCflt(&slt.cflt.cFlt, slt.cflt.checksum)) ||
-		(KOLIBA_ConvertColorFilterToSlut(&sLut.sLut, &slt.cflt.cFlt) == NULL) ||
-		(KOLIBA_FixSlut(&sLut.sLut) == NULL))
+		if (KOLIBA_ConvertColorFilterToSlut(&sLut, KOLIBA_ReadColorFilterFromOpenFile(&slt.cflt, f)) == NULL)
 			return invalid(f, argv[1]);
 		else ftype = cflt;
 	}
@@ -140,33 +152,40 @@ int main(int argc, char *argv[]) {
 	}
 	else f = stdout;
 
-	is1d = KOLIBA_SlutIs1D(&sLut.sLut);
+	is1d = KOLIBA_SlutIs1D(&sLut);
 
 	fprintf(f, cubehead, argv[1], is1d ? 1 : 3);
 	switch (ftype) {
 		case matrix:
-			fprintf(f, matrixdesc, slt.m3x4.mat.red.r, slt.m3x4.mat.red.g, slt.m3x4.mat.red.b, slt.m3x4.mat.red.o,
-				slt.m3x4.mat.green.r, slt.m3x4.mat.green.g, slt.m3x4.mat.green.b, slt.m3x4.mat.green.o,
-				slt.m3x4.mat.blue.r, slt.m3x4.mat.blue.g, slt.m3x4.mat.blue.b, slt.m3x4.mat.blue.o
+			fprintf(f, matrixdesc, slt.m3x4.red.r, slt.m3x4.red.g, slt.m3x4.red.b, slt.m3x4.red.o,
+				slt.m3x4.green.r, slt.m3x4.green.g, slt.m3x4.green.b, slt.m3x4.green.o,
+				slt.m3x4.blue.r, slt.m3x4.blue.g, slt.m3x4.blue.b, slt.m3x4.blue.o
+			);
+			break;
+		case chromat:
+			fprintf(f, chrmdesc, slt.chrm.model.r, slt.chrm.model.g, slt.chrm.model.b,
+				slt.chrm.chroma.angle, slt.chrm.chroma.magnitude,
+				slt.chrm.chroma.saturation,
+				slt.chrm.chroma.black, slt.chrm.chroma.white
 			);
 			break;
 		case cflt:
-			fprintf(f, cfltdesc, slt.cflt.cFlt.r, slt.cflt.cFlt.g, slt.cflt.cFlt.b, slt.cflt.cFlt.d);
+			fprintf(f, cfltdesc, slt.cflt.r, slt.cflt.g, slt.cflt.b, slt.cflt.d);
 			break;
 		default:
 			break;
 	}
-	fprintf(f, cubeline, sLut.sLut.black.r, sLut.sLut.black.g, sLut.sLut.black.b);
+	fprintf(f, cubeline, sLut.black.r, sLut.black.g, sLut.black.b);
 
 	if (!is1d) {
-		fprintf(f, cubeline, sLut.sLut.red.r, sLut.sLut.red.g, sLut.sLut.red.b);
-		fprintf(f, cubeline, sLut.sLut.green.r, sLut.sLut.green.g, sLut.sLut.green.b);
-		fprintf(f, cubeline, sLut.sLut.yellow.r, sLut.sLut.yellow.g, sLut.sLut.yellow.b);
-		fprintf(f, cubeline, sLut.sLut.blue.r, sLut.sLut.blue.g, sLut.sLut.blue.b);
-		fprintf(f, cubeline, sLut.sLut.magenta.r, sLut.sLut.magenta.g, sLut.sLut.magenta.b);
-		fprintf(f, cubeline, sLut.sLut.cyan.r, sLut.sLut.cyan.g, sLut.sLut.cyan.b);
+		fprintf(f, cubeline, sLut.red.r, sLut.red.g, sLut.red.b);
+		fprintf(f, cubeline, sLut.green.r, sLut.green.g, sLut.green.b);
+		fprintf(f, cubeline, sLut.yellow.r, sLut.yellow.g, sLut.yellow.b);
+		fprintf(f, cubeline, sLut.blue.r, sLut.blue.g, sLut.blue.b);
+		fprintf(f, cubeline, sLut.magenta.r, sLut.magenta.g, sLut.magenta.b);
+		fprintf(f, cubeline, sLut.cyan.r, sLut.cyan.g, sLut.cyan.b);
 	}
-	fprintf(f, cubeline, sLut.sLut.white.r, sLut.sLut.white.g, sLut.sLut.white.b);
+	fprintf(f, cubeline, sLut.white.r, sLut.white.g, sLut.white.b);
 	fprintf(f, "\n## Converted from \"%s\" by sltconv, " version "\n\n", argv[1]);
 
 	if (f != stdout) fclose(f);
