@@ -119,7 +119,11 @@ int main(int argc, char *argv[]) {
 	if (fread(ptr, 1, SLTCFILEHEADERBYTES, f) < SLTCFILEHEADERBYTES)
 		return invalid(f, argv[1]);
 
-	rewind(f);
+	if ( fseek(f, -(SLTCFILEHEADERBYTES), SEEK_CUR) != 0) {
+		fclose(f);
+		fprintf(stderr, "Could not rewind file '%s'\n", argv[1]);
+		return 37;
+	}
 
 	if (memcmp(ptr, KOLIBA_sLutHeader, SLTCFILEHEADERBYTES) == 0) {
 		if (KOLIBA_ReadSlutFromOpenFile(&sLut, f) == NULL)
