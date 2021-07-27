@@ -3,13 +3,14 @@
 	All rights reserved
 */
 
+#define USECLIB
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <koliba.h>
 
 int usage(char *path) {
-	fprintf(stderr, "Usage:\n\n\t%s output.m3x4 [angle [magnitude [saturation [white [black]]]]]\n\n"
+	fprintf(stderr, "Usage:\n\n\t%s output.chrm [angle [magnitude [saturation [white [black]]]]]\n\n"
 	"If not specified, these are the defaults:\n\n"
 	"\tangle:      30 degrees\n"
 	"\tmagnitude:  1\n"
@@ -20,7 +21,6 @@ int usage(char *path) {
 }
 
 int main(int argc, char *argv[]) {
-	KOLIBA_MATRIX2 mat;
 	FILE *f;
 	KOLIBA_CHROMAT chromat;
 
@@ -44,13 +44,7 @@ int main(int argc, char *argv[]) {
 	if (argc > 5) chromat.chroma.white      = atof(argv[5]);
 	if (argc > 6) chromat.chroma.black      = atof(argv[6]);
 
-
-	if (KOLIBA_ChromaticMatrix(&mat.mat, &chromat) != NULL) {
-		fwrite(KOLIBA_m3x4Header, 1, SLTCFILEHEADERBYTES, f);
-		mat.checksum = KOLIBA_CalcSum((double *)&mat.mat, sizeof(KOLIBA_MATRIX)/sizeof(double));
-		KOLIBA_NetDoubles((double *)&mat, sizeof(KOLIBA_MATRIX2)/sizeof(double));
-		fwrite(&mat, 1, sizeof(KOLIBA_MATRIX2), f);
-		fclose(f);
-	}
+	KOLIBA_WriteChromaticMatrixToOpenFile(&chromat, f);
+	fclose(f);
 	return 0;
 }
