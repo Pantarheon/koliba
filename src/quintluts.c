@@ -244,7 +244,7 @@ int main(unsigned int argc, char *argv[]) {
 
 	for (col = KQC_red; col < KQC_COUNT; col += step) {
 		if (amb != NULL) {
-			if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplyEfficacies(&sLut, &slt, &KOLIBA_QuintaryColorsF[col], &alt))) {
+			if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalEfficaciesF(&sLut, &slt, col, &alt))) {
 				sprintf(str, "%s_%s-AF.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 				if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 					fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
@@ -252,7 +252,7 @@ int main(unsigned int argc, char *argv[]) {
 					return 3;
 				}
 			}
-			if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplyEfficacies(&sLut, &slt, &KOLIBA_QuintaryColorsX[col], &alt))) {
+			if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalEfficaciesX(&sLut, &slt, col, &alt))) {
 				sprintf(str, "%s_%s-AX.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 				if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 					fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
@@ -262,26 +262,16 @@ int main(unsigned int argc, char *argv[]) {
 			}
 		}
 		else {
-			if ((!zoht) || (zoht & TFLAG)) {
-				if (((!fx) || (fx & FFLAG)) && (!KOLIBA_IsIdentitySlut(KOLIBA_ApplyEfficacies(&sLut, &slt, &KOLIBA_QuintaryColorsF[col], &KOLIBA_Rec2020Slut)))) {
-					sprintf(str, "%s_%s-TF.sLut", label, KOLIBA_QuintaryColorTokens[col]);
-					if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
-						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
-						free (str);
-						return 3;
-					}
-				}
-				if (((!fx) || (fx & XFLAG)) && (!KOLIBA_IsIdentitySlut(KOLIBA_ApplyEfficacies(&sLut, &slt, &KOLIBA_QuintaryColorsX[col], &KOLIBA_Rec2020Slut)))) {
-					sprintf(str, "%s_%s-TX.sLut", label, KOLIBA_QuintaryColorTokens[col]);
-					if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
-						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
-						free (str);
-						return 3;
-					}
+			if ((!zoht) || (zoht & TFLAG) && (!KOLIBA_IsIdentitySlut(KOLIBA_ApplySphericalEfficaciesF(&sLut, &slt, col, NULL)))) {
+				sprintf(str, "%s_%s-TF.sLut", label, KOLIBA_QuintaryColorTokens[col]);
+				if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
+					fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
+					free (str);
+					return 3;
 				}
 			}
 			if ((!zoht) || (zoht & ZFLAG)) {
-				if (((!fx) || (fx & FFLAG)) && (!KOLIBA_IsIdentitySlut(KOLIBA_ApplyEfficacies(&sLut, &slt, &KOLIBA_QuintaryColorsF[col], &KOLIBA_NoFarbaSlut)))) {
+				if (((!fx) || (fx & FFLAG)) && (!KOLIBA_IsIdentitySlut(KOLIBA_ApplySphericalEfficaciesF(&sLut, &slt, col, &KOLIBA_NoFarbaSlut)))) {
 					sprintf(str, "%s_%s-ZF.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 					if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
@@ -289,7 +279,7 @@ int main(unsigned int argc, char *argv[]) {
 						return 3;
 					}
 				}
-				if (((!fx) || (fx & XFLAG)) && (!KOLIBA_IsIdentitySlut(KOLIBA_ApplyEfficacies(&sLut, &slt, &KOLIBA_QuintaryColorsX[col], &KOLIBA_NoFarbaSlut)))) {
+				if (((!fx) || (fx & XFLAG)) && (!KOLIBA_IsIdentitySlut(KOLIBA_ApplySphericalEfficaciesX(&sLut, &slt, col, &KOLIBA_NoFarbaSlut)))) {
 					sprintf(str, "%s_%s-ZX.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 					if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
@@ -299,7 +289,7 @@ int main(unsigned int argc, char *argv[]) {
 				}
 			}
 			if ((!zoht) || (zoht & OFLAG)) {
-				if (((!fx) || (fx & FFLAG)) && (!KOLIBA_IsIdentitySlut(KOLIBA_ApplyEfficacies(&sLut, &slt, &KOLIBA_QuintaryColorsF[col], &KOLIBA_IdentitySlut)))) {
+				if (((!fx) || (fx & FFLAG)) && (!KOLIBA_IsIdentitySlut(KOLIBA_ApplySphericalEfficaciesF(&sLut, &slt, col, &KOLIBA_IdentitySlut)))) {
 					sprintf(str, "%s_%s-OF.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 					if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
@@ -307,7 +297,7 @@ int main(unsigned int argc, char *argv[]) {
 						return 3;
 					}
 				}
-				if (((!fx) || (fx & XFLAG)) && (!KOLIBA_IsIdentitySlut(KOLIBA_ApplyEfficacies(&sLut, &slt, &KOLIBA_QuintaryColorsX[col], &KOLIBA_IdentitySlut)))) {
+				if (((!fx) || (fx & XFLAG)) && (!KOLIBA_IsIdentitySlut(KOLIBA_ApplySphericalEfficaciesX(&sLut, &slt, col, &KOLIBA_IdentitySlut)))) {
 					sprintf(str, "%s_%s-OX.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 					if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
@@ -317,7 +307,7 @@ int main(unsigned int argc, char *argv[]) {
 				}
 			}
 			if ((!zoht) || (zoht & HFLAG)) {
-				if (((!fx) || (fx & FFLAG)) && (!KOLIBA_IsIdentitySlut(KOLIBA_ApplyEfficacies(&sLut, &slt, &KOLIBA_QuintaryColorsF[col], &KOLIBA_HomeSlut)))) {
+				if (((!fx) || (fx & FFLAG)) && (!KOLIBA_IsIdentitySlut(KOLIBA_ApplySphericalEfficaciesF(&sLut, &slt, col, &KOLIBA_HomeSlut)))) {
 					sprintf(str, "%s_%s-HF.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 					if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
@@ -325,7 +315,7 @@ int main(unsigned int argc, char *argv[]) {
 						return 3;
 					}
 				}
-				if (((!fx) || (fx & XFLAG)) && (!KOLIBA_IsIdentitySlut(KOLIBA_ApplyEfficacies(&sLut, &slt, &KOLIBA_QuintaryColorsX[col], &KOLIBA_HomeSlut)))) {
+				if (((!fx) || (fx & XFLAG)) && (!KOLIBA_IsIdentitySlut(KOLIBA_ApplySphericalEfficaciesX(&sLut, &slt, col, &KOLIBA_HomeSlut)))) {
 					sprintf(str, "%s_%s-HX.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 					if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
