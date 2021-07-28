@@ -51,7 +51,7 @@ int main(unsigned int argc, char *argv[]) {
 	char fx   = FFLAG;
 	KOLIBA_ftype ft;
 
-	fprintf(stderr, "quintluts " ver "\nCopyright 2021 G. Adam Stanislav\nAll rightsreserved\n\n");
+	fprintf(stderr, "quintluts " ver "\nCopyright 2021 G. Adam Stanislav\nAll rights reserved\n\n");
 
 	for (i = 1; i < argc; i++) {
 		if ((argv[i][0] == '-')
@@ -205,7 +205,7 @@ int main(unsigned int argc, char *argv[]) {
 				break;
 		}
 
-		KOLIBA_ApplyPaletteRing(&plt, &plt, KOLIBA_PlutRed);
+		KOLIBA_ApplyPaletteRing(&plt, &plt, pluts);
 		KOLIBA_ConvertPaletteToSlut(&slt, &plt);
 	}
 	else {
