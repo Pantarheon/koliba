@@ -63,7 +63,7 @@ RotationMatrix: RotationMatrix.o
 	$(CC) $(CFLG) -o RotationMatrix RotationMatrix.o -L$(PREFIX)/lib -lkoliba -lm
 
 quintluts: quintluts.o
-	$(CC) $(CFLG) -o quintluts quintluts.o -L$(PREFIX)/lib -lkoliba
+	$(CC) $(CFLG) -o quintluts quintluts.o -L$(PREFIX)/lib -lkoliba -lm
 
 sltconv.o: sltconv.c koliba.h
 	$(CC) $(CFLG) -c sltconv.c -I$(PREFIX)/include
