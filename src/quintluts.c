@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <koliba.h>
 
-#define	ver	"v.0.2"
+#define	ver	"v.0.3"
 
 #define	ZFLAG	1
 #define	OFLAG	2
@@ -13,7 +13,14 @@
 #define	FFLAG	1
 #define	XFLAG	2
 
-int usage(int err) {
+int usage(int err, char *str) {
+	if (str != NULL)
+		fprintf(
+			stderr,
+			"Sorry, I do not understand '%s'.\n"
+			"Perhaps this list will be usewful:\n\n",
+			str
+		);
 	fprintf((err) ? stderr:stdout, "Usage: quintluts [options] label\n\n"
 		"\t-[12345]\n"
 		"\t-[RGBCMY]\n"
@@ -24,7 +31,6 @@ int usage(int err) {
 		"\t-g value\n"
 		"\t-i file\n"
 		"\t-l label\n"
-		"\t-m\n"
 		"\t-r value\n"
 		"\t-u angle (in degrees)\n\n"
 		"The r, g, b values must be between 0 and 1.\n"
@@ -83,36 +89,36 @@ int main(unsigned int argc, char *argv[]) {
 			case 'r':
 				if (argv[i][2] != '\0') str = &(argv[i][2]);
 				else if (i < (argc - 1)) str = argv[++i];
-				else return usage(1);
+				else return usage(1, argv[i]);
 				r = atof(str);
 				break;
 			case 'g':
 				if (argv[i][2] != '\0') str = &(argv[i][2]);
 				else if (i < (argc - 1)) str = argv[++i];
-				else return usage(1);
+				else return usage(1, argv[i]);
 				g = atof(str);
 				break;
 			case 'b':
 				if (argv[i][2] != '\0') str = &(argv[i][2]);
 				else if (i < (argc - 1)) str = argv[++i];
-				else return usage(1);
+				else return usage(1, argv[i]);
 				b = atof(str);
 				break;
 			case 'e':
 				if (argv[i][2] != '\0') str = &(argv[i][2]);
 				else if (i < (argc - 1)) str = argv[++i];
-				else return usage(1);
+				else return usage(1, argv[i]);
 				efficacy = -fabs(atof(str));
 				break;
 			case 'i':
 				if (argv[i][2] != '\0') imp = &(argv[i][2]);
 				else if (i < (argc - 1)) imp = argv[++i];
-				else return usage(1);
+				else return usage(1, argv[i]);
 				break;
 			case 'a':
 				if (argv[i][2] != '\0') amb = &(argv[i][2]);
 				else if (i < (argc - 1)) amb = argv[++i];
-				else return usage(1);
+				else return usage(1, argv[i]);
 				break;
 			case '1':
 			case '2':
@@ -150,30 +156,30 @@ int main(unsigned int argc, char *argv[]) {
 			case 'l':
 				if (argv[i][2] != '\0') label = &(argv[i][2]);
 				else if (i < (argc - 1)) label = argv[++i];
-				else return usage(1);
+				else return usage(1, argv[i]);
 				break;
 			case 'h':
 #ifdef _WIN32
 			case '?':
 #endif
-				return usage (0);
+				return usage (0, NULL);
 				break;
 			case 'u':
 				if (argv[i][2] != '\0') str = &(argv[i][2]);
 				else if (i < (argc - 1)) str = argv[++i];
-				else return usage(1);
+				else return usage(1, argv[i]);
 				angle    = atof(str);
 				useangle = 1;
 				break;
 			default:
-				return usage(1);
+				return usage(1, argv[i]);
 		}
 		else label = argv[i];
 	}
 
 	if (imp == NULL) {
 		if ((r < 0.0) || (g < 0.0) || (b < 0.0) ||
-			(r > 1.0) || (g > 1.0) || (b > 1.0)) return usage(2);
+			(r > 1.0) || (g > 1.0) || (b > 1.0)) return usage(2, NULL);
 
 		KOLIBA_ResetPalette(&plt);
 		switch (pluts) {
