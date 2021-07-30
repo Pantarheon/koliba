@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <koliba.h>
 
-#define	ver	"v.0.3.1"
+#define	ver	"v.0.3.2"
 
 #define	ZFLAG	1
 #define	OFLAG	2
@@ -275,7 +275,7 @@ int main(unsigned int argc, char *argv[]) {
 			if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesF(&sLut, iLut, angle, &alt))) {
 				sprintf(str, "%s_%s-AF.sLut", label, astr);
 				if (KOLIBA_IsIdentitySlut(&sLut))
-					fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+					fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 				else if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 					fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 					free (str);
@@ -285,7 +285,7 @@ int main(unsigned int argc, char *argv[]) {
 			if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesX(&sLut, iLut, angle, &alt))) {
 				sprintf(str, "%s_%s-AX.sLut", label, astr);
 				if (KOLIBA_IsIdentitySlut(&sLut))
-					fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+					fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 				else if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 					fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 					free (str);
@@ -297,7 +297,7 @@ int main(unsigned int argc, char *argv[]) {
 			if (((!zoht) || (zoht & TFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesF(&sLut, iLut, angle, NULL))) {
 				sprintf(str, "%s_%s-TF.sLut", label, astr);
 				if (KOLIBA_IsIdentitySlut(&sLut))
-					fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+					fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 				else if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 					fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 					free (str);
@@ -308,7 +308,7 @@ int main(unsigned int argc, char *argv[]) {
 				if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesF(&sLut, iLut, angle, &KOLIBA_NoFarbaSlut))) {
 					sprintf(str, "%s_%s-ZF.sLut", label, astr);
 					if (KOLIBA_IsIdentitySlut(&sLut))
-						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+						fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 					else if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 						free (str);
@@ -318,7 +318,7 @@ int main(unsigned int argc, char *argv[]) {
 				if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesX(&sLut, iLut, angle, &KOLIBA_NoFarbaSlut))) {
 					sprintf(str, "%s_%s-ZX.sLut", label, astr);
 					if (KOLIBA_IsIdentitySlut(&sLut))
-						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+						fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 					else if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 						free (str);
@@ -330,7 +330,7 @@ int main(unsigned int argc, char *argv[]) {
 				if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesF(&sLut, iLut, angle, &KOLIBA_IdentitySlut))) {
 					sprintf(str, "%s_%s-OF.sLut", label, astr);
 					if (KOLIBA_IsIdentitySlut(&sLut))
-						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+						fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 					else if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 						free (str);
@@ -340,7 +340,7 @@ int main(unsigned int argc, char *argv[]) {
 				if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesX(&sLut, iLut, angle, &KOLIBA_IdentitySlut))) {
 					sprintf(str, "%s_%s-OX.sLut", label, astr);
 					if (KOLIBA_IsIdentitySlut(&sLut))
-						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+						fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 					else if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 						free (str);
@@ -352,7 +352,7 @@ int main(unsigned int argc, char *argv[]) {
 				if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesF(&sLut, iLut, angle, &KOLIBA_HomeSlut))) {
 					sprintf(str, "%s_%s-HF.sLut", label, astr);
 					if (KOLIBA_IsIdentitySlut(&sLut))
-						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+						fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 					else if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 						free (str);
@@ -362,7 +362,7 @@ int main(unsigned int argc, char *argv[]) {
 				if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesX(&sLut, iLut, angle, &KOLIBA_HomeSlut))) {
 					sprintf(str, "%s_%s-HX.sLut", label, astr);
 					if (KOLIBA_IsIdentitySlut(&sLut))
-						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+						fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 					else if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 						free (str);
@@ -377,7 +377,7 @@ int main(unsigned int argc, char *argv[]) {
 			if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalEfficaciesF(&sLut, iLut, col, &alt))) {
 				sprintf(str, "%s_%s-AF.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 				if (KOLIBA_IsIdentitySlut(&sLut))
-					fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+					fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 				else if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 					fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 					free (str);
@@ -387,7 +387,7 @@ int main(unsigned int argc, char *argv[]) {
 			if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalEfficaciesX(&sLut, iLut, col, &alt))) {
 				sprintf(str, "%s_%s-AX.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 				if (KOLIBA_IsIdentitySlut(&sLut))
-					fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+					fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 				else if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 					fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 					free (str);
@@ -399,7 +399,7 @@ int main(unsigned int argc, char *argv[]) {
 			if ((!zoht) || (zoht & TFLAG) && (KOLIBA_ApplySphericalEfficaciesF(&sLut, iLut, col, NULL))) {
 				sprintf(str, "%s_%s-TF.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 				if (KOLIBA_IsIdentitySlut(&sLut))
-					fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+					fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 				else if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 					fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 					free (str);
@@ -410,7 +410,7 @@ int main(unsigned int argc, char *argv[]) {
 				if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalEfficaciesF(&sLut, iLut, col, &KOLIBA_NoFarbaSlut))) {
 					sprintf(str, "%s_%s-ZF.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 					if (KOLIBA_IsIdentitySlut(&sLut))
-						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+						fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 					else if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 						free (str);
@@ -420,7 +420,7 @@ int main(unsigned int argc, char *argv[]) {
 				if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalEfficaciesX(&sLut, iLut, col, &KOLIBA_NoFarbaSlut))) {
 					sprintf(str, "%s_%s-ZX.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 					if (KOLIBA_IsIdentitySlut(&sLut))
-						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+						fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 					else if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 						free (str);
@@ -432,7 +432,7 @@ int main(unsigned int argc, char *argv[]) {
 				if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalEfficaciesF(&sLut, iLut, col, &KOLIBA_IdentitySlut))) {
 					sprintf(str, "%s_%s-OF.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 					if (KOLIBA_IsIdentitySlut(&sLut))
-						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+						fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 					else if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 						free (str);
@@ -442,7 +442,7 @@ int main(unsigned int argc, char *argv[]) {
 				if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalEfficaciesX(&sLut, iLut, col, &KOLIBA_IdentitySlut))) {
 					sprintf(str, "%s_%s-OX.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 					if (KOLIBA_IsIdentitySlut(&sLut))
-						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+						fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 					else if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 						free (str);
@@ -454,7 +454,7 @@ int main(unsigned int argc, char *argv[]) {
 				if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalEfficaciesF(&sLut, iLut, col, &KOLIBA_HomeSlut))) {
 					sprintf(str, "%s_%s-HF.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 					if (KOLIBA_IsIdentitySlut(&sLut))
-						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+						fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 					else if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 						free (str);
@@ -464,7 +464,7 @@ int main(unsigned int argc, char *argv[]) {
 				if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalEfficaciesX(&sLut, iLut, col, &KOLIBA_HomeSlut))) {
 					sprintf(str, "%s_%s-HX.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 					if (KOLIBA_IsIdentitySlut(&sLut))
-						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+						fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 					else if (KOLIBA_WriteSlutToNamedFile(&sLut, str)) {
 						fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 						free (str);
@@ -477,7 +477,7 @@ int main(unsigned int argc, char *argv[]) {
 
 	sprintf(str, "%s_Base.sLut", label);
 	if (KOLIBA_IsIdentitySlut((iLut == NULL) ? &KOLIBA_NaturalFarbaContrastSlut : iLut))
-		fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+		fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 	else if (KOLIBA_WriteSlutToNamedFile((iLut == NULL) ? &KOLIBA_NaturalFarbaContrastSlut : iLut, str)) {
 		fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 		free (str);
@@ -487,7 +487,7 @@ int main(unsigned int argc, char *argv[]) {
 	if (amb != NULL) {
 		sprintf(str, "%s_Ambient.sLut", label);
 		if (KOLIBA_IsIdentitySlut(&alt))
-			fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
+			fprintf(stderr, "quintluts: Skipping over ILUT '%s'\n", str);
 		else if (KOLIBA_WriteSlutToNamedFile(&alt, str)) {
 			fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 			free (str);
