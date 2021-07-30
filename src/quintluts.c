@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <koliba.h>
 
-#define	ver	"v.0.3"
+#define	ver	"v.0.3.1"
 
 #define	ZFLAG	1
 #define	OFLAG	2
@@ -31,6 +31,7 @@ int usage(int err, char *str) {
 		"\t-g value\n"
 		"\t-i file\n"
 		"\t-l label\n"
+		"\t-m\n"
 		"\t-r value\n"
 		"\t-u angle (in degrees)\n\n"
 		"The r, g, b values must be between 0 and 1.\n"
@@ -42,6 +43,7 @@ int usage(int err, char *str) {
 int main(unsigned int argc, char *argv[]) {
 	KOLIBA_PALETTE plt;
 	KOLIBA_SLUT sLut, slt, alt;
+	KOLIBA_SLUT *iLut;
 	KOLIBA_QUINTARYCOLORS col;
 	char *str;
 	char *label = "LUT";
@@ -58,6 +60,7 @@ int main(unsigned int argc, char *argv[]) {
 	char zoht = TFLAG;
 	char fx   = FFLAG;
 	char useangle = 0;
+	char lowfarba = 0;
 	KOLIBA_ftype ft;
 
 	fprintf(stderr, "quintluts " ver "\nCopyright 2021 G. Adam Stanislav\nAll rights reserved\n\n");
@@ -158,6 +161,9 @@ int main(unsigned int argc, char *argv[]) {
 				else if (i < (argc - 1)) label = argv[++i];
 				else return usage(1, argv[i]);
 				break;
+			case 'm':
+				lowfarba = 1;
+				break;
 			case 'h':
 #ifdef _WIN32
 			case '?':
@@ -177,7 +183,7 @@ int main(unsigned int argc, char *argv[]) {
 		else label = argv[i];
 	}
 
-	if (imp == NULL) {
+	if ((imp == NULL) && (lowfarba == 0)) {
 		if ((r < 0.0) || (g < 0.0) || (b < 0.0) ||
 			(r > 1.0) || (g > 1.0) || (b > 1.0)) return usage(2, NULL);
 
@@ -222,10 +228,10 @@ int main(unsigned int argc, char *argv[]) {
 		}
 
 		KOLIBA_ApplyPaletteRing(&plt, &plt, pluts);
-		KOLIBA_ConvertPaletteToSlut(&slt, &plt);
+		iLut = KOLIBA_ConvertPaletteToSlut(&slt, &plt);
 	}
-	else {
-		if (!KOLIBA_ReadSlutFromCompatibleNamedFile(&slt, imp, &ft)) {
+	else if (imp != NULL) {
+		if ((iLut = KOLIBA_ReadSlutFromCompatibleNamedFile(&slt, imp, &ft)) == NULL) {
 			switch (ft) {
 				default:
 				case KOLIBA_ftnofile:
@@ -238,7 +244,7 @@ int main(unsigned int argc, char *argv[]) {
 			fprintf(stderr, str, imp);
 			return 7;
 		}
-	}
+	} else iLut = NULL;
 
 	if (amb != NULL) {
 		if (!KOLIBA_ReadSlutFromCompatibleNamedFile(&alt, amb, &ft)) {
@@ -266,7 +272,7 @@ int main(unsigned int argc, char *argv[]) {
 		while (strptr = strchr(astr, '.')) *strptr = '_';
 
 		if (amb != NULL) {
-			if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesF(&sLut, &slt, angle, &alt))) {
+			if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesF(&sLut, iLut, angle, &alt))) {
 				sprintf(str, "%s_%s-AF.sLut", label, astr);
 				if (KOLIBA_IsIdentitySlut(&sLut))
 					fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
@@ -276,7 +282,7 @@ int main(unsigned int argc, char *argv[]) {
 					return 3;
 				}
 			}
-			if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesX(&sLut, &slt, angle, &alt))) {
+			if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesX(&sLut, iLut, angle, &alt))) {
 				sprintf(str, "%s_%s-AX.sLut", label, astr);
 				if (KOLIBA_IsIdentitySlut(&sLut))
 					fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
@@ -288,7 +294,7 @@ int main(unsigned int argc, char *argv[]) {
 			}
 		}
 		else {
-			if (((!zoht) || (zoht & TFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesF(&sLut, &slt, angle, NULL))) {
+			if (((!zoht) || (zoht & TFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesF(&sLut, iLut, angle, NULL))) {
 				sprintf(str, "%s_%s-TF.sLut", label, astr);
 				if (KOLIBA_IsIdentitySlut(&sLut))
 					fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
@@ -299,7 +305,7 @@ int main(unsigned int argc, char *argv[]) {
 				}
 			}
 			if ((!zoht) || (zoht & ZFLAG)) {
-				if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesF(&sLut, &slt, angle, &KOLIBA_NoFarbaSlut))) {
+				if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesF(&sLut, iLut, angle, &KOLIBA_NoFarbaSlut))) {
 					sprintf(str, "%s_%s-ZF.sLut", label, astr);
 					if (KOLIBA_IsIdentitySlut(&sLut))
 						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
@@ -309,7 +315,7 @@ int main(unsigned int argc, char *argv[]) {
 						return 3;
 					}
 				}
-				if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesX(&sLut, &slt, angle, &KOLIBA_NoFarbaSlut))) {
+				if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesX(&sLut, iLut, angle, &KOLIBA_NoFarbaSlut))) {
 					sprintf(str, "%s_%s-ZX.sLut", label, astr);
 					if (KOLIBA_IsIdentitySlut(&sLut))
 						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
@@ -321,7 +327,7 @@ int main(unsigned int argc, char *argv[]) {
 				}
 			}
 			if ((!zoht) || (zoht & OFLAG)) {
-				if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesF(&sLut, &slt, angle, &KOLIBA_IdentitySlut))) {
+				if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesF(&sLut, iLut, angle, &KOLIBA_IdentitySlut))) {
 					sprintf(str, "%s_%s-OF.sLut", label, astr);
 					if (KOLIBA_IsIdentitySlut(&sLut))
 						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
@@ -331,7 +337,7 @@ int main(unsigned int argc, char *argv[]) {
 						return 3;
 					}
 				}
-				if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesX(&sLut, &slt, angle, &KOLIBA_IdentitySlut))) {
+				if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesX(&sLut, iLut, angle, &KOLIBA_IdentitySlut))) {
 					sprintf(str, "%s_%s-OX.sLut", label, astr);
 					if (KOLIBA_IsIdentitySlut(&sLut))
 						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
@@ -343,7 +349,7 @@ int main(unsigned int argc, char *argv[]) {
 				}
 			}
 			if ((!zoht) || (zoht & HFLAG)) {
-				if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesF(&sLut, &slt, angle, &KOLIBA_HomeSlut))) {
+				if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesF(&sLut, iLut, angle, &KOLIBA_HomeSlut))) {
 					sprintf(str, "%s_%s-HF.sLut", label, astr);
 					if (KOLIBA_IsIdentitySlut(&sLut))
 						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
@@ -353,7 +359,7 @@ int main(unsigned int argc, char *argv[]) {
 						return 3;
 					}
 				}
-				if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesX(&sLut, &slt, angle, &KOLIBA_HomeSlut))) {
+				if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesX(&sLut, iLut, angle, &KOLIBA_HomeSlut))) {
 					sprintf(str, "%s_%s-HX.sLut", label, astr);
 					if (KOLIBA_IsIdentitySlut(&sLut))
 						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
@@ -368,7 +374,7 @@ int main(unsigned int argc, char *argv[]) {
 	}
 	else for (col = KQC_red; col < KQC_COUNT; col += step) {
 		if (amb != NULL) {
-			if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalEfficaciesF(&sLut, &slt, col, &alt))) {
+			if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalEfficaciesF(&sLut, iLut, col, &alt))) {
 				sprintf(str, "%s_%s-AF.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 				if (KOLIBA_IsIdentitySlut(&sLut))
 					fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
@@ -378,7 +384,7 @@ int main(unsigned int argc, char *argv[]) {
 					return 3;
 				}
 			}
-			if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalEfficaciesX(&sLut, &slt, col, &alt))) {
+			if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalEfficaciesX(&sLut, iLut, col, &alt))) {
 				sprintf(str, "%s_%s-AX.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 				if (KOLIBA_IsIdentitySlut(&sLut))
 					fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
@@ -390,7 +396,7 @@ int main(unsigned int argc, char *argv[]) {
 			}
 		}
 		else {
-			if ((!zoht) || (zoht & TFLAG) && (KOLIBA_ApplySphericalEfficaciesF(&sLut, &slt, col, NULL))) {
+			if ((!zoht) || (zoht & TFLAG) && (KOLIBA_ApplySphericalEfficaciesF(&sLut, iLut, col, NULL))) {
 				sprintf(str, "%s_%s-TF.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 				if (KOLIBA_IsIdentitySlut(&sLut))
 					fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
@@ -401,7 +407,7 @@ int main(unsigned int argc, char *argv[]) {
 				}
 			}
 			if ((!zoht) || (zoht & ZFLAG)) {
-				if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalEfficaciesF(&sLut, &slt, col, &KOLIBA_NoFarbaSlut))) {
+				if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalEfficaciesF(&sLut, iLut, col, &KOLIBA_NoFarbaSlut))) {
 					sprintf(str, "%s_%s-ZF.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 					if (KOLIBA_IsIdentitySlut(&sLut))
 						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
@@ -411,7 +417,7 @@ int main(unsigned int argc, char *argv[]) {
 						return 3;
 					}
 				}
-				if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalEfficaciesX(&sLut, &slt, col, &KOLIBA_NoFarbaSlut))) {
+				if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalEfficaciesX(&sLut, iLut, col, &KOLIBA_NoFarbaSlut))) {
 					sprintf(str, "%s_%s-ZX.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 					if (KOLIBA_IsIdentitySlut(&sLut))
 						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
@@ -423,7 +429,7 @@ int main(unsigned int argc, char *argv[]) {
 				}
 			}
 			if ((!zoht) || (zoht & OFLAG)) {
-				if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalEfficaciesF(&sLut, &slt, col, &KOLIBA_IdentitySlut))) {
+				if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalEfficaciesF(&sLut, iLut, col, &KOLIBA_IdentitySlut))) {
 					sprintf(str, "%s_%s-OF.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 					if (KOLIBA_IsIdentitySlut(&sLut))
 						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
@@ -433,7 +439,7 @@ int main(unsigned int argc, char *argv[]) {
 						return 3;
 					}
 				}
-				if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalEfficaciesX(&sLut, &slt, col, &KOLIBA_IdentitySlut))) {
+				if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalEfficaciesX(&sLut, iLut, col, &KOLIBA_IdentitySlut))) {
 					sprintf(str, "%s_%s-OX.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 					if (KOLIBA_IsIdentitySlut(&sLut))
 						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
@@ -445,7 +451,7 @@ int main(unsigned int argc, char *argv[]) {
 				}
 			}
 			if ((!zoht) || (zoht & HFLAG)) {
-				if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalEfficaciesF(&sLut, &slt, col, &KOLIBA_HomeSlut))) {
+				if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalEfficaciesF(&sLut, iLut, col, &KOLIBA_HomeSlut))) {
 					sprintf(str, "%s_%s-HF.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 					if (KOLIBA_IsIdentitySlut(&sLut))
 						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
@@ -455,7 +461,7 @@ int main(unsigned int argc, char *argv[]) {
 						return 3;
 					}
 				}
-				if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalEfficaciesX(&sLut, &slt, col, &KOLIBA_HomeSlut))) {
+				if (((!fx) || (fx & XFLAG)) && (KOLIBA_ApplySphericalEfficaciesX(&sLut, iLut, col, &KOLIBA_HomeSlut))) {
 					sprintf(str, "%s_%s-HX.sLut", label, KOLIBA_QuintaryColorTokens[col]);
 					if (KOLIBA_IsIdentitySlut(&sLut))
 						fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
@@ -470,9 +476,9 @@ int main(unsigned int argc, char *argv[]) {
 	}
 
 	sprintf(str, "%s_Base.sLut", label);
-	if (KOLIBA_IsIdentitySlut(&slt))
+	if (KOLIBA_IsIdentitySlut((iLut == NULL) ? &KOLIBA_NaturalFarbaContrastSlut : iLut))
 		fprintf(stderr, "quintlus: Skipping over ILUT '%s'\n", str);
-	else if (KOLIBA_WriteSlutToNamedFile(&slt, str)) {
+	else if (KOLIBA_WriteSlutToNamedFile((iLut == NULL) ? &KOLIBA_NaturalFarbaContrastSlut : iLut, str)) {
 		fprintf(stderr, "quintluts: Unable to create file '%s'. Aborting.\n", str);
 		free (str);
 		return 4;
