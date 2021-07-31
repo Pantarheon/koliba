@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <koliba.h>
 
-#define	ver	"v.0.3.2"
+#define	ver	"v.0.4"
 
 #define	ZFLAG	1
 #define	OFLAG	2
@@ -29,9 +29,11 @@ int usage(int err, char *str) {
 		"\t-e value\n"
 		"\t-f[TZOHFX]\n"
 		"\t-g value\n"
+		"\t-h\n"
 		"\t-i file\n"
 		"\t-l label\n"
 		"\t-m\n"
+		"\t-n\n"
 		"\t-r value\n"
 		"\t-u angle (in degrees)\n\n"
 		"The r, g, b values must be between 0 and 1.\n"
@@ -61,6 +63,7 @@ int main(unsigned int argc, char *argv[]) {
 	char fx   = FFLAG;
 	char useangle = 0;
 	char lowfarba = 0;
+	char usename  = 0;
 	KOLIBA_ftype ft;
 
 	fprintf(stderr, "quintluts " ver "\nCopyright 2021 G. Adam Stanislav\nAll rights reserved\n\n");
@@ -72,51 +75,72 @@ int main(unsigned int argc, char *argv[]) {
 #endif
 		) switch (argv[i][1]) {
 			case 'R':
-				pluts = KOLIBA_PlutRed;
+				pluts    = KOLIBA_PlutRed;
+				imp      = NULL;
+				lowfarba = 0;
 				break;
 			case 'G':
-				pluts = KOLIBA_PlutGreen;
+				pluts    = KOLIBA_PlutGreen;
+				imp      = NULL;
+				lowfarba = 0;
 				break;
 			case 'B':
-				pluts = KOLIBA_PlutBlue;
+				pluts    = KOLIBA_PlutBlue;
+				imp      = NULL;
+				lowfarba = 0;
 				break;
 			case 'C':
-				pluts = KOLIBA_PlutCyan;
+				pluts   = KOLIBA_PlutCyan;
+				imp      = NULL;
+				lowfarba = 0;
 				break;
 			case 'M':
-				pluts = KOLIBA_PlutMagenta;
+				pluts    = KOLIBA_PlutMagenta;
+				imp      = NULL;
+				lowfarba = 0;
 				break;
 			case 'Y':
-				pluts = KOLIBA_PlutYellow;
+				pluts    = KOLIBA_PlutYellow;
+				imp      = NULL;
+				lowfarba = 0;
 				break;
 			case 'r':
 				if (argv[i][2] != '\0') str = &(argv[i][2]);
 				else if (i < (argc - 1)) str = argv[++i];
 				else return usage(1, argv[i]);
-				r = atof(str);
+				r        = atof(str);
+				imp      = NULL;
+				lowfarba = 0;
 				break;
 			case 'g':
 				if (argv[i][2] != '\0') str = &(argv[i][2]);
 				else if (i < (argc - 1)) str = argv[++i];
 				else return usage(1, argv[i]);
-				g = atof(str);
+				g        = atof(str);
+				imp      = NULL;
+				lowfarba = 0;
 				break;
 			case 'b':
 				if (argv[i][2] != '\0') str = &(argv[i][2]);
 				else if (i < (argc - 1)) str = argv[++i];
 				else return usage(1, argv[i]);
-				b = atof(str);
+				b        = atof(str);
+				imp      = NULL;
+				lowfarba = 0;
 				break;
 			case 'e':
 				if (argv[i][2] != '\0') str = &(argv[i][2]);
 				else if (i < (argc - 1)) str = argv[++i];
 				else return usage(1, argv[i]);
 				efficacy = -fabs(atof(str));
+				imp      = NULL;
+				lowfarba = 0;
 				break;
 			case 'i':
 				if (argv[i][2] != '\0') imp = &(argv[i][2]);
 				else if (i < (argc - 1)) imp = argv[++i];
 				else return usage(1, argv[i]);
+				lowfarba = 0;
 				break;
 			case 'a':
 				if (argv[i][2] != '\0') amb = &(argv[i][2]);
@@ -162,7 +186,11 @@ int main(unsigned int argc, char *argv[]) {
 				else return usage(1, argv[i]);
 				break;
 			case 'm':
+				imp      = NULL;
 				lowfarba = 1;
+				break;
+			case 'n':
+				usename  = 1;
 				break;
 			case 'h':
 #ifdef _WIN32
@@ -265,11 +293,17 @@ int main(unsigned int argc, char *argv[]) {
 	str = malloc(strlen(label)+128);
 
 	if (useangle) {
-		char astr[32];
+		char astr[64];
 		char *strptr;
 
 		sprintf(astr, "%.10g", angle);
 		while (strptr = strchr(astr, '.')) *strptr = '_';
+
+		if (usename != 0) {
+			double d = (fmod(360.0+fmod(angle, 360.0), 360.0)*(double)KOLIBA_QuintaryColorCount)/360.0;
+			unsigned int i = (int)d;
+			if ((i < KOLIBA_QuintaryColorCount) && (d == (double)i)) strncpy(astr, KOLIBA_QuintaryColorTokens[i], sizeof(astr)-1);
+		}
 
 		if (amb != NULL) {
 			if (((!fx) || (fx & FFLAG)) && (KOLIBA_ApplySphericalAngleEfficaciesF(&sLut, iLut, angle, &alt))) {
