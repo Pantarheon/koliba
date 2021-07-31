@@ -1129,6 +1129,14 @@ KLBDC KOLIBA_SLUT *KOLIBA_ApplySphericalEfficaciesX(KOLIBA_SLUT *sLut, const KOL
 // Or for that matter, by any color based on its angle in degrees:
 KLBDC KOLIBA_SLUT *KOLIBA_ApplySphericalAngleEfficaciesF(KOLIBA_SLUT *sLut, const KOLIBA_SLUT * const slt, double angle, const KOLIBA_SLUT * const alt);
 KLBDC KOLIBA_SLUT *KOLIBA_ApplySphericalAngleEfficaciesX(KOLIBA_SLUT *sLut, const KOLIBA_SLUT * const slt, double angle, const KOLIBA_SLUT * const alt);
+// If we need to convert a KOLIBA_QUINTARYCOLORS to angle:
+#ifdef NOKLINLIN
+#define KOLIBA_SphericalToAngle(s)	((double)(360.0*(double)(s))/(double)KOLIBA_QuintaryColorCount)
+#else
+inline double KOLIBA_SphericalToAngle(KOLIBA_QUINTARYCOLORS s) {
+	return (360.0 * (double)s) / (double)KOLIBA_QuintaryColorCount;
+}
+#endif
 
 
 
