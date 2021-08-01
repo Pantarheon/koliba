@@ -979,8 +979,19 @@ KLBDC extern const double KOLIBA_ByteDiv255[256];
 KLBDC extern const unsigned char KOLIBA_LinearByteToSrgb[256];
 
 // Some help to produce primary through quintary color LUTs
-KLBDC extern const KOLIBA_EFFILUT KOLIBA_QuintaryColorsF[KQC_COUNT];
-KLBDC extern const KOLIBA_EFFILUT KOLIBA_QuintaryColorsX[KQC_COUNT];
+/*
+	These two are deprecated and will be removed in v.1.0.
+	Use KOLIBA_SphericalEffilut() instead!
+*/
+KLBDC extern const KOLIBA_EFFILUT KOLIBA_QuintaryColorsF[];
+KLBDC extern const KOLIBA_EFFILUT KOLIBA_QuintaryColorsX[];
+
+/*
+	These two replace them internally, but are not exported.
+*/
+KLBHID const KOLIBA_EFFILUT KOLIBA_TriFarbaF[3];
+KLBHID const KOLIBA_EFFILUT KOLIBA_TriFarbaX[3];
+
 KLBDC extern const char * const KOLIBA_QuintaryColorTokens[KQC_COUNT];
 KLBDC extern const char * const KOLIBA_QuintaryColorNames[KQC_COUNT];
 // But to allow us to extend it beyond quintary if we so
@@ -1124,18 +1135,49 @@ KLBDC KOLIBA_SLUT * KOLIBA_ApplyNaturalContrasts(
 );
 
 // We can interpolate SLUTs based on Quintary colors:
+KLBDC KOLIBA_EFFILUT *KOLIBA_SphericalEffilut(KOLIBA_EFFILUT *effi, double angle, double fx);
+KLBDC KOLIBA_SLUT *KOLIBA_ApplySphericalEfficacies(KOLIBA_SLUT *sLut, const KOLIBA_SLUT * const slt, double angle, const KOLIBA_SLUT * const alt, double fx);
+KLBDC KOLIBA_SLUT *KOLIBA_ColorRoller(KOLIBA_SLUT *sLut, double imp, double angle, double atmo, double fx, double efficacy);
+
+/* These are deprecated and will be removed in v.1.0.
+   Use KOLIBA_ApplySphericalEfficacies instead.
+
 KLBDC KOLIBA_SLUT *KOLIBA_ApplySphericalEfficaciesF(KOLIBA_SLUT *sLut, const KOLIBA_SLUT * const slt, KOLIBA_QUINTARYCOLORS index, const KOLIBA_SLUT * const alt);
 KLBDC KOLIBA_SLUT *KOLIBA_ApplySphericalEfficaciesX(KOLIBA_SLUT *sLut, const KOLIBA_SLUT * const slt, KOLIBA_QUINTARYCOLORS index, const KOLIBA_SLUT * const alt);
 // Or for that matter, by any color based on its angle in degrees:
 KLBDC KOLIBA_SLUT *KOLIBA_ApplySphericalAngleEfficaciesF(KOLIBA_SLUT *sLut, const KOLIBA_SLUT * const slt, double angle, const KOLIBA_SLUT * const alt);
-KLBDC KOLIBA_SLUT *KOLIBA_ApplySphericalAngleEfficaciesX(KOLIBA_SLUT *sLut, const KOLIBA_SLUT * const slt, double angle, const KOLIBA_SLUT * const alt);
+KLBDC KOLIBA_SLUT *KOLIBA_ApplySphericalAngleEfficaciesX(KOLIBA_SLUT *sLut, const KOLIBA_SLUT * const slt, double angle, const KOLIBA_SLUT * const alt);*/
 // If we need to convert a KOLIBA_QUINTARYCOLORS to angle:
 #ifdef NOKLINLIN
 #define KOLIBA_SphericalToAngle(s)	((double)(360.0*(double)(s))/(double)KOLIBA_QuintaryColorCount)
+#ifndef SPHERICAL_C
+#define KOLIBA_ApplySphericalEfficaciesF(sLut,slt,index,alt)	KOLIBA_ApplySphericalEfficacies(sLut,slt,KOLIBA_SphericalToAngle(index),alt,0.0)
+#define KOLIBA_ApplySphericalEfficaciesX(sLut,slt,index,alt)	KOLIBA_ApplySphericalEfficacies(sLut,slt,KOLIBA_SphericalToAngle(index),alt,1.0)
+#define	KOLIBA_ApplySphericalAngleEfficaciesF(sLut,slt,angle,alt)	KOLIBA_ApplySphericalEfficacies(sLut,slt,angle,alt,0.0)
+#define	KOLIBA_ApplySphericalAngleEfficaciesX(sLut,slt,angle,alt)	KOLIBA_ApplySphericalEfficacies(sLut,slt,angle,alt,1.0)
+#endif
 #else
 inline double KOLIBA_SphericalToAngle(KOLIBA_QUINTARYCOLORS s) {
 	return (360.0 * (double)s) / (double)KOLIBA_QuintaryColorCount;
 }
+
+#ifndef	SPHERICAL_C
+inline KOLIBA_SLUT *KOLIBA_ApplySphericalEfficaciesF(KOLIBA_SLUT *sLut, const KOLIBA_SLUT * const slt, KOLIBA_QUINTARYCOLORS index, const KOLIBA_SLUT * const alt) {
+	return KOLIBA_ApplySphericalEfficacies(sLut, slt, KOLIBA_SphericalToAngle(index), alt, 0.0);
+}
+
+inline KOLIBA_SLUT *KOLIBA_ApplySphericalEfficaciesX(KOLIBA_SLUT *sLut, const KOLIBA_SLUT * const slt, KOLIBA_QUINTARYCOLORS index, const KOLIBA_SLUT * const alt) {
+	return KOLIBA_ApplySphericalEfficacies(sLut, slt, KOLIBA_SphericalToAngle(index), alt, 1.0);
+}
+
+inline KOLIBA_SLUT *KOLIBA_ApplySphericalAngleEfficaciesF(KOLIBA_SLUT *sLut, const KOLIBA_SLUT * const slt, double angle, const KOLIBA_SLUT * const alt) {
+	return KOLIBA_ApplySphericalEfficacies(sLut, slt, angle, alt, 0.0);
+}
+
+inline KOLIBA_SLUT *KOLIBA_ApplySphericalAngleEfficaciesX(KOLIBA_SLUT *sLut, const KOLIBA_SLUT * const slt, double angle, const KOLIBA_SLUT * const alt) {
+	return KOLIBA_ApplySphericalEfficacies(sLut, slt, angle, alt, 1.0);
+}
+#endif
 #endif
 
 
