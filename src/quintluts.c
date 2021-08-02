@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <koliba.h>
 
-#define	ver	"v.0.4"
+#define	ver	"v.0.4.1"
 
 #define	ZFLAG	1
 #define	OFLAG	2
@@ -26,6 +26,7 @@ int usage(int err, char *str) {
 		"\t-[RGBCMY]\n"
 		"\t-a file\n"
 		"\t-b value\n"
+		"\t-c colorname\n"
 		"\t-e value\n"
 		"\t-f[TZOHFX]\n"
 		"\t-g value\n"
@@ -51,6 +52,7 @@ int main(unsigned int argc, char *argv[]) {
 	char *label = "LUT";
 	char *imp = NULL;
 	char *amb = NULL;
+	char *colorname = NULL;
 	double r = 1.0;
 	double g = 0.0;
 	double b = 0.0;
@@ -58,6 +60,7 @@ int main(unsigned int argc, char *argv[]) {
 	double angle = 0.0;
 	KOLIBA_Pluts pluts = KOLIBA_PlutRed;
 	unsigned int i;
+	signed int index;
 	unsigned int step = 8;
 	char zoht = TFLAG;
 	char fx   = FFLAG;
@@ -180,6 +183,11 @@ int main(unsigned int argc, char *argv[]) {
 						break;
 				}
 				break;
+			case 'c':
+				if (argv[i][2] != '\0') colorname = &(argv[i][2]);
+				else if (i < (argc - 1)) colorname = argv[++i];
+				else return usage(1, argv[i]);
+				break;
 			case 'l':
 				if (argv[i][2] != '\0') label = &(argv[i][2]);
 				else if (i < (argc - 1)) label = argv[++i];
@@ -209,6 +217,24 @@ int main(unsigned int argc, char *argv[]) {
 				return usage(1, argv[i]);
 		}
 		else label = argv[i];
+	}
+
+	if (colorname != NULL)  {
+		if ((index = KOLIBA_TokenToQuintaryIndex(colorname)) < 0) {
+			fprintf(stderr, 
+				"quintluts: Sorry, not familiar with '-c %s'.\n"
+				"But I do understand these %u names:\n\n",
+				colorname, KOLIBA_QuintaryColorCount
+			);
+			for  (i = 0; i < KOLIBA_QuintaryColorCount; i++)
+				fprintf(stderr, "\t%s\n", KOLIBA_QuintaryColorTokens[i]);
+			return -41;
+		}
+		else {
+			useangle = 1;
+			usename  = 1;
+			angle    = KOLIBA_SphericalToAngle(index);
+		}
 	}
 
 	if ((imp == NULL) && (lowfarba == 0)) {
