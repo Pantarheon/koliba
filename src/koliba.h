@@ -1180,6 +1180,9 @@ inline KOLIBA_SLUT *KOLIBA_ApplySphericalAngleEfficaciesX(KOLIBA_SLUT *sLut, con
 #endif
 #endif
 
+// More spherical support
+KLBDC signed int KOLIBA_AngleToQuintaryIndex(double angle);
+
 
 
 /****************************************************************************/
