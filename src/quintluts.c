@@ -295,14 +295,13 @@ int main(unsigned int argc, char *argv[]) {
 	if (useangle) {
 		char astr[64];
 		char *strptr;
+		signed int index;
 
-		sprintf(astr, "%.10g", angle);
-		while (strptr = strchr(astr, '.')) *strptr = '_';
-
-		if (usename != 0) {
-			double d = (fmod(360.0+fmod(angle, 360.0), 360.0)*(double)KOLIBA_QuintaryColorCount)/360.0;
-			unsigned int i = (int)d;
-			if ((i < KOLIBA_QuintaryColorCount) && (d == (double)i)) strncpy(astr, KOLIBA_QuintaryColorTokens[i], sizeof(astr)-1);
+		if ((usename != 0) && ((index = KOLIBA_AngleToQuintaryIndex(angle)) >= 0))
+			strncpy(astr, KOLIBA_QuintaryColorTokens[index], sizeof(astr)-1);
+		else {
+			sprintf(astr, "%.10g", angle);
+			while (strptr = strchr(astr, '.')) *strptr = '_';
 		}
 
 		if (amb != NULL) {
