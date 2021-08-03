@@ -64,6 +64,7 @@ extern "C" {
 
 
 #define	SLTCFILEHEADERBYTES	24
+#define	SLTAMINCHARS	(6+17*24)
 
 typedef enum {
 	KOLIBA_MalletAll = 0,
@@ -989,8 +990,8 @@ KLBDC extern const KOLIBA_EFFILUT KOLIBA_QuintaryColorsX[];
 /*
 	These two replace them internally, but are not exported.
 */
-KLBHID const KOLIBA_EFFILUT KOLIBA_TriFarbaF[3];
-KLBHID const KOLIBA_EFFILUT KOLIBA_TriFarbaX[3];
+KLBHID extern const KOLIBA_EFFILUT KOLIBA_TriFarbaF[3];
+KLBHID extern const KOLIBA_EFFILUT KOLIBA_TriFarbaX[3];
 
 KLBDC extern const char * const KOLIBA_QuintaryColorTokens[KQC_COUNT];
 KLBDC extern const char * const KOLIBA_QuintaryColorNames[KQC_COUNT];
@@ -3487,6 +3488,31 @@ inline int KOLIBA_CheckSlut(KOLIBA_SLUT *sLut, double chsum) {
 
 #endif
 
+// Sometimes we may need to communicate a sLut over a text-only communications
+// channel, or save it in a plain-text-format file. To do so, we can convert
+// the KOLIBA_SLUT structure into text using the following format string:
+KLBDC extern const char pfmt[];
+// We can then convert the text back to a KOLIBA_SLUT structure by using
+// the following scan-format string:
+KLBDC extern const char sfmt[];
+// We can use built-in functions to do that conversion for us. Note that
+// the string size must be at least SLTAMINCHARS chars.
+KLBDC char * KOLIBA_SlutToString(
+	char * string,
+	const KOLIBA_SLUT * const sLut,
+	unsigned int strsize
+);
+
+KLBDC KOLIBA_SLUT * KOLIBA_StringToSlut(
+	KOLIBA_SLUT * sLut,
+	const char * const string
+);
+// Such a file should have the .sltt extension and MUST start with the
+// text formated by pfmt[]. The text MAY be followed by any other text,
+// which we will ignore. But no comments are permissable within the
+// pfmt-formated string, or else the sfmt[] scan would fail.
+
+
 // If an effect can be expressed as a 3x4 matrix (i.e., KOLIBA_MATRIX), it
 // should be saved in the 3x4 Matrix file (extension .m3x4), rather than the
 // .fLut file because it is very easy to convert a matrix into not just a SLUT
@@ -3772,7 +3798,7 @@ KLBHID extern const KOLIBA_SLUT KOLIBA_Rec2020Slut;
 KLBHID extern const double KOLIBA_NaN;
 
 // And some globally useful.
-KLBDC const KOLIBA_SLUT KOLIBA_NaturalFarbaContrastSlut;
+KLBDC extern const KOLIBA_SLUT KOLIBA_NaturalFarbaContrastSlut;
 
 
 
@@ -4590,6 +4616,17 @@ KLBDC int KOLIBA_WriteSlutToNamedFile(
 	const char *fname
 );
 
+// Write a SLUT to an open .sltt file. It remains open upon
+// return, so the caller needs to close it. Returns 0 on
+// success, non-0 on failure.
+
+KLBDC int KOLIBA_WriteSlttToOpenFile(const KOLIBA_SLUT *sLut, FILE *f);
+
+// Write a SLUT to a named .sltt file. Returns 0 on success, non-0
+// on failure.
+
+KLBDC int KOLIBA_WriteSlttToNamedFile(const KOLIBA_SLUT *sLut, const char *fname);
+
 // Write a MATRIX to an open .m3x4 file. It needs to be open for writing
 // binary data. It remains open upon return, so the caller needs to close it.
 // Returns 0 on success, non-0 on failure.
@@ -4659,6 +4696,20 @@ KLBDC KOLIBA_SLUT * KOLIBA_ReadSlutFromNamedFile(
 	char *fname
 );
 
+// Read a SLUT from an open .sltt file. It may to be open
+// for reading binary or text data. It remains open upon return,
+// so the caller needs to close it. Returns sLut on success, NULL
+// on failure. If, however, sLut is not NULL, its contents
+// will be filled with the identity sLut on failure.
+
+KLBDC KOLIBA_SLUT * KOLIBA_ReadSlttFromOpenFile(KOLIBA_SLUT *sLut, FILE *f);
+
+// Read a Lut from a named .sltt file. Returns Lut on success,
+// NULL on failure. If, however, Lut is not NULL, its
+// contents will be filled with the identity Lut on failure.
+
+KLBDC KOLIBA_SLUT * KOLIBA_ReadSlttFromNamedFile(KOLIBA_SLUT *Lut, char *fname);
+
 // Read a MATRIX from an open .m3x4 file. It needs to be open for reading
 // binary data. It remains open upon return, so the caller needs to close it.
 // Returns m3x4 on success, NULL on failure. If, however, m3x4 is not NULL,
@@ -4725,7 +4776,8 @@ typedef	enum {
 	KOLIBA_ftslut,
 	KOLIBA_ftmatrix,
 	KOLIBA_ftchrm,
-	KOLIBA_ftcflt
+	KOLIBA_ftcflt,
+	KOLIBA_ftsltt
 } KOLIBA_ftype;
 
 // Read a sLut from an open compatible file. It needs to be open
