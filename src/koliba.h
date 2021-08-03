@@ -43,6 +43,8 @@
 #ifndef	_KOLIBA_H_
 #define	_KOLIBA_H_
 
+#include <stdlib.h>
+
 #if defined _WIN32
 # define	KLBHID
 #ifdef	DLL
