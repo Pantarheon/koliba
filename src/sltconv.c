@@ -45,7 +45,7 @@
 #include <string.h>
 #include <koliba.h>
 
-#define	version	"v.0.3"
+#define	version	"v.0.3.1"
 
 const char notice[] = "sltconv, " version "\nCopyright 2019 G. Adam Stanislav\nAll rights reserved\n\n";
 
@@ -127,6 +127,11 @@ int main(int argc, char *argv[]) {
 
 	if (memcmp(ptr, KOLIBA_sLutHeader, SLTCFILEHEADERBYTES) == 0) {
 		if (KOLIBA_ReadSlutFromOpenFile(&sLut, f) == NULL)
+			return invalid(f, argv[1]);
+		else ftype = slut;
+	}
+	else if (strncmp(ptr, "sLut", 4) == 0) {
+		if (KOLIBA_ReadSlttFromOpenFile(&sLut, f) == NULL)
 			return invalid(f, argv[1]);
 		else ftype = slut;
 	}
