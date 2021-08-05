@@ -45,7 +45,7 @@
 #include <string.h>
 #include <koliba.h>
 
-#define	version	"v.0.3.1"
+#define	version	"v.0.4"
 
 const char notice[] = "sltconv, " version "\nCopyright 2019 G. Adam Stanislav\nAll rights reserved\n\n";
 
@@ -80,7 +80,7 @@ static const char cfltdesc[] = "# Converted from the color filter:\n#\n"
 	"#\tdensity =  %.10g\n#\n";
 
 int usage(void) {
-	fprintf(stderr, "Usage: sltconv input [output]\n");
+	fprintf(stderr, "Usage: sltconv [-i] input [[-o] output] [-t]\n");
 	return 1;
 }
 
@@ -105,97 +105,134 @@ int main(int argc, char *argv[]) {
 	} slt;
 	double csum;
 	unsigned char *ptr = (unsigned char *)&sLut;
+	char *iname = NULL;
+	char *oname = NULL;
 	enum fd {slut, matrix, cflt, chromat} ftype;
 	int is1d;
+	unsigned int i;
+	char cltt = 0;
 
 	fprintf(stderr, notice);
 
-	if ((argc < 2) || (argc > 3))
+	for (i = 1; i < argc; i++) {
+		if ((argv[i][0] == '-')
+#ifdef WIN32
+			|| (argv[i][0] == '/')
+#endif
+			) switch (argv[i][1]) {
+				case 'i':
+					if (argv[i][2] != '\0') iname = &(argv[i][2]);
+					else if ((argv[++i]) != NULL) iname = argv[i];
+					else return (usage());
+					break;
+				case 'o':
+					if (argv[i][2] != '\0') oname = &(argv[i][2]);
+					else if ((argv[++i]) != NULL) oname = argv[i];
+					else return (usage());
+					break;
+				case 't':
+					cltt = 1;
+					break;
+				default:
+					return usage();
+					break;
+			}
+			else if (iname == NULL) iname = argv[i];
+			else if (oname == NULL) oname = argv[i];
+			else return usage();
+	}
+
+	if (iname == NULL)
 		return usage();
 
-	f = fopen(argv[1], "rb");
-	if (f == NULL) return nofile(argv[1]);
+	f = fopen(iname, "rb");
+	if (f == NULL) return nofile(iname);
 
 	if (fread(ptr, 1, SLTCFILEHEADERBYTES, f) < SLTCFILEHEADERBYTES)
-		return invalid(f, argv[1]);
+		return invalid(f, iname);
 
 	if ( fseek(f, -(SLTCFILEHEADERBYTES), SEEK_CUR) != 0) {
 		fclose(f);
-		fprintf(stderr, "Could not rewind file '%s'\n", argv[1]);
+		fprintf(stderr, "Could not rewind file '%s'\n", iname);
 		return 37;
 	}
 
 	if (memcmp(ptr, KOLIBA_sLutHeader, SLTCFILEHEADERBYTES) == 0) {
 		if (KOLIBA_ReadSlutFromOpenFile(&sLut, f) == NULL)
-			return invalid(f, argv[1]);
-		else ftype = slut;
-	}
-	else if (strncmp(ptr, "sLut", 4) == 0) {
-		if (KOLIBA_ReadSlttFromOpenFile(&sLut, f) == NULL)
-			return invalid(f, argv[1]);
+			return invalid(f, iname);
 		else ftype = slut;
 	}
 	else if (memcmp(ptr, KOLIBA_m3x4Header, SLTCFILEHEADERBYTES) == 0) {
 		if (KOLIBA_ConvertMatrixToSlut(&sLut, KOLIBA_ReadMatrixFromOpenFile(&slt.m3x4, f)) == NULL)
-			return invalid(f, argv[1]);
+			return invalid(f, iname);
 		else ftype = matrix;
 	}
 	else if (memcmp(ptr, KOLIBA_chrmHeader, SLTCFILEHEADERBYTES) == 0) {
 		KOLIBA_MATRIX mat;
 		if (KOLIBA_ConvertMatrixToSlut(&sLut, KOLIBA_ChromaticMatrix(&mat, KOLIBA_ReadChromaticMatrixFromOpenFile(&slt.chrm, f))) == NULL)
-			return invalid(f, argv[1]);
+			return invalid(f, iname);
 		else ftype = chromat;
 	}
 	else if (memcmp(ptr, KOLIBA_cFltHeader, SLTCFILEHEADERBYTES) == 0) {
 		if (KOLIBA_ConvertColorFilterToSlut(&sLut, KOLIBA_ReadColorFilterFromOpenFile(&slt.cflt, f)) == NULL)
-			return invalid(f, argv[1]);
+			return invalid(f, iname);
 		else ftype = cflt;
 	}
-	else return invalid(f, argv[1]);
+	else if (KOLIBA_ReadSlttFromOpenFile(&sLut, f) != NULL)
+		ftype = slut;
+	else return invalid(f, iname);
 
 	fclose(f);
 
-	if (argc == 3) {
-		f = fopen(argv[2], "wb");
-		if (f == NULL) return nofile(argv[2]);
+	if (oname != NULL) {
+		f = fopen(oname, "wb");
+		if (f == NULL) return nofile(oname);
 	}
 	else f = stdout;
 
-	is1d = KOLIBA_SlutIs1D(&sLut);
-
-	fprintf(f, cubehead, argv[1], is1d ? 1 : 3);
-	switch (ftype) {
-		case matrix:
-			fprintf(f, matrixdesc, slt.m3x4.red.r, slt.m3x4.red.g, slt.m3x4.red.b, slt.m3x4.red.o,
-				slt.m3x4.green.r, slt.m3x4.green.g, slt.m3x4.green.b, slt.m3x4.green.o,
-				slt.m3x4.blue.r, slt.m3x4.blue.g, slt.m3x4.blue.b, slt.m3x4.blue.o
-			);
-			break;
-		case chromat:
-			fprintf(f, chrmdesc, slt.chrm.model.r, slt.chrm.model.g, slt.chrm.model.b,
-				slt.chrm.chroma.angle, slt.chrm.chroma.magnitude,
-				slt.chrm.chroma.saturation,
-				slt.chrm.chroma.black, slt.chrm.chroma.white
-			);
-			break;
-		case cflt:
-			fprintf(f, cfltdesc, slt.cflt.r, slt.cflt.g, slt.cflt.b, slt.cflt.d);
-			break;
-		default:
-			break;
+	if (cltt != '\0') {
+		if (i = KOLIBA_WriteSlttToOpenFile(&sLut, f)) {
+			if (oname) fclose(f);
+			return i;
+		}
 	}
-	fprintf(f, cubeline, sLut.black.r, sLut.black.g, sLut.black.b);
+	else {
+		is1d = KOLIBA_SlutIs1D(&sLut);
 
-	if (!is1d) {
-		fprintf(f, cubeline, sLut.red.r, sLut.red.g, sLut.red.b);
-		fprintf(f, cubeline, sLut.green.r, sLut.green.g, sLut.green.b);
-		fprintf(f, cubeline, sLut.yellow.r, sLut.yellow.g, sLut.yellow.b);
-		fprintf(f, cubeline, sLut.blue.r, sLut.blue.g, sLut.blue.b);
-		fprintf(f, cubeline, sLut.magenta.r, sLut.magenta.g, sLut.magenta.b);
-		fprintf(f, cubeline, sLut.cyan.r, sLut.cyan.g, sLut.cyan.b);
+		fprintf(f, cubehead, iname, is1d ? 1 : 3);
+		switch (ftype) {
+			case matrix:
+				fprintf(f, matrixdesc, slt.m3x4.red.r, slt.m3x4.red.g, slt.m3x4.red.b, slt.m3x4.red.o,
+					slt.m3x4.green.r, slt.m3x4.green.g, slt.m3x4.green.b, slt.m3x4.green.o,
+					slt.m3x4.blue.r, slt.m3x4.blue.g, slt.m3x4.blue.b, slt.m3x4.blue.o
+				);
+				break;
+			case chromat:
+				fprintf(f, chrmdesc, slt.chrm.model.r, slt.chrm.model.g, slt.chrm.model.b,
+					slt.chrm.chroma.angle, slt.chrm.chroma.magnitude,
+					slt.chrm.chroma.saturation,
+					slt.chrm.chroma.black, slt.chrm.chroma.white
+				);
+				break;
+			case cflt:
+				fprintf(f, cfltdesc, slt.cflt.r, slt.cflt.g, slt.cflt.b, slt.cflt.d);
+				break;
+			default:
+				break;
+		}
+		fprintf(f, cubeline, sLut.black.r, sLut.black.g, sLut.black.b);
+
+		if (!is1d) {
+			fprintf(f, cubeline, sLut.red.r, sLut.red.g, sLut.red.b);
+			fprintf(f, cubeline, sLut.green.r, sLut.green.g, sLut.green.b);
+			fprintf(f, cubeline, sLut.yellow.r, sLut.yellow.g, sLut.yellow.b);
+			fprintf(f, cubeline, sLut.blue.r, sLut.blue.g, sLut.blue.b);
+			fprintf(f, cubeline, sLut.magenta.r, sLut.magenta.g, sLut.magenta.b);
+			fprintf(f, cubeline, sLut.cyan.r, sLut.cyan.g, sLut.cyan.b);
+		}
+		fprintf(f, cubeline, sLut.white.r, sLut.white.g, sLut.white.b);
 	}
-	fprintf(f, cubeline, sLut.white.r, sLut.white.g, sLut.white.b);
-	fprintf(f, "\n## Converted from \"%s\" by sltconv, " version "\n\n", argv[1]);
+	fprintf(f, "\n## Converted from \"%s\" by sltconv, " version "\n\n", iname);
 
 	if (f != stdout) fclose(f);
 
