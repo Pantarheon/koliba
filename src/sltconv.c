@@ -2,7 +2,7 @@
 
 	sltconv.c
 
-	Copyright 2019 G. Adam Stanislav
+	Copyright 2019-2021 G. Adam Stanislav
 	All rights reserved
 
 	Redistribution and use in source and binary forms,
@@ -42,12 +42,13 @@
 
 #define USECLIB
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <koliba.h>
 
-#define	version	"v.0.4"
+#define	version	"v.0.5"
 
-const char notice[] = "sltconv, " version "\nCopyright 2019 G. Adam Stanislav\nAll rights reserved\n\n";
+const char notice[] = "sltconv, " version "\nCopyright 2019-2021 G. Adam Stanislav\nAll rights reserved\n\n";
 
 static const char cubehead[] = "TITLE \"%s\"\n"
 	"DOMAIN_MIN 0 0 0\n"
@@ -80,7 +81,7 @@ static const char cfltdesc[] = "# Converted from the color filter:\n#\n"
 	"#\tdensity =  %.10g\n#\n";
 
 int usage(void) {
-	fprintf(stderr, "Usage: sltconv [-i] input [[-o] output] [-t]\n");
+	fprintf(stderr, "Usage: sltconv [-i] input [[-o] output] [-t] [-e efficacy]\n");
 	return 1;
 }
 
@@ -104,7 +105,9 @@ int main(int argc, char *argv[]) {
 		KOLIBA_CFLT cflt;
 	} slt;
 	double csum;
+	double efficacy = 1.0;
 	unsigned char *ptr = (unsigned char *)&sLut;
+	char *strptr;
 	char *iname = NULL;
 	char *oname = NULL;
 	enum fd {slut, matrix, cflt, chromat} ftype;
@@ -120,6 +123,15 @@ int main(int argc, char *argv[]) {
 			|| (argv[i][0] == '/')
 #endif
 			) switch (argv[i][1]) {
+				case 'e':
+					if (argv[i][2] != '\0') strptr = &(argv[i][2]);
+					else if ((argv[++i]) != NULL) strptr = argv[i];
+					else return usage();
+					efficacy = atof(strptr);
+					for (;*strptr;strptr++) {
+						if (*strptr == '%') efficacy /= 100.0;
+					}
+					break;
 				case 'i':
 					if (argv[i][2] != '\0') iname = &(argv[i][2]);
 					else if ((argv[++i]) != NULL) iname = argv[i];
@@ -183,6 +195,9 @@ int main(int argc, char *argv[]) {
 	else return invalid(f, iname);
 
 	fclose(f);
+
+	if (efficacy != 1.0) KOLIBA_SlutEfficacy(&sLut, &sLut, efficacy);
+	KOLIBA_FixSlut(&sLut);
 
 	if (oname != NULL) {
 		f = fopen(oname, "wb");
