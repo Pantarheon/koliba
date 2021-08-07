@@ -40,7 +40,7 @@ CFLAGS=$(CFLG) -fPIC
 ASFLAGS=--gstabs
 PREFIX=/usr
 
-build: sltconv pullmat invertmat effimat ConvertRecs RotationMatrix quintluts
+build: sltconv pullmat invertmat effimat ConvertRecs RotationMatrix quintluts eryslut
 
 rebuild: clean build
 
@@ -65,6 +65,9 @@ RotationMatrix: RotationMatrix.o
 quintluts: quintluts.o
 	$(CC) $(CFLG) -o quintluts quintluts.o -L$(PREFIX)/lib -lkoliba -lm
 
+eryslut: eryslut.o
+	$(CC) $(CFLG) -o eryslut eryslut.o -L$(PREFIX)/lib -lkoliba
+
 sltconv.o: sltconv.c koliba.h
 	$(CC) $(CFLG) -c sltconv.c -I$(PREFIX)/include
 
@@ -85,6 +88,9 @@ RotationMatrix.o: RotationMatrix.c koliba.h
 
 quintluts.o: quintluts.c koliba.h
 	$(CC) $(CFLG) -c quintluts.c -I$(PREFIX)/include
+
+eryslut.o: eryslut.c koliba.h
+	$(CC) $(CFLG) -c eryslut.c -I$(PREFIX)/include
 
 install-sltconv: sltconv
 	install -p -s sltconv $(PREFIX)/bin
@@ -107,9 +113,12 @@ install-RotationMatrix: RotationMatrix
 install-quintluts: quintluts
 	install -p -s quintluts $(PREFIX)/bin
 
-install-all: install-sltconv install-pullmat install-invertmat install-effimat install-ConvertRecs install-RotationMatrix install-quintluts
+install-eryslut: eryslut
+	install -p -s eryslut $(PREFIX)/bin
+
+install-all: install-sltconv install-pullmat install-invertmat install-effimat install-ConvertRecs install-RotationMatrix install-quintluts install-eryslut
 
 clean:
-	rm -f sltconv.o sltconv sltconv.o pullmat pullmat.o invertmat invertmat.o effimat effimat.o ConvertRecs ConvertRecs.o RotationMatrix RotationMatrix.o quintluts quintluts.o
+	rm -f sltconv.o sltconv sltconv.o pullmat pullmat.o invertmat invertmat.o effimat effimat.o ConvertRecs ConvertRecs.o RotationMatrix RotationMatrix.o quintluts quintluts.o eryslut eryslut.o
 
 

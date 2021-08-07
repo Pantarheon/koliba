@@ -38,7 +38,7 @@ CC=gcc
 CFLG=-O3 -s
 CFLAGS=$(CFLG) -fPIC -DDLL
 
-build-all: sltconv.exe pullmat.exe invertmat.exe effimat.exe ConvertRecs.exe RotationMatrix.exe quintluts.exe
+build-all: sltconv.exe pullmat.exe invertmat.exe effimat.exe ConvertRecs.exe RotationMatrix.exe quintluts.exe eryslut.exe
 
 rebuild: clean build-all
 
@@ -66,6 +66,9 @@ RotationMatrix.exe: RotationMatrix.o
 quintluts.exe: quintluts.o quintlutsres.o
 	$(CC) $(CFLG) -o quintluts.exe quintluts.o quintlutsres.o -L. -lkoliba
 
+eryslut.exe: eryslut.o
+	$(CC) $(CFLG) -o eryslut.exe eryslut.o -L. -lkoliba
+
 quintlutsres.o: quintluts.rc
 	windres -i quintluts.rc -o quintlutsres.o
 
@@ -90,7 +93,10 @@ RotationMatrix.o: RotationMatrix.c koliba.h
 quintluts.o: quintluts.c koliba.h
 	$(CC) $(CFLG) -c quintluts.c -I.
 
+eryslut.o: eryslut.c koliba.h
+	$(CC) $(CFLG) -c eryslut.c -I.
+
 clean:
-	rm -f sltconv.o sltconv.exe sltconv.o pullmat.exe pullmat.o invertmat.exe invertmat.o effimat.exe effimat.o ConvertRecs.exe ConvertRecs.o RotationMatrix.exe RotationMatrix.o quintluts.exe quintluts.o
+	rm -f sltconv.o sltconv.exe sltconv.o pullmat.exe pullmat.o invertmat.exe invertmat.o effimat.exe effimat.o ConvertRecs.exe ConvertRecs.o RotationMatrix.exe RotationMatrix.o quintluts.exe quintluts.o eryslut.exe eryslut.o
 
 
