@@ -46,7 +46,15 @@
 #include <string.h>
 #include <koliba.h>
 
-#define	version	"v.0.5"
+#define	version	"v.0.5.1"
+
+typedef	union {
+	KOLIBA_CHROMAT chrm;
+	KOLIBA_MATRIX m3x4;
+	KOLIBA_CFLT cflt;
+} saluti;
+
+typedef enum fd {slut, matrix, cflt, chromat} FTYPE;
 
 const char notice[] = "sltconv, " version "\nCopyright 2019-2021 G. Adam Stanislav\nAll rights reserved\n\n";
 
@@ -56,6 +64,8 @@ static const char cubehead[] = "TITLE \"%s\"\n"
 	"LUT_%iD_SIZE 2\n";
 
 static const char cubeline[] = "%.10g %.10g %.10g\n";
+
+static const char withefficacy[] = "# With %g%% efficacy.\n#\n";
 
 static const char matrixdesc[] = "# Converted from the matrix:\n#\n"
 	"#\t%.10g %.10g %.10g %.10g\n"
@@ -96,21 +106,41 @@ int invalid(FILE *f, char *fname) {
 	return 3;
 }
 
+void describe(FTYPE ftype, FILE *f, saluti *slt, double efficacy) {
+	switch (ftype) {
+		case matrix:
+			fprintf(f, matrixdesc, slt->m3x4.red.r, slt->m3x4.red.g, slt->m3x4.red.b, slt->m3x4.red.o,
+				slt->m3x4.green.r, slt->m3x4.green.g, slt->m3x4.green.b, slt->m3x4.green.o,
+				slt->m3x4.blue.r, slt->m3x4.blue.g, slt->m3x4.blue.b, slt->m3x4.blue.o
+			);
+			break;
+		case chromat:
+			fprintf(f, chrmdesc, slt->chrm.model.r, slt->chrm.model.g, slt->chrm.model.b,
+				slt->chrm.chroma.angle, slt->chrm.chroma.magnitude,
+				slt->chrm.chroma.saturation,
+				slt->chrm.chroma.black, slt->chrm.chroma.white
+			);
+			break;
+		case cflt:
+			fprintf(f, cfltdesc, slt->cflt.r, slt->cflt.g, slt->cflt.b, slt->cflt.d);
+			break;
+		default:
+			break;
+	}
+	if (efficacy != 1.0) fprintf(f, withefficacy, 100.0*efficacy);
+}
+
 int main(int argc, char *argv[]) {
 	FILE *f;
 	KOLIBA_SLUT sLut;
-	union {
-		KOLIBA_CHROMAT chrm;
-		KOLIBA_MATRIX m3x4;
-		KOLIBA_CFLT cflt;
-	} slt;
+	saluti slt;
 	double csum;
 	double efficacy = 1.0;
 	unsigned char *ptr = (unsigned char *)&sLut;
 	char *strptr;
 	char *iname = NULL;
 	char *oname = NULL;
-	enum fd {slut, matrix, cflt, chromat} ftype;
+	FTYPE ftype;
 	int is1d;
 	unsigned int i;
 	char cltt = 0;
@@ -215,26 +245,7 @@ int main(int argc, char *argv[]) {
 		is1d = KOLIBA_SlutIs1D(&sLut);
 
 		fprintf(f, cubehead, iname, is1d ? 1 : 3);
-		switch (ftype) {
-			case matrix:
-				fprintf(f, matrixdesc, slt.m3x4.red.r, slt.m3x4.red.g, slt.m3x4.red.b, slt.m3x4.red.o,
-					slt.m3x4.green.r, slt.m3x4.green.g, slt.m3x4.green.b, slt.m3x4.green.o,
-					slt.m3x4.blue.r, slt.m3x4.blue.g, slt.m3x4.blue.b, slt.m3x4.blue.o
-				);
-				break;
-			case chromat:
-				fprintf(f, chrmdesc, slt.chrm.model.r, slt.chrm.model.g, slt.chrm.model.b,
-					slt.chrm.chroma.angle, slt.chrm.chroma.magnitude,
-					slt.chrm.chroma.saturation,
-					slt.chrm.chroma.black, slt.chrm.chroma.white
-				);
-				break;
-			case cflt:
-				fprintf(f, cfltdesc, slt.cflt.r, slt.cflt.g, slt.cflt.b, slt.cflt.d);
-				break;
-			default:
-				break;
-		}
+		describe(ftype, f, &slt, efficacy);
 		fprintf(f, cubeline, sLut.black.r, sLut.black.g, sLut.black.b);
 
 		if (!is1d) {
@@ -248,6 +259,7 @@ int main(int argc, char *argv[]) {
 		fprintf(f, cubeline, sLut.white.r, sLut.white.g, sLut.white.b);
 	}
 	fprintf(f, "\n## Converted from \"%s\" by sltconv, " version "\n\n", iname);
+	if (cltt) describe(ftype, f, &slt, efficacy);
 
 	if (f != stdout) fclose(f);
 
