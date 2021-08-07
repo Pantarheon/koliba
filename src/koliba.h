@@ -3496,7 +3496,8 @@ inline int KOLIBA_CheckSlut(KOLIBA_SLUT *sLut, double chsum) {
 KLBDC extern const char pfmt[];
 // We can then convert the text back to a KOLIBA_SLUT structure by using
 // the following scan-format string:
-KLBDC extern const char sfmt[];
+KLBDC extern const char KOLIBA_ScanSlttFormat[];
+#define	sfmt	KOLIBA_ScanSlttFormat
 // We can use built-in functions to do that conversion for us. Note that
 // the string size must be at least SLTAMINCHARS chars.
 KLBDC char * KOLIBA_SlutToString(
@@ -3512,7 +3513,7 @@ KLBDC KOLIBA_SLUT * KOLIBA_StringToSlut(
 // Such a file should have the .sltt extension and MUST start with the
 // text formated by pfmt[]. The text MAY be followed by any other text,
 // which we will ignore. But no comments are permissable within the
-// pfmt-formated string, or else the sfmt[] scan would fail.
+// pfmt-formated string, or else the KOLIBA_ScanSlttFormat[] scan would fail.
 
 
 // If an effect can be expressed as a 3x4 matrix (i.e., KOLIBA_MATRIX), it
