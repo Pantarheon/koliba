@@ -3493,7 +3493,8 @@ inline int KOLIBA_CheckSlut(KOLIBA_SLUT *sLut, double chsum) {
 // Sometimes we may need to communicate a sLut over a text-only communications
 // channel, or save it in a plain-text-format file. To do so, we can convert
 // the KOLIBA_SLUT structure into text using the following format string:
-KLBDC extern const char pfmt[];
+KLBDC extern const char KOLIBA_PrintSlttFormat[];
+#define pfmt	KOLIBA_PrintSlttFormat
 // We can then convert the text back to a KOLIBA_SLUT structure by using
 // the following scan-format string:
 KLBDC extern const char KOLIBA_ScanSlttFormat[];
@@ -3511,9 +3512,9 @@ KLBDC KOLIBA_SLUT * KOLIBA_StringToSlut(
 	const char * const string
 );
 // Such a file should have the .sltt extension and MUST start with the
-// text formated by pfmt[]. The text MAY be followed by any other text,
+// text formated by KOLIBA_PrintSlttFormat[]. The text MAY be followed by any other text,
 // which we will ignore. But no comments are permissable within the
-// pfmt-formated string, or else the KOLIBA_ScanSlttFormat[] scan would fail.
+// KOLIBA_PrintSlttFormat-formated string, or else the KOLIBA_ScanSlttFormat[] scan would fail.
 
 
 // If an effect can be expressed as a 3x4 matrix (i.e., KOLIBA_MATRIX), it
