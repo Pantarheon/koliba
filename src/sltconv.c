@@ -46,7 +46,7 @@
 #include <string.h>
 #include <koliba.h>
 
-#define	version	"v.0.5.1"
+#define	version	"v.0.5.2"
 
 typedef	union {
 	KOLIBA_CHROMAT chrm;
@@ -91,7 +91,7 @@ static const char cfltdesc[] = "# Converted from the color filter:\n#\n"
 	"#\tdensity =  %.10g\n#\n";
 
 int usage(void) {
-	fprintf(stderr, "Usage: sltconv [-i] input [[-o] output] [-t] [-e efficacy]\n");
+	fprintf(stderr, "Usage: sltconv [-i] input [[-o] output] [-t|T] [-e efficacy]\n");
 	return 1;
 }
 
@@ -174,6 +174,9 @@ int main(int argc, char *argv[]) {
 					break;
 				case 't':
 					cltt = 1;
+					break;
+				case 'T':
+					cltt = -1;
 					break;
 				default:
 					return usage();
@@ -258,8 +261,8 @@ int main(int argc, char *argv[]) {
 		}
 		fprintf(f, cubeline, sLut.white.r, sLut.white.g, sLut.white.b);
 	}
-	fprintf(f, "\n## Converted from \"%s\" by sltconv, " version "\n\n", iname);
-	if (cltt) describe(ftype, f, &slt, efficacy);
+	if (cltt <= 0) fprintf(f, "\n## Converted from \"%s\" by sltconv, " version "\n\n", iname);
+	if (cltt>0) describe(ftype, f, &slt, efficacy);
 
 	if (f != stdout) fclose(f);
 
