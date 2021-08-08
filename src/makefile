@@ -40,7 +40,7 @@ CFLAGS=$(CFLG) -fPIC
 ASFLAGS=--gstabs
 PREFIX=/usr
 
-build: sltconv pullmat invertmat effimat ConvertRecs RotationMatrix quintluts eryslut
+build: sltconv pullmat invertmat effimat ConvertRecs RotationMatrix quintluts eryslut dblhex
 
 rebuild: clean build
 
@@ -68,6 +68,9 @@ quintluts: quintluts.o
 eryslut: eryslut.o
 	$(CC) $(CFLG) -o eryslut eryslut.o -L$(PREFIX)/lib -lkoliba
 
+dblhex: dblhex.o
+	$(CC) $(CFLG) -o dblhex dblhex.o
+
 sltconv.o: sltconv.c koliba.h
 	$(CC) $(CFLG) -c sltconv.c -I$(PREFIX)/include
 
@@ -91,6 +94,9 @@ quintluts.o: quintluts.c koliba.h
 
 eryslut.o: eryslut.c koliba.h
 	$(CC) $(CFLG) -c eryslut.c -I$(PREFIX)/include
+
+dblhex.o: dblhex.c
+	$(CC) $(CFLG) -c dblhex.c
 
 install-sltconv: sltconv
 	install -p -s sltconv $(PREFIX)/bin
@@ -116,9 +122,12 @@ install-quintluts: quintluts
 install-eryslut: eryslut
 	install -p -s eryslut $(PREFIX)/bin
 
-install-all: install-sltconv install-pullmat install-invertmat install-effimat install-ConvertRecs install-RotationMatrix install-quintluts install-eryslut
+install-dblhex: dblhex
+	install -p -s dblhex $(PREFIX)/bin
+
+install-all: install-sltconv install-pullmat install-invertmat install-effimat install-ConvertRecs install-RotationMatrix install-quintluts install-eryslut install-dblhex
 
 clean:
-	rm -f sltconv.o sltconv sltconv.o pullmat pullmat.o invertmat invertmat.o effimat effimat.o ConvertRecs ConvertRecs.o RotationMatrix RotationMatrix.o quintluts quintluts.o eryslut eryslut.o
+	rm -f sltconv.o sltconv sltconv.o pullmat pullmat.o invertmat invertmat.o effimat effimat.o ConvertRecs ConvertRecs.o RotationMatrix RotationMatrix.o quintluts quintluts.o eryslut eryslut.o dblhex dblhex.o
 
 
