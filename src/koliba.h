@@ -67,6 +67,7 @@ extern "C" {
 
 #define	SLTCFILEHEADERBYTES	24
 #define	SLTAMINCHARS	(6+17*24)
+#define	MATAMINCHARS	(6+17*12)
 
 typedef enum {
 	KOLIBA_MalletAll = 0,
@@ -3499,6 +3500,8 @@ KLBDC extern const char KOLIBA_PrintSlttFormat[];
 // the following scan-format string:
 KLBDC extern const char KOLIBA_ScanSlttFormat[];
 #define	sfmt	KOLIBA_ScanSlttFormat
+// And just to check the header,
+KLBDC extern const char KOLIBA_ScanSlttHeaderFormat[];
 // We can use built-in functions to do that conversion for us. Note that
 // the string size must be at least SLTAMINCHARS chars.
 KLBDC char * KOLIBA_SlutToString(
@@ -3570,6 +3573,12 @@ inline int KOLIBA_CheckMat(KOLIBA_MATRIX *matrix, double chsum) {
 
 #endif
 
+// As before, we can store the same data in a text format.
+KLBDC extern const char KOLIBA_PrintM34tFormat[];
+KLBDC extern const char KOLIBA_ScanM34tFormat[];
+KLBDC extern const char KOLIBA_ScanM34tHeaderFormat[];
+KLBDC char * KOLIBA_MatrixToString(char * string, const KOLIBA_MATRIX * const m3x4, unsigned int strsize);
+KLBDC KOLIBA_MATRIX * KOLIBA_StringToMatrix(KOLIBA_MATRIX * m3x4, const char * const string);
 
 // If we want to save a palette in a file, we can convert it to a simple LUT
 // and save it as a .sLut file.
@@ -4647,6 +4656,16 @@ KLBDC int KOLIBA_WriteMatrixToNamedFile(
 	const char *fname
 );
 
+KLBDC int KOLIBA_WriteM34tToOpenFile(
+	const KOLIBA_MATRIX *m3x4,
+	FILE *f
+);
+
+KLBDC int KOLIBA_WriteM34tToNamedFile(
+	const KOLIBA_MATRIX *m3x4,
+	const char *fname
+);
+
 // Write a CHROMATIC MATRIX to an open .chrm file. It needs to be open for
 // writing binary data. It remains open upon return, so the caller needs to
 // close it. Returns 0 on success, non-0 on failure.
@@ -4733,6 +4752,15 @@ KLBDC KOLIBA_MATRIX * KOLIBA_ReadMatrixFromNamedFile(
 	char *fname
 );
 
+KLBDC KOLIBA_MATRIX * KOLIBA_ReadM34tFromOpenFile(
+	KOLIBA_MATRIX *m3x4, FILE *f
+);
+
+KLBDC KOLIBA_MATRIX * KOLIBA_ReadM34tFromNamedFile(
+	KOLIBA_MATRIX *m3x4,
+	char *fname
+);
+
 // Read a CHROMATIC MATRIX from an open .chrm file. It needs to be open for
 // reading binary data. It remains open upon return, so the caller needs to
 // close it. Returns chrm on success, NULL on failure. If, however, chrm is
@@ -4781,7 +4809,8 @@ typedef	enum {
 	KOLIBA_ftmatrix,
 	KOLIBA_ftchrm,
 	KOLIBA_ftcflt,
-	KOLIBA_ftsltt
+	KOLIBA_ftsltt,
+	KOLIBA_ftm34t
 } KOLIBA_ftype;
 
 // Read a sLut from an open compatible file. It needs to be open
