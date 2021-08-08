@@ -46,7 +46,7 @@
 #include <string.h>
 #include <koliba.h>
 
-#define	version	"v.0.5.2"
+#define	version	"v.0.5.3"
 
 typedef	union {
 	KOLIBA_CHROMAT chrm;
@@ -91,7 +91,7 @@ static const char cfltdesc[] = "# Converted from the color filter:\n#\n"
 	"#\tdensity =  %.10g\n#\n";
 
 int usage(void) {
-	fprintf(stderr, "Usage: sltconv [-i] input [[-o] output] [-t|T] [-e efficacy]\n");
+	fprintf(stderr, "Usage: sltconv [-i] input [[-o] output] [-t|T|s|c] [-e efficacy]\n");
 	return 1;
 }
 
@@ -144,6 +144,7 @@ int main(int argc, char *argv[]) {
 	int is1d;
 	unsigned int i;
 	char cltt = 0;
+	char bin  = 0;
 
 	fprintf(stderr, notice);
 
@@ -174,9 +175,19 @@ int main(int argc, char *argv[]) {
 					break;
 				case 't':
 					cltt = 1;
+					bin  = 0;
 					break;
 				case 'T':
 					cltt = -1;
+					bin  =  0;
+					break;
+				case 's':
+					cltt = 0;
+					bin  = 1;
+					break;
+				case 'c':
+					cltt = 0;
+					bin  = 0;
 					break;
 				default:
 					return usage();
@@ -244,6 +255,12 @@ int main(int argc, char *argv[]) {
 			return i;
 		}
 	}
+	else if (bin != '\0') {
+		if (i = KOLIBA_WriteSlutToOpenFile(&sLut, f)) {
+			if (oname) fclose(f);
+			return i;
+		}
+	}
 	else {
 		is1d = KOLIBA_SlutIs1D(&sLut);
 
@@ -261,7 +278,7 @@ int main(int argc, char *argv[]) {
 		}
 		fprintf(f, cubeline, sLut.white.r, sLut.white.g, sLut.white.b);
 	}
-	if (cltt <= 0) fprintf(f, "\n## Converted from \"%s\" by sltconv, " version "\n\n", iname);
+	if ((cltt <= 0) && (bin == 0)) fprintf(f, "\n## Converted from \"%s\" by sltconv, " version "\n\n", iname);
 	if (cltt>0) describe(ftype, f, &slt, efficacy);
 
 	if (f != stdout) fclose(f);
