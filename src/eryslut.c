@@ -45,7 +45,7 @@
 #include <stdlib.h>
 #include <koliba.h>
 
-#define	version	"0.1"
+#define	version	"0.2"
 
 int usage(void) {
 	fprintf(stderr, "Usage: eryslut [-r red] [-g green] [-b blue] [-o filename] [-t|T]\n");
@@ -116,9 +116,9 @@ int main(int argc, char *argv[]) {
 
 	KOLIBA_ResetSlut(&sLut);
 
-	sLut.red.r = (double)red   / 255.0;
-	sLut.red.g = (double)green / 255.0;
-	sLut.red.b = (double)blue  / 255.0;
+	sLut.red.r = KOLIBA_ByteDiv255[red];
+	sLut.red.g = KOLIBA_ByteDiv255[green];
+	sLut.red.b = KOLIBA_ByteDiv255[blue];
 
 	f = fopen(filename, "wb");
 	if (f == NULL) {
