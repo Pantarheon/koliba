@@ -213,6 +213,8 @@ int main(int argc, char *argv[]) {
 		return 37;
 	}
 
+	ptr[SLTCFILEHEADERBYTES] = '\0';
+
 	if (memcmp(ptr, KOLIBA_sLutHeader, SLTCFILEHEADERBYTES) == 0) {
 		if (KOLIBA_ReadSlutFromOpenFile(&sLut, f) == NULL)
 			return invalid(f, iname);
