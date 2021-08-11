@@ -46,7 +46,7 @@
 #include <string.h>
 #include <koliba.h>
 
-#define	version	"v.0.5.3"
+#define	version	"v.0.5.4"
 
 typedef	union {
 	KOLIBA_CHROMAT chrm;
@@ -136,6 +136,7 @@ int main(int argc, char *argv[]) {
 	saluti slt;
 	double csum;
 	double efficacy = 1.0;
+	double d;
 	unsigned char *ptr = (unsigned char *)&sLut;
 	char *strptr;
 	char *iname = NULL;
@@ -236,7 +237,18 @@ int main(int argc, char *argv[]) {
 			return invalid(f, iname);
 		else ftype = cflt;
 	}
-	else if (KOLIBA_ReadSlttFromOpenFile(&sLut, f) != NULL)
+	else if (sscanf(ptr, KOLIBA_ScanSlttHeaderFormat, &d) == 1) {
+		if (KOLIBA_ReadSlttFromOpenFile(&sLut, f) == NULL)
+			return invalid(f, iname);
+		else ftype = slut;
+	}
+	else if (sscanf(ptr, KOLIBA_ScanM34tHeaderFormat, &d) == 1) {
+		if (KOLIBA_ConvertMatrixToSlut(&sLut, KOLIBA_ReadM34tFromOpenFile(&slt.m3x4, f)) == NULL)
+			return invalid(f, iname);
+		else ftype = matrix;
+	}
+	// And for whatever future formats libkoliba might support:
+	else if (KOLIBA_ReadSlutFromCompatibleOpenFile(&sLut, f, NULL))
 		ftype = slut;
 	else return invalid(f, iname);
 
