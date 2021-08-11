@@ -2,7 +2,7 @@
 
 	koliba.h
 
-	Copyright 2019 G. Adam Stanislav
+	Copyright 2019-2021 G. Adam Stanislav
 	All rights reserved
 
 	Redistribution and use in source and binary forms,
@@ -68,6 +68,7 @@ extern "C" {
 #define	SLTCFILEHEADERBYTES	24
 #define	SLTAMINCHARS	(6+17*24)
 #define	MATAMINCHARS	(6+17*12)
+#define	CHRAMINCHARS	(6+17*8)
 
 typedef enum {
 	KOLIBA_MalletAll = 0,
@@ -1753,7 +1754,7 @@ KLBDC KOLIBA_MATRIX * KOLIBA_ResetMatrixBlue(
 // matrices A, B, and C, each representing a function, a, b, c.
 //
 // To apply function a to pixel p, i.e., to calculate p' = a(p), we
-// multiply pixel p by matrix A, i.e., p' = A*p. f we then want to apply
+// multiply pixel p by matrix A, i.e., p' = A*p. If we then want to apply
 // function b to the modifies pixel p', i.e., p'' = b(p'), or p'' = B*p'.
 // And finally, to apply function c to p'' we get p''' = c(p''), i.e.,
 // p''' = C*p''.
@@ -2359,7 +2360,7 @@ KLBDC KOLIBA_MATRIX * KOLIBA_InvertMatrix(
 // It was my Palette-Mallet OFX plug-in that led to the creation of the Koliba
 // library. The idea behind the Palette was inspired by the homunculus in the
 // movie Hugo. It made me think that if such a homunculus was programmed to
-// paint rather than draw and was given a standard palette. then programmed to
+// paint rather than draw and was given a standard palette, then programmed to
 // dip its brush in the eight colors of the palette and press the brush
 // against paper, making predetermined strokes, it would create some painting.
 //
@@ -2367,7 +2368,7 @@ KLBDC KOLIBA_MATRIX * KOLIBA_InvertMatrix(
 // produce a painting that in some ways is the same as the one made with the
 // standard palette, yet different in other ways.
 //
-// So, the Koliba palette given an image will not change it that image if its
+// So, the Koliba palette given an image will not change that image if its
 // palette is the standard black, white, red, green, blue, cyan, magenta, and
 // yellow. But if we change any of the colors in the palette, the image will
 // become repainted with the new palette, while keeping the same shapes as
@@ -3644,6 +3645,10 @@ inline int KOLIBA_CheckChrm(KOLIBA_CHROMAT *chrm, double chsum) {
 
 KLBDC extern const unsigned char KOLIBA_chrmHeader[SLTCFILEHEADERBYTES];
 
+// We also have a text version (*.chrt) of the chromat file.
+KLBDC extern const char KOLIBA_PrintChrtFormat[];
+KLBDC extern const char KOLIBA_ScanChrtFormat[];
+KLBDC extern const char KOLIBA_ScanChrtHeaderFormat[];
 
 // The dichroma file (*.dicr) starts with the 16-byte UUID of
 // ax58598e-6de9-11e9-9e0b-003048fd9f6e in the big-endian format. The x in the
@@ -4810,7 +4815,8 @@ typedef	enum {
 	KOLIBA_ftchrm,
 	KOLIBA_ftcflt,
 	KOLIBA_ftsltt,
-	KOLIBA_ftm34t
+	KOLIBA_ftm34t,
+	KOLIBA_ftchrt
 } KOLIBA_ftype;
 
 // Read a sLut from an open compatible file. It needs to be open
