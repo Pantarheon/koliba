@@ -46,15 +46,13 @@
 #include <string.h>
 #include <koliba.h>
 
-#define	version	"v.0.5.4"
+#define	version	"v.0.5.5"
 
 typedef	union {
 	KOLIBA_CHROMAT chrm;
 	KOLIBA_MATRIX m3x4;
 	KOLIBA_CFLT cflt;
 } saluti;
-
-typedef enum fd {slut, matrix, cflt, chromat} FTYPE;
 
 const char notice[] = "sltconv, " version "\nCopyright 2019-2021 G. Adam Stanislav\nAll rights reserved\n\n";
 
@@ -106,22 +104,23 @@ int invalid(FILE *f, char *fname) {
 	return 3;
 }
 
-void describe(FTYPE ftype, FILE *f, saluti *slt, double efficacy) {
+void describe(KOLIBA_ftype ftype, FILE *f, saluti *slt, double efficacy) {
 	switch (ftype) {
-		case matrix:
+		case KOLIBA_ftmatrix:
+		case KOLIBA_ftm34t:
 			fprintf(f, matrixdesc, slt->m3x4.red.r, slt->m3x4.red.g, slt->m3x4.red.b, slt->m3x4.red.o,
 				slt->m3x4.green.r, slt->m3x4.green.g, slt->m3x4.green.b, slt->m3x4.green.o,
 				slt->m3x4.blue.r, slt->m3x4.blue.g, slt->m3x4.blue.b, slt->m3x4.blue.o
 			);
 			break;
-		case chromat:
+		case KOLIBA_ftchrm:
 			fprintf(f, chrmdesc, slt->chrm.model.r, slt->chrm.model.g, slt->chrm.model.b,
 				slt->chrm.chroma.angle, slt->chrm.chroma.magnitude,
 				slt->chrm.chroma.saturation,
 				slt->chrm.chroma.black, slt->chrm.chroma.white
 			);
 			break;
-		case cflt:
+		case KOLIBA_ftcflt:
 			fprintf(f, cfltdesc, slt->cflt.r, slt->cflt.g, slt->cflt.b, slt->cflt.d);
 			break;
 		default:
@@ -141,7 +140,7 @@ int main(int argc, char *argv[]) {
 	char *strptr;
 	char *iname = NULL;
 	char *oname = NULL;
-	FTYPE ftype;
+	KOLIBA_ftype ftype;
 	int is1d;
 	unsigned int i;
 	char cltt = 0;
@@ -219,38 +218,37 @@ int main(int argc, char *argv[]) {
 	if (memcmp(ptr, KOLIBA_sLutHeader, SLTCFILEHEADERBYTES) == 0) {
 		if (KOLIBA_ReadSlutFromOpenFile(&sLut, f) == NULL)
 			return invalid(f, iname);
-		else ftype = slut;
+		else ftype = KOLIBA_ftslut;
 	}
 	else if (memcmp(ptr, KOLIBA_m3x4Header, SLTCFILEHEADERBYTES) == 0) {
 		if (KOLIBA_ConvertMatrixToSlut(&sLut, KOLIBA_ReadMatrixFromOpenFile(&slt.m3x4, f)) == NULL)
 			return invalid(f, iname);
-		else ftype = matrix;
+		else ftype = KOLIBA_ftmatrix;
 	}
 	else if (memcmp(ptr, KOLIBA_chrmHeader, SLTCFILEHEADERBYTES) == 0) {
 		KOLIBA_MATRIX mat;
 		if (KOLIBA_ConvertMatrixToSlut(&sLut, KOLIBA_ChromaticMatrix(&mat, KOLIBA_ReadChromaticMatrixFromOpenFile(&slt.chrm, f))) == NULL)
 			return invalid(f, iname);
-		else ftype = chromat;
+		else ftype = KOLIBA_ftchrm;
 	}
 	else if (memcmp(ptr, KOLIBA_cFltHeader, SLTCFILEHEADERBYTES) == 0) {
 		if (KOLIBA_ConvertColorFilterToSlut(&sLut, KOLIBA_ReadColorFilterFromOpenFile(&slt.cflt, f)) == NULL)
 			return invalid(f, iname);
-		else ftype = cflt;
+		else ftype = KOLIBA_ftcflt;
 	}
 	else if (sscanf(ptr, KOLIBA_ScanSlttHeaderFormat, &d) == 1) {
 		if (KOLIBA_ReadSlttFromOpenFile(&sLut, f) == NULL)
 			return invalid(f, iname);
-		else ftype = slut;
+		else ftype = KOLIBA_ftsltt;
 	}
 	else if (sscanf(ptr, KOLIBA_ScanM34tHeaderFormat, &d) == 1) {
 		if (KOLIBA_ConvertMatrixToSlut(&sLut, KOLIBA_ReadM34tFromOpenFile(&slt.m3x4, f)) == NULL)
 			return invalid(f, iname);
-		else ftype = matrix;
+		else ftype = KOLIBA_ftm34t;
 	}
 	// And for whatever future formats libkoliba might support:
-	else if (KOLIBA_ReadSlutFromCompatibleOpenFile(&sLut, f, NULL))
-		ftype = slut;
-	else return invalid(f, iname);
+	else if (KOLIBA_ReadSlutFromCompatibleOpenFile(&sLut, f, &ftype) == NULL)
+		return invalid(f, iname);
 
 	fclose(f);
 
