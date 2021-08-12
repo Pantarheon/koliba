@@ -2028,6 +2028,12 @@ KLBDC KOLIBA_CHROMAT * KOLIBA_ResetChromaticMatrix(
 	const KOLIBA_RGB * const model
 );
 
+// Reset a chromatic matrix to default contents, plus set the model to Rec2020.
+
+KLBDC KOLIBA_CHROMAT * KOLIBA_ResetChromat(
+	KOLIBA_CHROMAT * chrm
+);
+
 // Set the model inside a chromatic matrix without changing the chromatic
 // matrix itself.
 
