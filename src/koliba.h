@@ -3649,6 +3649,8 @@ KLBDC extern const unsigned char KOLIBA_chrmHeader[SLTCFILEHEADERBYTES];
 KLBDC extern const char KOLIBA_PrintChrtFormat[];
 KLBDC extern const char KOLIBA_ScanChrtFormat[];
 KLBDC extern const char KOLIBA_ScanChrtHeaderFormat[];
+KLBDC char * KOLIBA_ChromatToString(char * string, const KOLIBA_CHROMAT * const chrm, unsigned int strsize);
+KLBDC KOLIBA_CHROMAT * KOLIBA_StringToChromat(KOLIBA_CHROMAT * chrm, const char * const string);
 
 // The dichroma file (*.dicr) starts with the 16-byte UUID of
 // ax58598e-6de9-11e9-9e0b-003048fd9f6e in the big-endian format. The x in the
