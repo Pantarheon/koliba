@@ -4794,6 +4794,17 @@ KLBDC KOLIBA_CHROMAT * KOLIBA_ReadChromaticMatrixFromNamedFile(
 	char *fname
 );
 
+KLBDC KOLIBA_CHROMAT * KOLIBA_ReadChrtFromOpenFile(
+	KOLIBA_CHROMAT *chrm,
+	FILE *f
+);
+
+KLBDC KOLIBA_CHROMAT * KOLIBA_ReadChrtFromNamedFile(
+	KOLIBA_CHROMAT *chrt,
+	char *fname
+);
+
+
 // Read a Color Filter from an open .cflt file. It needs to be open
 // for reading binary data. It remains open upon return, so
 // the caller needs to close it. Returns matrix on success, NULL
