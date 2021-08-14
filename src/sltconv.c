@@ -46,7 +46,7 @@
 #include <string.h>
 #include <koliba.h>
 
-#define	version	"v.0.5.5"
+#define	version	"v.0.5.6"
 
 typedef	union {
 	KOLIBA_CHROMAT chrm;
@@ -114,6 +114,7 @@ void describe(KOLIBA_ftype ftype, FILE *f, saluti *slt, double efficacy) {
 			);
 			break;
 		case KOLIBA_ftchrm:
+		case KOLIBA_ftchrt:
 			fprintf(f, chrmdesc, slt->chrm.model.r, slt->chrm.model.g, slt->chrm.model.b,
 				slt->chrm.chroma.angle, slt->chrm.chroma.magnitude,
 				slt->chrm.chroma.saturation,
@@ -245,6 +246,12 @@ int main(int argc, char *argv[]) {
 		if (KOLIBA_ConvertMatrixToSlut(&sLut, KOLIBA_ReadM34tFromOpenFile(&slt.m3x4, f)) == NULL)
 			return invalid(f, iname);
 		else ftype = KOLIBA_ftm34t;
+	}
+	else if (sscanf(ptr, KOLIBA_ScanChrtHeaderFormat, &d) == 1) {
+		KOLIBA_MATRIX mat;
+		if (KOLIBA_ConvertMatrixToSlut(&sLut, KOLIBA_ChromaticMatrix(&mat, KOLIBA_ReadChrtFromOpenFile(&slt.chrm, f))) == NULL)
+			return invalid(f, iname);
+		else ftype = KOLIBA_ftchrt;
 	}
 	// And for whatever future formats libkoliba might support:
 	else if (KOLIBA_ReadSlutFromCompatibleOpenFile(&sLut, f, &ftype) == NULL)
