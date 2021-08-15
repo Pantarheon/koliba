@@ -4696,6 +4696,17 @@ KLBDC int KOLIBA_WriteChromaticMatrixToNamedFile(
 	const char *fname
 );
 
+// Write a KOLIBA_CHROMAT to an open .chrt file. It remains open
+// upon return, so the caller needs to close it. Returns 0 on
+// success, non-0 on failure.
+
+KLBDC int KOLIBA_WriteChrtToOpenFile(const KOLIBA_CHROMAT *chrt, FILE *f);
+
+// Write a KOLIBA_CHROMAT to a named .chrt file.
+// Returns 0 on success, non-0 on failure.
+
+KLBDC int KOLIBA_WriteChrtToNamedFile(const KOLIBA_CHROMAT *chrt, const char *fname);
+
 // Write a COLOR FILTER to an open .cFlt file. It needs to be open for writing
 // binary data. It remains open upon return, so the caller needs to close it.
 // Returns 0 on success, non-0 on failure.
