@@ -4871,6 +4871,20 @@ KLBDC KOLIBA_SLUT * KOLIBA_ReadSlutFromCompatibleNamedFile(
 	KOLIBA_ftype *ft
 );
 
+// Read a matrix from an open compatible file. It needs to be open
+// for reading binary data. It remains open upon return, so
+// the caller needs to close it. Returns mat on success, NULL
+// on failure. If, however, mat is not NULL, its contents
+// will be filled with the identity mat on failure.
+
+KLBDC KOLIBA_MATRIX * KOLIBA_ReadMatrixFromCompatibleOpenFile(KOLIBA_MATRIX *mat, FILE *f, KOLIBA_ftype *ft);
+
+// Read a matrix from a named compatible file. Returns mat on success,
+// NULL on failure. If, however, mat is not NULL, its
+// contents will be filled with the identity mat on failure.
+
+KLBDC KOLIBA_MATRIX * KOLIBA_ReadMatrixFromCompatibleNamedFile(KOLIBA_MATRIX *mat, char *fname, KOLIBA_ftype *ft);
+
 #endif	// USECLIB
 
 

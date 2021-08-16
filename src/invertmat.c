@@ -1,11 +1,12 @@
 /*
-	Copyright 2019 G. Adam Stanislav
+	Copyright 2019-2021 G. Adam Stanislav
 	All rights reserved.
 
 	If possible, invert a matrix, or just tell
 	us whether it is invertible.
 */
 
+#define	USECLIB
 #include <koliba.h>
 #include <stdio.h>
 #include <string.h>
@@ -25,7 +26,7 @@ int notmat(char *path, char *file, FILE *input) {
 
 int main(int argc, char *argv[]) {
 	FILE *input, *output;
-	KOLIBA_MATRIX2 mat;
+	KOLIBA_MATRIX mat;
 	char buffer[SLTCFILEHEADERBYTES];
 	int sum;
 
@@ -37,18 +38,12 @@ int main(int argc, char *argv[]) {
 		return 2;
 	}
 
-	fread(buffer, 1, SLTCFILEHEADERBYTES, input);
-	if (memcmp(buffer, KOLIBA_m3x4Header, SLTCFILEHEADERBYTES) != 0)
-		return notmat(argv[0], argv[1], input);
-
-	fread(&mat, 1, sizeof(KOLIBA_MATRIX2), input);
-	KOLIBA_FixDoubles((double *)&mat, sizeof(KOLIBA_MATRIX2)/sizeof(double));
-	if (KOLIBA_CheckMat(&mat.mat,mat.checksum) == 0)
+	if (KOLIBA_ReadMatrixFromCompatibleOpenFile(&mat, input, NULL) == NULL)
 		return notmat(argv[0], argv[1], input);
 
 	fclose(input);
 
-	if (KOLIBA_InvertMatrix(&mat.mat, &mat.mat) == NULL) {
+	if (KOLIBA_InvertMatrix(&mat, &mat) == NULL) {
 		fprintf(stderr, "%sThe matrix is not invertible.\n", "Error: " + (argc == 2) * 7);
 		return (argc == 3) * 4;
 	}
@@ -59,10 +54,7 @@ int main(int argc, char *argv[]) {
 			return 5;
 		}
 
-		mat.checksum = KOLIBA_CalcSum((double *)&mat.mat, sizeof(KOLIBA_MATRIX)/sizeof(double));
-		KOLIBA_NetDoubles((double *)&mat, sizeof(KOLIBA_MATRIX2)/sizeof(double));
-		fwrite(KOLIBA_m3x4Header, 1, SLTCFILEHEADERBYTES, output);
-		fwrite(&mat, 1, sizeof(KOLIBA_MATRIX2), output);
+		KOLIBA_WriteMatrixToOpenFile(&mat, output);
 		fclose(output);
 	}
 	else fprintf(stderr, "%s is an invertible matrix.\n", argv[1]);
