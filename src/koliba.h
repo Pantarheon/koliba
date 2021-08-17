@@ -2078,6 +2078,13 @@ KLBDC KOLIBA_MATRIX * KOLIBA_DichromaticMatrix(
 
 #ifdef	NOKLINLIN
 
+#define	KOLIBA_ResetDichromaticMatrix(dicr)	do {\
+	KOLIBA_ResetChromat(&dicr->chr);\
+	dicr->rotation=0.0;\
+	dicr->efficacy=1.0;\
+	dicr;\
+} while(0)
+
 #define	KOLIBA_ConvertDichromaticMatrixToSlut(sLut,dicr,normalize,channel) do {\
 	KOLIBA_MATRIX m_a_t_h___QX_87;\
 	KOLIBA_ConvertMatrixToSlut(sLut, KOLIBA_DichromaticMatrix(&m_a_t_h___QX_87, dicr, normalize, channel));\
@@ -2090,6 +2097,13 @@ KLBDC KOLIBA_MATRIX * KOLIBA_DichromaticMatrix(
 
 #else
 
+inline KOLIBA_DICHROMA * KOLIBA_ResetDichromaticMatrix(KOLIBA_DICHROMA *dicr) {
+	KOLIBA_ResetChromat(&dicr->chr);
+	dicr->rotation = 0.0;
+	dicr->efficacy = 1.0;
+	return dicr;
+}
+	
 inline KOLIBA_SLUT * KOLIBA_ConvertDichromaticMatrixToSlut(KOLIBA_SLUT *sLut, const KOLIBA_DICHROMA *dicr, unsigned int normalize, unsigned int channel) {
 	KOLIBA_MATRIX mat;
 
@@ -4700,12 +4714,40 @@ KLBDC int KOLIBA_WriteChromaticMatrixToNamedFile(
 // upon return, so the caller needs to close it. Returns 0 on
 // success, non-0 on failure.
 
-KLBDC int KOLIBA_WriteChrtToOpenFile(const KOLIBA_CHROMAT *chrt, FILE *f);
+KLBDC int KOLIBA_WriteChrtToOpenFile(
+	const KOLIBA_CHROMAT *chrt,
+	FILE *f
+);
 
 // Write a KOLIBA_CHROMAT to a named .chrt file.
 // Returns 0 on success, non-0 on failure.
 
-KLBDC int KOLIBA_WriteChrtToNamedFile(const KOLIBA_CHROMAT *chrt, const char *fname);
+KLBDC int KOLIBA_WriteChrtToNamedFile(
+	const KOLIBA_CHROMAT *chrt,
+	const char *fname
+);
+
+// Write a dichromatic matrix to an open .dicr file. It needs
+// to be open for writing binary data. It remains open upon
+// return, so the caller needs to close it. Returns 0 on
+// success, non-0 on failure.
+
+KLBDC int KOLIBA_WriteDichromaticMatrixToOpenFile(
+	const KOLIBA_DICHROMA *dicr,
+	FILE *f,
+	unsigned int normalize,	// true or false
+	unsigned int channel	// MUST be < 3
+);
+
+// Write a dichromatic matrix to a named file.
+// Returns 0 on success, non-0 on failure.
+
+KLBDC int KOLIBA_WriteDichromaticMatrixToNamedFile(
+	const KOLIBA_DICHROMA *dicr,
+	const char *fname,
+	unsigned int normalize,	// true or false
+	unsigned int channel	// MUST be < 3
+);
 
 // Write a COLOR FILTER to an open .cFlt file. It needs to be open for writing
 // binary data. It remains open upon return, so the caller needs to close it.
@@ -4749,13 +4791,19 @@ KLBDC KOLIBA_SLUT * KOLIBA_ReadSlutFromNamedFile(
 // on failure. If, however, sLut is not NULL, its contents
 // will be filled with the identity sLut on failure.
 
-KLBDC KOLIBA_SLUT * KOLIBA_ReadSlttFromOpenFile(KOLIBA_SLUT *sLut, FILE *f);
+KLBDC KOLIBA_SLUT * KOLIBA_ReadSlttFromOpenFile(
+	KOLIBA_SLUT *sLut,
+	FILE *f
+);
 
 // Read a Lut from a named .sltt file. Returns Lut on success,
 // NULL on failure. If, however, Lut is not NULL, its
 // contents will be filled with the identity Lut on failure.
 
-KLBDC KOLIBA_SLUT * KOLIBA_ReadSlttFromNamedFile(KOLIBA_SLUT *Lut, char *fname);
+KLBDC KOLIBA_SLUT * KOLIBA_ReadSlttFromNamedFile(
+	KOLIBA_SLUT *Lut,
+	char *fname
+);
 
 // Read a MATRIX from an open .m3x4 file. It needs to be open for reading
 // binary data. It remains open upon return, so the caller needs to close it.
@@ -4777,7 +4825,8 @@ KLBDC KOLIBA_MATRIX * KOLIBA_ReadMatrixFromNamedFile(
 );
 
 KLBDC KOLIBA_MATRIX * KOLIBA_ReadM34tFromOpenFile(
-	KOLIBA_MATRIX *m3x4, FILE *f
+	KOLIBA_MATRIX *m3x4,
+	FILE *f
 );
 
 KLBDC KOLIBA_MATRIX * KOLIBA_ReadM34tFromNamedFile(
@@ -4815,6 +4864,32 @@ KLBDC KOLIBA_CHROMAT * KOLIBA_ReadChrtFromNamedFile(
 	char *fname
 );
 
+// Read a dichromatic matrix from an open .dicr file. It needs
+// to be open for reading binary data. It remains open upon
+// return, so the caller needs to close it. Returns dichromatic
+// matrix on success, NULL on failure. If, however, dicr is
+// not NULL, its contents will be filled with the identity
+// dichromatic matrix, using the Rec. 2020 model, on failure.
+
+KLBDC KOLIBA_DICHROMA * KOLIBA_ReadDichromaticMatrixFromOpenFile(
+	KOLIBA_DICHROMA *dicr,
+	FILE *f,
+	unsigned int *normalize,	// May be NULL
+	unsigned int *channel		// May be NULL
+);
+
+// Read a dichromatic matrix from a named file. Returns the
+// matrix on success, NULL on failure. If, however, dicr is
+// not NULL, its contents will be filled with the identity
+// dichromatic matrix, using the Rec. 2020 model, on failure.
+
+KLBDC KOLIBA_DICHROMA * KOLIBA_ReadDichromaticMatrixFromNamedFile(
+	KOLIBA_DICHROMA *dicr,
+	char *fname,
+	unsigned int *normalize,	// May be NULL
+	unsigned int *channel		// May be NULL
+);
+
 
 // Read a Color Filter from an open .cflt file. It needs to be open
 // for reading binary data. It remains open upon return, so
@@ -4846,7 +4921,8 @@ typedef	enum {
 	KOLIBA_ftcflt,
 	KOLIBA_ftsltt,
 	KOLIBA_ftm34t,
-	KOLIBA_ftchrt
+	KOLIBA_ftchrt,
+	KOLIBA_ftdicr
 } KOLIBA_ftype;
 
 // Read a sLut from an open compatible file. It needs to be open
