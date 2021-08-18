@@ -70,6 +70,24 @@ extern "C" {
 #define	MATAMINCHARS	(6+17*12)
 #define	CHRAMINCHARS	(6+17*8)
 
+typedef	enum {
+	KOLIBA_ftnoslut,
+	KOLIBA_ftnofile,
+	KOLIBA_ftunknown,
+	KOLIBA_ftslut,
+	KOLIBA_ftmatrix,
+	KOLIBA_ftchrm,
+	KOLIBA_ftcflt,
+	KOLIBA_ftsltt,
+	KOLIBA_ftm34t,
+	KOLIBA_ftchrt,
+	KOLIBA_ftdicr,
+	KOLIBA_ftdcrt,
+	KOLIBA_ftpalette,
+	KOLIBA_ftkptt,
+	KOLIBA_ftcftt
+} KOLIBA_ftype;
+
 typedef enum {
 	KOLIBA_MalletAll = 0,
 	KOLIBA_MalletSvit,
@@ -4910,20 +4928,6 @@ KLBDC KOLIBA_CFLT * KOLIBA_ReadColorFilterFromNamedFile(
 	KOLIBA_CFLT *cFlt,
 	char *fname
 );
-
-typedef	enum {
-	KOLIBA_ftnoslut,
-	KOLIBA_ftnofile,
-	KOLIBA_ftunknown,
-	KOLIBA_ftslut,
-	KOLIBA_ftmatrix,
-	KOLIBA_ftchrm,
-	KOLIBA_ftcflt,
-	KOLIBA_ftsltt,
-	KOLIBA_ftm34t,
-	KOLIBA_ftchrt,
-	KOLIBA_ftdicr
-} KOLIBA_ftype;
 
 // Read a sLut from an open compatible file. It needs to be open
 // for reading binary data. It remains open upon return, so
