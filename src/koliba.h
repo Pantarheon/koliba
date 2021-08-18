@@ -4961,6 +4961,16 @@ KLBDC KOLIBA_MATRIX * KOLIBA_ReadMatrixFromCompatibleOpenFile(KOLIBA_MATRIX *mat
 
 KLBDC KOLIBA_MATRIX * KOLIBA_ReadMatrixFromCompatibleNamedFile(KOLIBA_MATRIX *mat, char *fname, KOLIBA_ftype *ft);
 
+// Get the data type of a Koliba data file header.
+
+KLBDC KOLIBA_ftype KOLIBA_GetFileDataFormat(const unsigned char * const header);
+
+// Get the data type of a Koliba data string.
+// The string mut be at least SLTCFILEHEADERBYTES
+// bytes in size.
+
+KLBDC KOLIBA_ftype KOLIBA_GetStringDataFormat(const unsigned char * const data);
+
 #endif	// USECLIB
 
 
