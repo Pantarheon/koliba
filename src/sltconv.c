@@ -46,7 +46,7 @@
 #include <string.h>
 #include <koliba.h>
 
-#define	version	"v.0.5.7"
+#define	version	"v.0.5.8"
 
 typedef	union {
 	KOLIBA_CHROMAT chrm;
@@ -160,6 +160,7 @@ void describe(KOLIBA_ftype ftype, FILE *f, saluti *slt, double efficacy) {
 int main(int argc, char *argv[]) {
 	FILE *f;
 	KOLIBA_SLUT sLut;
+	KOLIBA_MATRIX mat;
 	saluti slt;
 	double csum;
 	double efficacy = 1.0;
@@ -243,55 +244,47 @@ int main(int argc, char *argv[]) {
 
 	ptr[SLTCFILEHEADERBYTES] = '\0';
 
-	if (memcmp(ptr, KOLIBA_sLutHeader, SLTCFILEHEADERBYTES) == 0) {
-		if (KOLIBA_ReadSlutFromOpenFile(&sLut, f) == NULL)
-			return invalid(f, iname);
-		else ftype = KOLIBA_ftslut;
+	switch(KOLIBA_GetFileDataFormat(ptr)) {
+		case KOLIBA_ftslut:
+			if (KOLIBA_ReadSlutFromOpenFile(&sLut, f) == NULL)
+				return invalid(f, iname);
+			break;
+		case KOLIBA_ftmatrix:
+			if (KOLIBA_ConvertMatrixToSlut(&sLut, KOLIBA_ReadMatrixFromOpenFile(&slt.m3x4, f)) == NULL)
+				return invalid(f, iname);
+			break;
+		case KOLIBA_ftchrm:
+			if (KOLIBA_ConvertMatrixToSlut(&sLut, KOLIBA_ChromaticMatrix(&mat, KOLIBA_ReadChromaticMatrixFromOpenFile(&slt.chrm, f))) == NULL)
+				return invalid(f, iname);
+			break;
+		case KOLIBA_ftcflt:
+			if (KOLIBA_ConvertColorFilterToSlut(&sLut, KOLIBA_ReadColorFilterFromOpenFile(&slt.cflt, f)) == NULL)
+				return invalid(f, iname);
+			break;
+		case KOLIBA_ftsltt:
+			if (KOLIBA_ReadSlttFromOpenFile(&sLut, f) == NULL)
+				return invalid(f, iname);
+			break;
+		case KOLIBA_ftm34t:
+			if (KOLIBA_ConvertMatrixToSlut(&sLut, KOLIBA_ReadM34tFromOpenFile(&slt.m3x4, f)) == NULL)
+				return invalid(f, iname);
+			break;
+		case KOLIBA_ftchrt:
+			if (KOLIBA_ConvertMatrixToSlut(&sLut, KOLIBA_ChromaticMatrix(&mat, KOLIBA_ReadChrtFromOpenFile(&slt.chrm, f))) == NULL)
+				return invalid(f, iname);
+			break;
+		case KOLIBA_ftdicr:
+			if ((KOLIBA_ReadDichromaticMatrixFromOpenFile(&slt.dicr, f, &normalize, &channel) == NULL) ||
+			(KOLIBA_DichromaticMatrix(&mat, &slt.dicr, normalize, channel) == NULL) ||
+			(KOLIBA_ConvertMatrixToSlut(&sLut, &mat) == NULL) )
+				return invalid(f, iname);
+			break;
+		default:
+			// And for whatever future formats libkoliba might support:
+			if (KOLIBA_ReadSlutFromCompatibleOpenFile(&sLut, f, &ftype) == NULL)
+				return invalid(f, iname);
+			break;
 	}
-	else if (memcmp(ptr, KOLIBA_m3x4Header, SLTCFILEHEADERBYTES) == 0) {
-		if (KOLIBA_ConvertMatrixToSlut(&sLut, KOLIBA_ReadMatrixFromOpenFile(&slt.m3x4, f)) == NULL)
-			return invalid(f, iname);
-		else ftype = KOLIBA_ftmatrix;
-	}
-	else if (memcmp(ptr, KOLIBA_chrmHeader, SLTCFILEHEADERBYTES) == 0) {
-		KOLIBA_MATRIX mat;
-		if (KOLIBA_ConvertMatrixToSlut(&sLut, KOLIBA_ChromaticMatrix(&mat, KOLIBA_ReadChromaticMatrixFromOpenFile(&slt.chrm, f))) == NULL)
-			return invalid(f, iname);
-		else ftype = KOLIBA_ftchrm;
-	}
-	else if (memcmp(ptr, KOLIBA_cFltHeader, SLTCFILEHEADERBYTES) == 0) {
-		if (KOLIBA_ConvertColorFilterToSlut(&sLut, KOLIBA_ReadColorFilterFromOpenFile(&slt.cflt, f)) == NULL)
-			return invalid(f, iname);
-		else ftype = KOLIBA_ftcflt;
-	}
-	else if (sscanf(ptr, KOLIBA_ScanSlttHeaderFormat, &d) == 1) {
-		if (KOLIBA_ReadSlttFromOpenFile(&sLut, f) == NULL)
-			return invalid(f, iname);
-		else ftype = KOLIBA_ftsltt;
-	}
-	else if (sscanf(ptr, KOLIBA_ScanM34tHeaderFormat, &d) == 1) {
-		if (KOLIBA_ConvertMatrixToSlut(&sLut, KOLIBA_ReadM34tFromOpenFile(&slt.m3x4, f)) == NULL)
-			return invalid(f, iname);
-		else ftype = KOLIBA_ftm34t;
-	}
-	else if (sscanf(ptr, KOLIBA_ScanChrtHeaderFormat, &d) == 1) {
-		KOLIBA_MATRIX mat;
-		if (KOLIBA_ConvertMatrixToSlut(&sLut, KOLIBA_ChromaticMatrix(&mat, KOLIBA_ReadChrtFromOpenFile(&slt.chrm, f))) == NULL)
-			return invalid(f, iname);
-		else ftype = KOLIBA_ftchrt;
-	}
-	else if (memcmp(ptr+1, KOLIBA_dicrHeader+1, SLTCFILEHEADERBYTES-1) == 0) {
-		KOLIBA_MATRIX m3x4;
-
-		if ((KOLIBA_ReadDichromaticMatrixFromOpenFile(&slt.dicr, f, &normalize, &channel) == NULL) ||
-		(KOLIBA_DichromaticMatrix(&m3x4, &slt.dicr, normalize, channel) == NULL) ||
-		(KOLIBA_ConvertMatrixToSlut(&sLut, &m3x4) == NULL) )
-			return invalid(f, iname);
-		else ftype = KOLIBA_ftdicr;
-	}
-	// And for whatever future formats libkoliba might support:
-	else if (KOLIBA_ReadSlutFromCompatibleOpenFile(&sLut, f, &ftype) == NULL)
-		return invalid(f, iname);
 
 	fclose(f);
 
