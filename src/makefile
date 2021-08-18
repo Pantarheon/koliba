@@ -39,8 +39,14 @@ CFLG=-O3
 CFLAGS=$(CFLG) -fPIC
 ASFLAGS=--gstabs
 PREFIX=/usr
+OBJS=sltconv.o pullmat.o invertmat.o effimat.o \
+	ConvertRecs.o RotationMatrix.o quintluts.o \
+	eryslut.o dblhex.o MatrixChain.o dichromatic.o 
+APPS=sltconv pullmat invertmat effimat \
+	ConvertRecs RotationMatrix quintluts \
+	eryslut dblhex MatrixChain dichromatic
 
-build: sltconv pullmat invertmat effimat ConvertRecs RotationMatrix quintluts eryslut dblhex
+build-all: $(APPS)
 
 rebuild: clean build
 
@@ -71,6 +77,12 @@ eryslut: eryslut.o
 dblhex: dblhex.o
 	$(CC) $(CFLG) -o dblhex dblhex.o
 
+MatrixChain: MatrixChain.o
+	$(CC) $(CFLG) -o MatrixChain MatrixChain.o -L$(PREFIX)/lib -lkoliba
+
+dichromatic: dichromatic.o
+	$(CC) $(CFLG) -o dichromatic dichromatic.o -L$(PREFIX)/lib -lkoliba
+
 sltconv.o: sltconv.c koliba.h
 	$(CC) $(CFLG) -c sltconv.c -I$(PREFIX)/include
 
@@ -94,6 +106,12 @@ quintluts.o: quintluts.c koliba.h
 
 eryslut.o: eryslut.c koliba.h
 	$(CC) $(CFLG) -c eryslut.c -I$(PREFIX)/include
+
+MatrixChain.o: MatrixChain.c koliba.h
+	$(CC) $(CFLG) -c MatrixChain.c -I$(PREFIX)/include
+
+dichromatic.o: dichromatic.c koliba.h
+	$(CC) $(CFLG) -c dichromatic.c -I$(PREFIX)/include
 
 dblhex.o: dblhex.c
 	$(CC) $(CFLG) -c dblhex.c
@@ -125,9 +143,15 @@ install-eryslut: eryslut
 install-dblhex: dblhex
 	install -p -s dblhex $(PREFIX)/bin
 
-install-all: install-sltconv install-pullmat install-invertmat install-effimat install-ConvertRecs install-RotationMatrix install-quintluts install-eryslut install-dblhex
+install-MatrixChain: MatrixChain
+	install -p -s MatrixChain $(PREFIX)/bin
+
+install-dichromatic: dichromatic
+	install -p -s dichromatic $(PREFIX)/bin
+
+install-all: install-sltconv install-pullmat install-invertmat install-effimat install-ConvertRecs install-RotationMatrix install-quintluts install-eryslut install-dblhex install-MatrixChain install-dichromatic
 
 clean:
-	rm -f sltconv.o sltconv sltconv.o pullmat pullmat.o invertmat invertmat.o effimat effimat.o ConvertRecs ConvertRecs.o RotationMatrix RotationMatrix.o quintluts quintluts.o eryslut eryslut.o dblhex dblhex.o
+	rm -f $(OBJS) $(APPS)
 
 

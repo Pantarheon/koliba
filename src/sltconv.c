@@ -46,15 +46,17 @@
 #include <string.h>
 #include <koliba.h>
 
-#define	version	"v.0.5.6"
+#define	version	"v.0.5.7"
 
 typedef	union {
 	KOLIBA_CHROMAT chrm;
 	KOLIBA_MATRIX m3x4;
 	KOLIBA_CFLT cflt;
+	KOLIBA_DICHROMA dicr;
 } saluti;
 
 const char notice[] = "sltconv, " version "\nCopyright 2019-2021 G. Adam Stanislav\nAll rights reserved\n\n";
+unsigned int normalize, channel;
 
 static const char cubehead[] = "TITLE \"%s\"\n"
 	"DOMAIN_MIN 0 0 0\n"
@@ -87,6 +89,18 @@ static const char chrmdesc[] = "# Converted from the chromatic matrix:\n#\n"
 static const char cfltdesc[] = "# Converted from the color filter:\n#\n"
 	"#\t[r,g,b] = [%.10g, %.10g, %.10g]\n"
 	"#\tdensity =  %.10g\n#\n";
+
+static const char dicrdesc[] = "# Converted from the dichromatic values:\n#\n"
+	"#\t[r,g,b]    = [%.10g, %.10g, %.10g]\n"
+	"#\tangle      =  %.10g\n"
+	"#\tmagnitude  =  %.10g\n"
+	"#\tsaturation =  %.10g\n"
+	"#\tblack      =  %.10g\n"
+	"#\twhite      =  %.10g\n"
+	"#\trotation   =  %.10g\n"
+	"#\tefficacy   =  %.10g\n"
+	"#\tnormalize  =  %s\n"
+	"#\tchannel    =  %u (%s)\n#\n";
 
 int usage(void) {
 	fprintf(stderr, "Usage: sltconv [-i] input [[-o] output] [-t|T|s|c] [-e efficacy]\n");
@@ -123,6 +137,19 @@ void describe(KOLIBA_ftype ftype, FILE *f, saluti *slt, double efficacy) {
 			break;
 		case KOLIBA_ftcflt:
 			fprintf(f, cfltdesc, slt->cflt.r, slt->cflt.g, slt->cflt.b, slt->cflt.d);
+			break;
+		case KOLIBA_ftdicr:
+			fprintf(f, dicrdesc, slt->dicr.chr.model.r,  slt->dicr.chr.model.g,
+				 slt->dicr.chr.model.b, slt->dicr.chr.chroma.angle,
+				 slt->dicr.chr.chroma.magnitude,
+				 slt->dicr.chr.chroma.saturation,
+				 slt->dicr.chr.chroma.black,
+				 slt->dicr.chr.chroma.white,
+				 slt->dicr.rotation,
+				 slt->dicr.efficacy,
+				 (normalize) ? "True" : "False",
+				 channel, (channel == 0) ? "Red" : (channel == 1) ? "Green" : "Blue"
+			);
 			break;
 		default:
 			break;
@@ -252,6 +279,15 @@ int main(int argc, char *argv[]) {
 		if (KOLIBA_ConvertMatrixToSlut(&sLut, KOLIBA_ChromaticMatrix(&mat, KOLIBA_ReadChrtFromOpenFile(&slt.chrm, f))) == NULL)
 			return invalid(f, iname);
 		else ftype = KOLIBA_ftchrt;
+	}
+	else if (memcmp(ptr+1, KOLIBA_dicrHeader+1, SLTCFILEHEADERBYTES-1) == 0) {
+		KOLIBA_MATRIX m3x4;
+
+		if ((KOLIBA_ReadDichromaticMatrixFromOpenFile(&slt.dicr, f, &normalize, &channel) == NULL) ||
+		(KOLIBA_DichromaticMatrix(&m3x4, &slt.dicr, normalize, channel) == NULL) ||
+		(KOLIBA_ConvertMatrixToSlut(&sLut, &m3x4) == NULL) )
+			return invalid(f, iname);
+		else ftype = KOLIBA_ftdicr;
 	}
 	// And for whatever future formats libkoliba might support:
 	else if (KOLIBA_ReadSlutFromCompatibleOpenFile(&sLut, f, &ftype) == NULL)
