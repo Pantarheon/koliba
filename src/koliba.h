@@ -2121,7 +2121,7 @@ inline KOLIBA_DICHROMA * KOLIBA_ResetDichromaticMatrix(KOLIBA_DICHROMA *dicr) {
 	dicr->efficacy = 1.0;
 	return dicr;
 }
-	
+
 inline KOLIBA_SLUT * KOLIBA_ConvertDichromaticMatrixToSlut(KOLIBA_SLUT *sLut, const KOLIBA_DICHROMA *dicr, unsigned int normalize, unsigned int channel) {
 	KOLIBA_MATRIX mat;
 
@@ -3456,6 +3456,85 @@ KLBDC unsigned int KOLIBA_GetMinorLibraryVersion(void);
 
 
 /****************************************************************************/
+/****************                                           *****************/
+/**************** T H E  KOLIBA  S T R I N G  F O R M A T S *****************/
+/****************                                           *****************/
+/****************************************************************************/
+
+// Sometimes we may want to convert a Koliba data structure into a text
+// string, perhaps to post it in an online forum or pass the data through
+// an ASCII-text-only communication channel.
+//
+// We want to do that without converting binary reals into plain text,
+// and then back to binary (we would only need to do that if we wanted
+// the values to be human readable). Thankfully, the C printf and scanf
+// routines make it very easy to print and scan real values as hexadecinal
+// text.
+
+// Get the data type of a Koliba data string.
+// The string mut be at least SLTCFILEHEADERBYTES
+// bytes in size.
+
+KLBDC KOLIBA_ftype KOLIBA_GetStringDataFormat(const unsigned char * const data);
+
+// The KOLIBA_SLUT structure can be converted to a string with these:
+KLBDC extern const char KOLIBA_PrintSlttFormat[];
+#define pfmt	KOLIBA_PrintSlttFormat
+// We can then convert the text back to a KOLIBA_SLUT structure by using
+// the following scan-format string:
+KLBDC extern const char KOLIBA_ScanSlttFormat[];
+#define	sfmt	KOLIBA_ScanSlttFormat
+// And just to check the header,
+KLBDC extern const char KOLIBA_ScanSlttHeaderFormat[];
+// We can use built-in functions to do that conversion for us. Note that
+// the string size must be at least SLTAMINCHARS chars.
+KLBDC char * KOLIBA_SlutToString(
+	char * string,
+	const KOLIBA_SLUT * const sLut,
+	unsigned int strsize
+);
+
+KLBDC KOLIBA_SLUT * KOLIBA_StringToSlut(
+	KOLIBA_SLUT * sLut,
+	const char * const string
+);
+
+// Similarly, we can convert a KOLIBA_MATRIX to text.
+KLBDC extern const char KOLIBA_PrintM34tFormat[];
+KLBDC extern const char KOLIBA_ScanM34tFormat[];
+KLBDC extern const char KOLIBA_ScanM34tHeaderFormat[];
+
+KLBDC char * KOLIBA_MatrixToString(
+	char * string,
+	const KOLIBA_MATRIX * const m3x4,
+	unsigned int strsize
+);
+
+KLBDC KOLIBA_MATRIX * KOLIBA_StringToMatrix(
+	KOLIBA_MATRIX * m3x4,
+	const char * const string
+);
+
+// We also have a text version (*.chrt) of the chromat file.
+KLBDC extern const char KOLIBA_PrintChrtFormat[];
+KLBDC extern const char KOLIBA_ScanChrtFormat[];
+KLBDC extern const char KOLIBA_ScanChrtHeaderFormat[];
+
+KLBDC char * KOLIBA_ChromatToString(
+	char * string,
+	const KOLIBA_CHROMAT * const chrm,
+	unsigned int strsize
+);
+
+KLBDC KOLIBA_CHROMAT * KOLIBA_StringToChromat(
+	KOLIBA_CHROMAT * chrm,
+	const char * const string
+);
+
+
+
+
+/****************************************************************************/
 /******************                                       *******************/
 /****************** T H E  KOLIBA  F I L E  F O R M A T S *******************/
 /******************                                       *******************/
@@ -3467,6 +3546,19 @@ KLBDC unsigned int KOLIBA_GetMinorLibraryVersion(void);
 // them back the next day and continue working on them. Or we can save stages
 // of our work as we progress, so we can go back if we decide something did
 // not turn out the way we wanted.
+//
+// We have defined a number of binary file formats for that. With the addition
+// of the Koliba string formats (see the previous section), we can also save
+// those same structures in a text format. We may want to do that especially
+// when we want to write down some comment on what functions and what arguments
+// we used to create the file. This is possible because any Koliba functions
+// used to read such text files stop reading after they have receved the entire
+// structure, and just ignore anything written after the text representing
+// the structures.
+
+// Get the data type of a Koliba data file header.
+
+KLBDC KOLIBA_ftype KOLIBA_GetFileDataFormat(const unsigned char * const header);
 
 
 // The SaLUTe (Simple Look-up Table) file (extension .sLut) is the format to
@@ -3530,33 +3622,49 @@ inline int KOLIBA_CheckSlut(KOLIBA_SLUT *sLut, double chsum) {
 
 #endif
 
+
+// Write a SLUT to a named file. It creates the file first. It closes the file
+// at the end. Returns 0 on success, non-0 on failure.
+
+KLBDC int KOLIBA_WriteSlutToNamedFile(
+	const KOLIBA_SLUT *sLut,
+	const char *fname
+);
+
+// Read a SLUT from a named file. Returns sLut on success, NULL on failure.
+// If, however, sLut is not NULL, its contents will be filled with the
+// identity SLUT on failure.
+
+KLBDC KOLIBA_SLUT * KOLIBA_ReadSlutFromNamedFile(
+	KOLIBA_SLUT *sLut,
+	char *fname
+);
+
 // Sometimes we may need to communicate a sLut over a text-only communications
 // channel, or save it in a plain-text-format file. To do so, we can convert
 // the KOLIBA_SLUT structure into text using the following format string:
-KLBDC extern const char KOLIBA_PrintSlttFormat[];
-#define pfmt	KOLIBA_PrintSlttFormat
-// We can then convert the text back to a KOLIBA_SLUT structure by using
-// the following scan-format string:
-KLBDC extern const char KOLIBA_ScanSlttFormat[];
-#define	sfmt	KOLIBA_ScanSlttFormat
-// And just to check the header,
-KLBDC extern const char KOLIBA_ScanSlttHeaderFormat[];
-// We can use built-in functions to do that conversion for us. Note that
-// the string size must be at least SLTAMINCHARS chars.
-KLBDC char * KOLIBA_SlutToString(
-	char * string,
-	const KOLIBA_SLUT * const sLut,
-	unsigned int strsize
-);
-
-KLBDC KOLIBA_SLUT * KOLIBA_StringToSlut(
-	KOLIBA_SLUT * sLut,
-	const char * const string
-);
+//
 // Such a file should have the .sltt extension and MUST start with the
 // text formated by KOLIBA_PrintSlttFormat[]. The text MAY be followed by any other text,
 // which we will ignore. But no comments are permissable within the
 // KOLIBA_PrintSlttFormat-formated string, or else the KOLIBA_ScanSlttFormat[] scan would fail.
+
+// Write a SLUT to a named .sltt file. Returns 0 on success, non-0
+// on failure.
+
+KLBDC int KOLIBA_WriteSlttToNamedFile(
+	const KOLIBA_SLUT *sLut,
+	const char *fname
+);
+
+// Read a Lut from a named .sltt file. Returns Lut on success,
+// NULL on failure. If, however, Lut is not NULL, its
+// contents will be filled with the identity Lut on failure.
+
+KLBDC KOLIBA_SLUT * KOLIBA_ReadSlttFromNamedFile(
+	KOLIBA_SLUT *Lut,
+	char *fname
+);
 
 
 // If an effect can be expressed as a 3x4 matrix (i.e., KOLIBA_MATRIX), it
@@ -3612,12 +3720,33 @@ inline int KOLIBA_CheckMat(KOLIBA_MATRIX *matrix, double chsum) {
 
 #endif
 
+// Write a MATRIX to a named file. Returns 0 on success, non-0 on failure.
+
+KLBDC int KOLIBA_WriteMatrixToNamedFile(
+	const KOLIBA_MATRIX *mat,
+	const char *fname
+);
+
+// Read a MATRIX from a named file. Returns m3x4 on success, NULL on failure.
+// If, however, m3x4 is not NULL, its contents will be filled with the
+// identity MATRIX on failure.
+
+KLBDC KOLIBA_MATRIX * KOLIBA_ReadMatrixFromNamedFile(
+	KOLIBA_MATRIX *m3x4,
+	char *fname
+);
+
 // As before, we can store the same data in a text format.
-KLBDC extern const char KOLIBA_PrintM34tFormat[];
-KLBDC extern const char KOLIBA_ScanM34tFormat[];
-KLBDC extern const char KOLIBA_ScanM34tHeaderFormat[];
-KLBDC char * KOLIBA_MatrixToString(char * string, const KOLIBA_MATRIX * const m3x4, unsigned int strsize);
-KLBDC KOLIBA_MATRIX * KOLIBA_StringToMatrix(KOLIBA_MATRIX * m3x4, const char * const string);
+
+KLBDC int KOLIBA_WriteM34tToNamedFile(
+	const KOLIBA_MATRIX *m3x4,
+	const char *fname
+);
+
+KLBDC KOLIBA_MATRIX * KOLIBA_ReadM34tFromNamedFile(
+	KOLIBA_MATRIX *m3x4,
+	char *fname
+);
 
 // If we want to save a palette in a file, we can convert it to a simple LUT
 // and save it as a .sLut file.
@@ -3637,7 +3766,7 @@ KLBDC KOLIBA_MATRIX * KOLIBA_StringToMatrix(KOLIBA_MATRIX * m3x4, const char * c
 // The file with no erythropy shall have the UUID of
 // 7de56100-5a59-11e9-9df9-003048fd9f6e, while the one with erythropy set to
 // true shall use 7de56101-5a59-11e9-9df9-003048fd9f6e for its UUID. As
-// always, these are MSB first and followed with the length of the 
+// always, these are MSB first and followed with the length of the
 // KOLIBA_PALETTE2 data (which is 8*4*8+8+8=272), again MSB first, and then
 // with the KOLIBA_PALETTE2 data MSB first.
 //
@@ -3661,6 +3790,14 @@ inline int KOLIBA_CheckKplt(KOLIBA_PALETTE2 * kPlt, double chsum) {
 
 #endif
 
+// Write a kPlt to a named file. Returns 0 on success, non-0
+// on failure.
+
+KLBDC int KOLIBA_WritePaletteToNamedFile(
+	const KOLIBA_PALETTE *kPlt,
+	const char *fname
+);
+
 
 
 // A chromat file (*.chrm) starts with the 16-byte UUID of
@@ -3683,12 +3820,37 @@ inline int KOLIBA_CheckChrm(KOLIBA_CHROMAT *chrm, double chsum) {
 
 KLBDC extern const unsigned char KOLIBA_chrmHeader[SLTCFILEHEADERBYTES];
 
-// We also have a text version (*.chrt) of the chromat file.
-KLBDC extern const char KOLIBA_PrintChrtFormat[];
-KLBDC extern const char KOLIBA_ScanChrtFormat[];
-KLBDC extern const char KOLIBA_ScanChrtHeaderFormat[];
-KLBDC char * KOLIBA_ChromatToString(char * string, const KOLIBA_CHROMAT * const chrm, unsigned int strsize);
-KLBDC KOLIBA_CHROMAT * KOLIBA_StringToChromat(KOLIBA_CHROMAT * chrm, const char * const string);
+// Write a CHROMATIC MATRIX to a named file. Returns 0 on success, non-0
+// on failure.
+
+KLBDC int KOLIBA_WriteChromaticMatrixToNamedFile(
+	const KOLIBA_CHROMAT *chrm,
+	const char *fname
+);
+
+// Read a CHROMATIC MATRIX from a named file. Returns chrm on success, NULL on
+// failure. If, however, chrm is not NULL, its contents will be filled with
+// the identity CHROMATIC MATRIX, using the Rec. 2020 model, on failure.
+
+KLBDC KOLIBA_CHROMAT * KOLIBA_ReadChromaticMatrixFromNamedFile(
+	KOLIBA_CHROMAT *chrm,
+	char *fname
+);
+
+// Write a KOLIBA_CHROMAT to a named .chrt file.
+// Returns 0 on success, non-0 on failure.
+
+KLBDC int KOLIBA_WriteChrtToNamedFile(
+	const KOLIBA_CHROMAT *chrt,
+	const char *fname
+);
+
+// And read the text version from a named file.
+
+KLBDC KOLIBA_CHROMAT * KOLIBA_ReadChrtFromNamedFile(
+	KOLIBA_CHROMAT *chrt,
+	char *fname
+);
 
 // The dichroma file (*.dicr) starts with the 16-byte UUID of
 // ax58598e-6de9-11e9-9e0b-003048fd9f6e in the big-endian format. The x in the
@@ -3728,6 +3890,28 @@ inline int KOLIBA_CheckDicr(KOLIBA_DICHROMA * dicr, double chsum) {
 
 KLBDC extern const unsigned char KOLIBA_dicrHeader[SLTCFILEHEADERBYTES];
 
+// Write a dichromatic matrix to a named file.
+// Returns 0 on success, non-0 on failure.
+
+KLBDC int KOLIBA_WriteDichromaticMatrixToNamedFile(
+	const KOLIBA_DICHROMA *dicr,
+	const char *fname,
+	unsigned int normalize,	// true or false
+	unsigned int channel	// MUST be < 3
+);
+
+// Read a dichromatic matrix from a named file. Returns the
+// matrix on success, NULL on failure. If, however, dicr is
+// not NULL, its contents will be filled with the identity
+// dichromatic matrix, using the Rec. 2020 model, on failure.
+
+KLBDC KOLIBA_DICHROMA * KOLIBA_ReadDichromaticMatrixFromNamedFile(
+	KOLIBA_DICHROMA *dicr,
+	char *fname,
+	unsigned int *normalize,	// May be NULL
+	unsigned int *channel		// May be NULL
+);
+
 
 // The Color Filter file (extension .cFlt) contains exactly one data stream
 // with the following structure:
@@ -3762,6 +3946,39 @@ inline int KOLIBA_CheckCflt(KOLIBA_CFLT *cFlt, double chsum) {
 }
 
 #endif
+
+// Write a COLOR FILTER to a named file. Returns 0 on success, non-0 on
+// failure.
+
+KLBDC int KOLIBA_WriteColorFilterToNamedFile(
+	const KOLIBA_CFLT *cFlt,
+	const char *fname
+);
+
+// Read a Color Filter from a named file. Returns Color Filter on success,
+// NULL on failure. If, however, cFlt is not NULL, its
+// contents will be filled with zeros on failure.
+
+KLBDC KOLIBA_CFLT * KOLIBA_ReadColorFilterFromNamedFile(
+	KOLIBA_CFLT *cFlt,
+	char *fname
+);
+
+// Read a sLut from a named compatible file. Returns sLut on success,
+// NULL on failure. If, however, sLut is not NULL, its
+// contents will be filled with the identity sLut on failure.
+
+KLBDC KOLIBA_SLUT * KOLIBA_ReadSlutFromCompatibleNamedFile(
+	KOLIBA_SLUT *sLut,
+	char *fname,
+	KOLIBA_ftype *ft
+);
+
+// Read a matrix from a named compatible file. Returns mat on success,
+// NULL on failure. If, however, mat is not NULL, its
+// contents will be filled with the identity mat on failure.
+
+KLBDC KOLIBA_MATRIX * KOLIBA_ReadMatrixFromCompatibleNamedFile(KOLIBA_MATRIX *mat, char *fname, KOLIBA_ftype *ft);
 
 
 // A Lumidux file, extension .ldx (lower case only) is different from all
@@ -4638,8 +4855,8 @@ inline KOLIBA_ABGR32PIXEL * KOLIBA_Abgr32PixelLumidux(KOLIBA_ABGR32PIXEL *pixelo
 // systems. If you want it, #define USECLIB before including koliba.h.
 //
 // Each function in this section is either for reading from/writing to a file
-// that has already been open using the C library fopen function or for doing
-// the same but to a named file.
+// that has already been open using the C library fopen function. Doing the
+// same but to a named file has been defined in the file format section.
 //
 // The functions with "OpenFile" in their name simply do their work using the
 // FILE pointer passed to them, and return. They do not close the file, the
@@ -4649,9 +4866,13 @@ inline KOLIBA_ABGR32PIXEL * KOLIBA_Abgr32PixelLumidux(KOLIBA_ABGR32PIXEL *pixelo
 // and, if successful, will call the corresponding "OpenFile" functions, then
 // close the file. The caller need not (cannot, actually) close the file.
 //
-// Even though you need to #define USECLIB to use them, these are not macros,
+// Even though you need to #define USECLIB to use these, they are not macros,
 // nor are they inline functions. They are regular C functions included in the
-// Koliba library.
+// Koliba library. But the OPEN files receive their FILE * pointers, which had
+// to be opened by the same C library as the Koliba library is compiled with.
+// That is generally not a problem under Unix and its children. But it can cause
+// havoc under Windows. Hence the need to #define USECLIB, so you have to pause
+// before you act.
 
 #ifdef USECLIB
 
@@ -4666,24 +4887,11 @@ KLBDC int KOLIBA_WriteSlutToOpenFile(
 	FILE *f
 );
 
-// Write a SLUT to a named file. It creates the file first. It closes the file
-// at the end. Returns 0 on success, non-0 on failure.
-
-KLBDC int KOLIBA_WriteSlutToNamedFile(
-	const KOLIBA_SLUT *sLut,
-	const char *fname
-);
-
 // Write a SLUT to an open .sltt file. It remains open upon
 // return, so the caller needs to close it. Returns 0 on
 // success, non-0 on failure.
 
 KLBDC int KOLIBA_WriteSlttToOpenFile(const KOLIBA_SLUT *sLut, FILE *f);
-
-// Write a SLUT to a named .sltt file. Returns 0 on success, non-0
-// on failure.
-
-KLBDC int KOLIBA_WriteSlttToNamedFile(const KOLIBA_SLUT *sLut, const char *fname);
 
 // Write a MATRIX to an open .m3x4 file. It needs to be open for writing
 // binary data. It remains open upon return, so the caller needs to close it.
@@ -4694,21 +4902,19 @@ KLBDC int KOLIBA_WriteMatrixToOpenFile(
 	FILE *f
 );
 
-// Write a MATRIX to a named file. Returns 0 on success, non-0 on failure.
-
-KLBDC int KOLIBA_WriteMatrixToNamedFile(
-	const KOLIBA_MATRIX *mat,
-	const char *fname
-);
-
 KLBDC int KOLIBA_WriteM34tToOpenFile(
 	const KOLIBA_MATRIX *m3x4,
 	FILE *f
 );
 
-KLBDC int KOLIBA_WriteM34tToNamedFile(
-	const KOLIBA_MATRIX *m3x4,
-	const char *fname
+// Write a palette to an open .kPlt file. It needs to be open
+// for writing binary data. It remains open upon return, so
+// the caller needs to close it. Returns 0 on success, non-0
+// on failure.
+
+KLBDC int KOLIBA_WritePaletteToOpenFile(
+	const KOLIBA_PALETTE *kPlt,
+	 FILE *f
 );
 
 // Write a CHROMATIC MATRIX to an open .chrm file. It needs to be open for
@@ -4720,14 +4926,6 @@ KLBDC int KOLIBA_WriteChromaticMatrixToOpenFile(
 	FILE *f
 );
 
-// Write a CHROMATIC MATRIX to a named file. Returns 0 on success, non-0
-// on failure.
-
-KLBDC int KOLIBA_WriteChromaticMatrixToNamedFile(
-	const KOLIBA_CHROMAT *chrm,
-	const char *fname
-);
-
 // Write a KOLIBA_CHROMAT to an open .chrt file. It remains open
 // upon return, so the caller needs to close it. Returns 0 on
 // success, non-0 on failure.
@@ -4735,14 +4933,6 @@ KLBDC int KOLIBA_WriteChromaticMatrixToNamedFile(
 KLBDC int KOLIBA_WriteChrtToOpenFile(
 	const KOLIBA_CHROMAT *chrt,
 	FILE *f
-);
-
-// Write a KOLIBA_CHROMAT to a named .chrt file.
-// Returns 0 on success, non-0 on failure.
-
-KLBDC int KOLIBA_WriteChrtToNamedFile(
-	const KOLIBA_CHROMAT *chrt,
-	const char *fname
 );
 
 // Write a dichromatic matrix to an open .dicr file. It needs
@@ -4757,16 +4947,6 @@ KLBDC int KOLIBA_WriteDichromaticMatrixToOpenFile(
 	unsigned int channel	// MUST be < 3
 );
 
-// Write a dichromatic matrix to a named file.
-// Returns 0 on success, non-0 on failure.
-
-KLBDC int KOLIBA_WriteDichromaticMatrixToNamedFile(
-	const KOLIBA_DICHROMA *dicr,
-	const char *fname,
-	unsigned int normalize,	// true or false
-	unsigned int channel	// MUST be < 3
-);
-
 // Write a COLOR FILTER to an open .cFlt file. It needs to be open for writing
 // binary data. It remains open upon return, so the caller needs to close it.
 // Returns 0 on success, non-0 on failure.
@@ -4774,14 +4954,6 @@ KLBDC int KOLIBA_WriteDichromaticMatrixToNamedFile(
 KLBDC int KOLIBA_WriteColorFilterToOpenFile(
 	const KOLIBA_CFLT *cFlt,
 	FILE *f
-);
-
-// Write a COLOR FILTER to a named file. Returns 0 on success, non-0 on
-// failure.
-
-KLBDC int KOLIBA_WriteColorFilterToNamedFile(
-	const KOLIBA_CFLT *cFlt,
-	const char *fname
 );
 
 // Read a SLUT from an open .sLut file. It needs to be open for reading binary
@@ -4792,15 +4964,6 @@ KLBDC int KOLIBA_WriteColorFilterToNamedFile(
 KLBDC KOLIBA_SLUT * KOLIBA_ReadSlutFromOpenFile(
 	KOLIBA_SLUT *sLut,
 	FILE *f
-);
-
-// Read a SLUT from a named file. Returns sLut on success, NULL on failure.
-// If, however, sLut is not NULL, its contents will be filled with the
-// identity SLUT on failure.
-
-KLBDC KOLIBA_SLUT * KOLIBA_ReadSlutFromNamedFile(
-	KOLIBA_SLUT *sLut,
-	char *fname
 );
 
 // Read a SLUT from an open .sltt file. It may to be open
@@ -4814,15 +4977,6 @@ KLBDC KOLIBA_SLUT * KOLIBA_ReadSlttFromOpenFile(
 	FILE *f
 );
 
-// Read a Lut from a named .sltt file. Returns Lut on success,
-// NULL on failure. If, however, Lut is not NULL, its
-// contents will be filled with the identity Lut on failure.
-
-KLBDC KOLIBA_SLUT * KOLIBA_ReadSlttFromNamedFile(
-	KOLIBA_SLUT *Lut,
-	char *fname
-);
-
 // Read a MATRIX from an open .m3x4 file. It needs to be open for reading
 // binary data. It remains open upon return, so the caller needs to close it.
 // Returns m3x4 on success, NULL on failure. If, however, m3x4 is not NULL,
@@ -4833,23 +4987,9 @@ KLBDC KOLIBA_MATRIX * KOLIBA_ReadMatrixFromOpenFile(
 	FILE *f
 );
 
-// Read a MATRIX from a named file. Returns m3x4 on success, NULL on failure.
-// If, however, m3x4 is not NULL, its contents will be filled with the
-// identity MATRIX on failure.
-
-KLBDC KOLIBA_MATRIX * KOLIBA_ReadMatrixFromNamedFile(
-	KOLIBA_MATRIX *m3x4,
-	char *fname
-);
-
 KLBDC KOLIBA_MATRIX * KOLIBA_ReadM34tFromOpenFile(
 	KOLIBA_MATRIX *m3x4,
 	FILE *f
-);
-
-KLBDC KOLIBA_MATRIX * KOLIBA_ReadM34tFromNamedFile(
-	KOLIBA_MATRIX *m3x4,
-	char *fname
 );
 
 // Read a CHROMATIC MATRIX from an open .chrm file. It needs to be open for
@@ -4863,23 +5003,9 @@ KLBDC KOLIBA_CHROMAT * KOLIBA_ReadChromaticMatrixFromOpenFile(
 	FILE *f
 );
 
-// Read a CHROMATIC MATRIX from a named file. Returns chrm on success, NULL on
-// failure. If, however, chrm is not NULL, its contents will be filled with
-// the identity CHROMATIC MATRIX, using the Rec. 2020 model, on failure.
-
-KLBDC KOLIBA_CHROMAT * KOLIBA_ReadChromaticMatrixFromNamedFile(
-	KOLIBA_CHROMAT *chrm,
-	char *fname
-);
-
 KLBDC KOLIBA_CHROMAT * KOLIBA_ReadChrtFromOpenFile(
 	KOLIBA_CHROMAT *chrm,
 	FILE *f
-);
-
-KLBDC KOLIBA_CHROMAT * KOLIBA_ReadChrtFromNamedFile(
-	KOLIBA_CHROMAT *chrt,
-	char *fname
 );
 
 // Read a dichromatic matrix from an open .dicr file. It needs
@@ -4896,18 +5022,6 @@ KLBDC KOLIBA_DICHROMA * KOLIBA_ReadDichromaticMatrixFromOpenFile(
 	unsigned int *channel		// May be NULL
 );
 
-// Read a dichromatic matrix from a named file. Returns the
-// matrix on success, NULL on failure. If, however, dicr is
-// not NULL, its contents will be filled with the identity
-// dichromatic matrix, using the Rec. 2020 model, on failure.
-
-KLBDC KOLIBA_DICHROMA * KOLIBA_ReadDichromaticMatrixFromNamedFile(
-	KOLIBA_DICHROMA *dicr,
-	char *fname,
-	unsigned int *normalize,	// May be NULL
-	unsigned int *channel		// May be NULL
-);
-
 
 // Read a Color Filter from an open .cflt file. It needs to be open
 // for reading binary data. It remains open upon return, so
@@ -4918,15 +5032,6 @@ KLBDC KOLIBA_DICHROMA * KOLIBA_ReadDichromaticMatrixFromNamedFile(
 KLBDC KOLIBA_CFLT * KOLIBA_ReadColorFilterFromOpenFile(
 	KOLIBA_CFLT *cFlt,
 	FILE *f
-);
-
-// Read a Color Filter from a named file. Returns Color Filter on success,
-// NULL on failure. If, however, cFlt is not NULL, its
-// contents will be filled with zeros on failure.
-
-KLBDC KOLIBA_CFLT * KOLIBA_ReadColorFilterFromNamedFile(
-	KOLIBA_CFLT *cFlt,
-	char *fname
 );
 
 // Read a sLut from an open compatible file. It needs to be open
@@ -4941,16 +5046,6 @@ KLBDC KOLIBA_SLUT * KOLIBA_ReadSlutFromCompatibleOpenFile(
 	KOLIBA_ftype *ft
 );
 
-// Read a sLut from a named compatible file. Returns sLut on success,
-// NULL on failure. If, however, sLut is not NULL, its
-// contents will be filled with the identity sLut on failure.
-
-KLBDC KOLIBA_SLUT * KOLIBA_ReadSlutFromCompatibleNamedFile(
-	KOLIBA_SLUT *sLut,
-	char *fname,
-	KOLIBA_ftype *ft
-);
-
 // Read a matrix from an open compatible file. It needs to be open
 // for reading binary data. It remains open upon return, so
 // the caller needs to close it. Returns mat on success, NULL
@@ -4958,22 +5053,6 @@ KLBDC KOLIBA_SLUT * KOLIBA_ReadSlutFromCompatibleNamedFile(
 // will be filled with the identity mat on failure.
 
 KLBDC KOLIBA_MATRIX * KOLIBA_ReadMatrixFromCompatibleOpenFile(KOLIBA_MATRIX *mat, FILE *f, KOLIBA_ftype *ft);
-
-// Read a matrix from a named compatible file. Returns mat on success,
-// NULL on failure. If, however, mat is not NULL, its
-// contents will be filled with the identity mat on failure.
-
-KLBDC KOLIBA_MATRIX * KOLIBA_ReadMatrixFromCompatibleNamedFile(KOLIBA_MATRIX *mat, char *fname, KOLIBA_ftype *ft);
-
-// Get the data type of a Koliba data file header.
-
-KLBDC KOLIBA_ftype KOLIBA_GetFileDataFormat(const unsigned char * const header);
-
-// Get the data type of a Koliba data string.
-// The string mut be at least SLTCFILEHEADERBYTES
-// bytes in size.
-
-KLBDC KOLIBA_ftype KOLIBA_GetStringDataFormat(const unsigned char * const data);
 
 #endif	// USECLIB
 
