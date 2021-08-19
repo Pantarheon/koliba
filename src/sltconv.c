@@ -48,11 +48,14 @@
 
 #define	version	"v.0.5.8"
 
+#define	pv(color)	slt->plt.color.r, slt->plt.color.g, slt->plt.color.b, slt->plt.color.efficacy
+
 typedef	union {
 	KOLIBA_CHROMAT chrm;
 	KOLIBA_MATRIX m3x4;
 	KOLIBA_CFLT cflt;
 	KOLIBA_DICHROMA dicr;
+	KOLIBA_PALETTE plt;
 } saluti;
 
 const char notice[] = "sltconv, " version "\nCopyright 2019-2021 G. Adam Stanislav\nAll rights reserved\n\n";
@@ -102,6 +105,19 @@ static const char dicrdesc[] = "# Converted from the dichromatic values:\n#\n"
 	"#\tnormalize  =  %s\n"
 	"#\tchannel    =  %u (%s)\n#\n";
 
+static const char palettedesc[]= "# Converted from Koliba palette:\n#\n"
+	"#\tBlack     = [%g %g %g], %g\n"
+	"#\tWhite     = [%g %g %g], %g\n"
+	"#\tRed       = [%g %g %g], %g\n"
+	"#\tGreen     = [%g %g %g], %g\n"
+	"#\tBlue      = [%g %g %g], %g\n"
+	"#\tCyan      = [%g %g %g], %g\n"
+	"#\tMagenta   = [%g %g %g], %g\n"
+	"#\tYellow    = [%g %g %g], %g\n"
+	"#\tefficacy  =  %g\n"
+	"#\tErythropy = %s\n#\n";
+
+
 int usage(void) {
 	fprintf(stderr, "Usage: sltconv [-i] input [[-o] output] [-t|T|s|c] [-e efficacy]\n");
 	return 1;
@@ -149,6 +165,14 @@ void describe(KOLIBA_ftype ftype, FILE *f, saluti *slt, double efficacy) {
 				 slt->dicr.efficacy,
 				 (normalize) ? "True" : "False",
 				 channel, (channel == 0) ? "Red" : (channel == 1) ? "Green" : "Blue"
+			);
+			break;
+		case KOLIBA_ftpalette:
+			fprintf(f, palettedesc,
+			pv(black), pv(white), pv(red), pv(green),
+			pv(blue), pv(cyan), pv(magenta), pv(yellow),
+			slt->plt.efficacy,
+			(slt->plt.erythropy) ? "True" : "False"
 			);
 			break;
 		default:
@@ -244,7 +268,7 @@ int main(int argc, char *argv[]) {
 
 	ptr[SLTCFILEHEADERBYTES] = '\0';
 
-	switch(KOLIBA_GetFileDataFormat(ptr)) {
+	switch(ftype = KOLIBA_GetFileDataFormat(ptr)) {
 		case KOLIBA_ftslut:
 			if (KOLIBA_ReadSlutFromOpenFile(&sLut, f) == NULL)
 				return invalid(f, iname);
@@ -277,6 +301,10 @@ int main(int argc, char *argv[]) {
 			if ((KOLIBA_ReadDichromaticMatrixFromOpenFile(&slt.dicr, f, &normalize, &channel) == NULL) ||
 			(KOLIBA_DichromaticMatrix(&mat, &slt.dicr, normalize, channel) == NULL) ||
 			(KOLIBA_ConvertMatrixToSlut(&sLut, &mat) == NULL) )
+				return invalid(f, iname);
+			break;
+		case KOLIBA_ftpalette:
+			if (KOLIBA_ConvertPaletteToSlut(&sLut, KOLIBA_ReadPaletteFromOpenFile(&slt.plt, f)) == NULL)
 				return invalid(f, iname);
 			break;
 		default:
