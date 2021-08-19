@@ -3531,6 +3531,12 @@ KLBDC KOLIBA_CHROMAT * KOLIBA_StringToChromat(
 	const char * const string
 );
 
+// Text version of Koliba palette (.pltt)
+KLBDC extern const char KOLIBA_PrintPlttFormat[];
+KLBDC extern const char KOLIBA_ScanPlttFormat[];
+KLBDC extern const char KOLIBA_ScanPlttHeaderFormat[];
+
+
 
 
 
