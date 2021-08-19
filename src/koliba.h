@@ -717,7 +717,7 @@ typedef struct _KOLIBA_PIGMENT {
 // The palette consists of eight pigments, an overall efficacy, but also with
 // an erythropy flag. What is erythropy you ask?
 //
-// Strictly speaking the word should be erythrotropy, but I turned the liberty
+// Strictly speaking the word should be erythrotropy, but I took the liberty
 // to shorten it to erythropy. It tells us to take the red pigment (including
 // its efficacy) and ignore all the other pigments in the palette and rotate
 // them the same way red is rotated.
@@ -3798,6 +3798,15 @@ KLBDC int KOLIBA_WritePaletteToNamedFile(
 	const char *fname
 );
 
+// Read a palette from a named file. Returns palette on success,
+// NULL on failure. If, however, kPlt is not NULL, its
+// contents will be filled with the identity palette on failure.
+
+KLBDC KOLIBA_PALETTE * KOLIBA_ReadPaletteFromNamedFile(
+	KOLIBA_PALETTE *kPlt,
+	char *fname
+);
+
 
 
 // A chromat file (*.chrm) starts with the 16-byte UUID of
@@ -4991,6 +5000,14 @@ KLBDC KOLIBA_MATRIX * KOLIBA_ReadM34tFromOpenFile(
 	KOLIBA_MATRIX *m3x4,
 	FILE *f
 );
+
+// Read a palette from an open .kPlt file. It needs to be open
+// for reading binary data. It remains open upon return, so
+// the caller needs to close it. Returns palette on success, NULL
+// on failure. If, however, kPlt is not NULL, its contents
+// will be filled with the identity palette on failure.
+
+KLBDC KOLIBA_PALETTE * KOLIBA_ReadPaletteFromOpenFile(KOLIBA_PALETTE *kPlt, FILE *f);
 
 // Read a CHROMATIC MATRIX from an open .chrm file. It needs to be open for
 // reading binary data. It remains open upon return, so the caller needs to
