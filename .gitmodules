@@ -1,3 +1,6 @@
 [submodule "libkoliba"]
 	path = libkoliba
 	url = https://github.com/Pantarheon/libkoliba
+[submodule "freliba"]
+	path = freliba
+	url = https://github.com/Pantarheon/freliba
