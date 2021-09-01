@@ -44,6 +44,7 @@
 #define	_KOLIBA_H_
 
 #include <stdlib.h>
+#include <inttypes.h>
 
 #if defined _WIN32
 # define	KLBHID
@@ -460,21 +461,25 @@ typedef	struct _KOLIBA_PIXEL {
 
 // Strangely, many video editors are still using pixels with 8 bits per
 // channel. We might need to deal with them.
-typedef	struct _KOLIBA_RGBA8PIXEL {
-	unsigned char	r, g, b, a;
+typedef	union _KOLIBA_RGBA8PIXEL {
+	struct {uint8_t	r, g, b, a;};
+	uint32_t px;
 } KOLIBA_RGBA8PIXEL;
 
 // And some, e.g. Vegas Pro, prefer BGRA.
-typedef struct _KOLIBA_BGRA8PIXEL {
-	unsigned char	b, g, r, a;
+typedef union _KOLIBA_BGRA8PIXEL {
+	struct {uint8_t	b, g, r, a;};
+	uint32_t px;
 } KOLIBA_BGRA8PIXEL;
 
 // Additionally, ARGB and ABGR are possible.
-typedef struct _KOLIBA_ARGB8PIXEL {
-	unsigned char	a, r, g, b;
+typedef union _KOLIBA_ARGB8PIXEL {
+	struct {uint8_t	a, r, g, b;};
+	uint32_t px;
 } KOLIBA_ARGB8PIXEL;
-typedef struct	_KOLIBA_ABGR8PIXEL {
-	unsigned char	a, g, b, r;
+typedef union	_KOLIBA_ABGR8PIXEL {
+	struct {uint8_t	a, g, b, r;};
+	uint32_t px;
 } KOLIBA_ABGR8PIXEL;
 
 // Most professional video editors use 32-bit floats for color grading to
