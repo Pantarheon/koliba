@@ -1429,6 +1429,33 @@ KLBDC KOLIBA_VERTICES * KOLIBA_SlutToVertices(
 	KOLIBA_SLUT * const sLut
 );
 
+// Scale the sLut factors in a FLUT so that the results
+// of applying them does not have to be scaled up for
+// every channel of every pixel.
+//
+// While the input of the respective KOLIBA_ApplyXyz()
+// still expects the values in the nominal 0-1 range,
+// the output of a scaled FLUT will be in the 0-n range,
+// where n is the scale factor applied here.
+//
+// This saves processing time because with the most common
+// pixel size of using 8-bit integer bytes for the channels
+// converting them to the 0-1 range is a matter of a small
+// lookup table, but we avoid multiplying them back by 255
+// (or whatever factor we use) and only need to convert them
+// back to integers, which modern processors do fast.
+//
+// The scaling should normally be the last step before
+// pixel processing because it breaks such things as
+// checking for an identity FLUT, it makes interpolating
+// FLUTS harder, etc.
+
+KLBDC KOLIBA_FLUT * KOLIBA_ScaleFlut(
+	KOLIBA_FLUT *scaled,
+	const KOLIBA_FLUT * const fLut,
+	double factor
+);
+
 // We can calculate KOLIBA_FLUT from KOLIBA_VERTICES.
 KLBDC KOLIBA_FLUT * KOLIBA_ConvertSlutToFlut(
 	KOLIBA_FLUT * fLut,
@@ -3239,6 +3266,15 @@ KLBDC KOLIBA_RGBA8PIXEL * KOLIBA_XyzToRgba8Pixel(
 	const unsigned char * const oconv
 );
 
+// Convert scaled XYZ to the RGB portion of RGBA8PIXEL.
+// Same as KOLIBA_XyzToRgba8Pixel() but the result is
+// already premultiplied by 255.0 because the FLUT was scaled.
+KLBDC KOLIBA_RGBA8PIXEL * KOLIBA_ScaledXyzToRgba8Pixel(
+	KOLIBA_RGBA8PIXEL *px,
+	const KOLIBA_XYZ * const xyz,
+	const unsigned char * const oconv
+);
+
 // Convert the RGB portion of RGBA8PIXEL to XYZ.
 
 KLBDC KOLIBA_XYZ * KOLIBA_Rgba8PixelToXyz(
@@ -3250,6 +3286,12 @@ KLBDC KOLIBA_XYZ * KOLIBA_Rgba8PixelToXyz(
 // The same for BGRA8.
 
 KLBDC KOLIBA_BGRA8PIXEL * KOLIBA_XyzToBgra8Pixel(
+	KOLIBA_BGRA8PIXEL * px,
+	const KOLIBA_XYZ * const xyz,
+	const unsigned char * const oconv
+);
+
+KLBDC KOLIBA_BGRA8PIXEL * KOLIBA_ScaledXyzToBgra8Pixel(
 	KOLIBA_BGRA8PIXEL * px,
 	const KOLIBA_XYZ * const xyz,
 	const unsigned char * const oconv
@@ -3269,6 +3311,12 @@ KLBDC KOLIBA_ARGB8PIXEL * KOLIBA_XyzToArgb8Pixel(
 	const unsigned char * const oconv
 );
 
+KLBDC KOLIBA_ARGB8PIXEL * KOLIBA_ScaledXyzToArgb8Pixel(
+	KOLIBA_ARGB8PIXEL * px,
+	const KOLIBA_XYZ * const xyz,
+	const unsigned char * const oconv
+);
+
 KLBDC KOLIBA_XYZ * KOLIBA_Argb8PixelToXyz(
 	KOLIBA_XYZ *xyz,
 	const KOLIBA_ARGB8PIXEL * const px,
@@ -3278,6 +3326,12 @@ KLBDC KOLIBA_XYZ * KOLIBA_Argb8PixelToXyz(
 // ABGR.
 
 KLBDC KOLIBA_ABGR8PIXEL * KOLIBA_XyzToAbgr8Pixel(
+	KOLIBA_ABGR8PIXEL * px,
+	const KOLIBA_XYZ * const xyz,
+	const unsigned char * const oconv
+);
+
+KLBDC KOLIBA_ABGR8PIXEL * KOLIBA_ScaledXyzToAbgr8Pixel(
 	KOLIBA_ABGR8PIXEL * px,
 	const KOLIBA_XYZ * const xyz,
 	const unsigned char * const oconv
@@ -3394,6 +3448,41 @@ KLBDC KOLIBA_PIXEL * KOLIBA_ExternalPixel(
 );
 
 
+// It is common  to use a quick approximation of video
+// effects while editing (typically called a preview mode).
+// In that case, these functions may come useful.
+
+// Convert KOLIBA_SLUT to a palette of 256 KOLIBA_RGBA8PIXEL
+// values This can be used, among other things, for a low-quality
+// but fast preview during editing. The alpha channels of all
+// palette members are set to fully opaque (i.e., 255).
+
+KLBDC KOLIBA_RGBA8PIXEL * KOLIBA_SlutToRgba8Palette(
+	KOLIBA_RGBA8PIXEL *palette,
+	KOLIBA_SLUT * const sLut,
+	const double * const iconv,
+	const unsigned char * const oconv
+);
+
+// Apply a 256-member RGBA8 palette to a number
+// of RGBA8 pixels discarding their Alpha channel.
+
+KLBDC KOLIBA_RGBA8PIXEL * KOLIBA_PaletteToRgba8(
+	KOLIBA_RGBA8PIXEL * outframe,
+	const KOLIBA_RGBA8PIXEL * const inframe,
+	const KOLIBA_RGBA8PIXEL * const palette,
+	unsigned int count
+);
+
+// Apply a 256-member RGBA8 palette to a number
+// of RGBA8 pixels preserving their Alpha channel.
+
+KLBDC KOLIBA_RGBA8PIXEL * KOLIBA_PaletteToRgba8Alpha(
+	KOLIBA_RGBA8PIXEL * outframe,
+	const KOLIBA_RGBA8PIXEL * const inframe,
+	const KOLIBA_RGBA8PIXEL * const palette,
+	unsigned int count
+);
 
 
 
@@ -4148,6 +4237,11 @@ inline KOLIBA_RGBA8PIXEL * KOLIBA_Rgba8Pixel(KOLIBA_RGBA8PIXEL *pixelout, const 
 	return KOLIBA_XyzToRgba8Pixel(pixelout, KOLIBA_ApplyXyz(&xyz, KOLIBA_Rgba8PixelToXyz(&xyz, pixelin, iconv), fLut, flags), oconv);
 }
 
+inline KOLIBA_RGBA8PIXEL * KOLIBA_ScaledRgba8Pixel(KOLIBA_RGBA8PIXEL *pixelout, const KOLIBA_RGBA8PIXEL *pixelin, const KOLIBA_FLUT *fLut, KOLIBA_FLAGS flags, const double *iconv, const unsigned char *oconv) {
+	KOLIBA_XYZ xyz;
+	return KOLIBA_ScaledXyzToRgba8Pixel(pixelout, KOLIBA_ApplyXyz(&xyz, KOLIBA_Rgba8PixelToXyz(&xyz, pixelin, iconv), fLut, flags), oconv);
+}
+
 inline KOLIBA_RGBA8PIXEL * KOLIBA_PolyRgba8Pixel(KOLIBA_RGBA8PIXEL *pixelout, const KOLIBA_RGBA8PIXEL *pixelin, const KOLIBA_FFLUT *ffLut, unsigned int n, const double *iconv, const unsigned char *oconv) {
 	KOLIBA_XYZ xyz;
 	return KOLIBA_XyzToRgba8Pixel(pixelout, KOLIBA_PolyXyz(&xyz, KOLIBA_Rgba8PixelToXyz(&xyz, pixelin, iconv), ffLut, n), oconv);
@@ -4193,6 +4287,11 @@ inline KOLIBA_BGRA8PIXEL * KOLIBA_Bgra8Pixel(KOLIBA_BGRA8PIXEL *pixelout, const 
 	return KOLIBA_XyzToBgra8Pixel(pixelout, KOLIBA_ApplyXyz(&xyz, KOLIBA_Bgra8PixelToXyz(&xyz, pixelin, iconv), fLut, flags), oconv);
 }
 
+inline KOLIBA_BGRA8PIXEL * KOLIBA_ScaledBgra8Pixel(KOLIBA_BGRA8PIXEL *pixelout, const KOLIBA_BGRA8PIXEL *pixelin, const KOLIBA_FLUT *fLut, KOLIBA_FLAGS flags, const double *iconv, const unsigned char *oconv) {
+	KOLIBA_XYZ xyz;
+	return KOLIBA_ScaledXyzToBgra8Pixel(pixelout, KOLIBA_ApplyXyz(&xyz, KOLIBA_Bgra8PixelToXyz(&xyz, pixelin, iconv), fLut, flags), oconv);
+}
+
 inline KOLIBA_BGRA8PIXEL * KOLIBA_PolyBgra8Pixel(KOLIBA_BGRA8PIXEL *pixelout, const KOLIBA_BGRA8PIXEL *pixelin, const KOLIBA_FFLUT *ffLut, unsigned int n, const double *iconv, const unsigned char *oconv) {
 	KOLIBA_XYZ xyz;
 	return KOLIBA_XyzToBgra8Pixel(pixelout, KOLIBA_PolyXyz(&xyz, KOLIBA_Bgra8PixelToXyz(&xyz, pixelin, iconv), ffLut, n), oconv);
@@ -4230,6 +4329,11 @@ inline KOLIBA_ARGB8PIXEL * KOLIBA_Argb8Pixel(KOLIBA_ARGB8PIXEL *pixelout, const 
 	return KOLIBA_XyzToArgb8Pixel(pixelout, KOLIBA_ApplyXyz(&xyz, KOLIBA_Argb8PixelToXyz(&xyz, pixelin, iconv), fLut, flags), oconv);
 }
 
+inline KOLIBA_ARGB8PIXEL * KOLIBA_ScaledArgb8Pixel(KOLIBA_ARGB8PIXEL *pixelout, const KOLIBA_ARGB8PIXEL *pixelin, const KOLIBA_FLUT *fLut, KOLIBA_FLAGS flags, const double *iconv, const unsigned char *oconv) {
+	KOLIBA_XYZ xyz;
+	return KOLIBA_ScaledXyzToArgb8Pixel(pixelout, KOLIBA_ApplyXyz(&xyz, KOLIBA_Argb8PixelToXyz(&xyz, pixelin, iconv), fLut, flags), oconv);
+}
+
 inline KOLIBA_ARGB8PIXEL * KOLIBA_PolyArgb8Pixel(KOLIBA_ARGB8PIXEL *pixelout, const KOLIBA_ARGB8PIXEL *pixelin, const KOLIBA_FFLUT *ffLut, unsigned int n, const double *iconv, const unsigned char *oconv) {
 	KOLIBA_XYZ xyz;
 	return KOLIBA_XyzToArgb8Pixel(pixelout, KOLIBA_PolyXyz(&xyz, KOLIBA_Argb8PixelToXyz(&xyz, pixelin, iconv), ffLut, n), oconv);
@@ -4261,6 +4365,11 @@ inline KOLIBA_ARGB8PIXEL * KOLIBA_Argb8PixelLumidux(KOLIBA_ARGB8PIXEL *pixelout,
 }
 
 //
+
+inline KOLIBA_ABGR8PIXEL * KOLIBA_ScaledAbgr8Pixel(KOLIBA_ABGR8PIXEL *pixelout, const KOLIBA_ABGR8PIXEL *pixelin, const KOLIBA_FLUT *fLut, KOLIBA_FLAGS flags, const double *iconv, const unsigned char *oconv) {
+	KOLIBA_XYZ xyz;
+	return KOLIBA_ScaledXyzToAbgr8Pixel(pixelout, KOLIBA_ApplyXyz(&xyz, KOLIBA_Abgr8PixelToXyz(&xyz, pixelin, iconv), fLut, flags), oconv);
+}
 
 inline KOLIBA_ABGR8PIXEL * KOLIBA_Abgr8Pixel(KOLIBA_ABGR8PIXEL *pixelout, const KOLIBA_ABGR8PIXEL *pixelin, const KOLIBA_FLUT *fLut, KOLIBA_FLAGS flags, const double *iconv, const unsigned char *oconv) {
 	KOLIBA_XYZ xyz;
@@ -4454,6 +4563,13 @@ inline KOLIBA_ABGR32PIXEL * KOLIBA_Abgr32PixelLumidux(KOLIBA_ABGR32PIXEL *pixelo
 	KOLIBA_XyzToRgba8Pixel(pxout, KOLIBA_ApplyXyz(&koliba_x_y_z_5_0_1, KOLIBA_Rgba8PixelToXyz(&koliba_x_y_z_5_0_1, pxin, iconv), fLut, flags), oconv);\
 } while(0)
 
+// KLBDC KOLIBA_RGBA8PIXEL * KOLIBA_ScaledRgba8Pixel(KOLIBA_RGBA8PIXEL *pixelout, const KOLIBA_RGBA8PIXEL *pixelin, const KOLIBA_FLUT *fLut, KOLIBA_FLAGS flags, const double *iconv, const unsigned char *oconv);
+
+#define	KOLIBA_ScaledRgba8Pixel(pxout,pxin,fLut,flags,iconv,oconv) do {\
+	KOLIBA_XYZ koliba_x_y_z_5_0_111;\
+	KOLIBA_ScaledXyzToRgba8Pixel(pxout, KOLIBA_ApplyXyz(&koliba_x_y_z_5_0_111, KOLIBA_Rgba8PixelToXyz(&koliba_x_y_z_5_0_111, pxin, iconv), fLut, flags), oconv);\
+} while(0)
+
 // KLBDC KOLIBA_RGBA8PIXEL * KOLIBA_PolyRgba8Pixel(KOLIBA_RGBA8PIXEL *pixelout, const KOLIBA_RGBA8PIXEL *pixelin, const KOLIBA_FFLUT *ffLut, unsigned int n, const double *iconv, const unsigned char *oconv);
 
 #define	KOLIBA_PolyRgba8Pixel(pxout,pxin,ffLut,n,iconv,oconv) do {\
@@ -4508,6 +4624,13 @@ inline KOLIBA_ABGR32PIXEL * KOLIBA_Abgr32PixelLumidux(KOLIBA_ABGR32PIXEL *pixelo
 	KOLIBA_XyzToBgra8Pixel(pxout, KOLIBA_ApplyXyz(&koliba_x_y_z_5_0_1, KOLIBA_Bgra8PixelToXyz(&koliba_x_y_z_5_0_1, pxin, iconv), fLut, flags), oconv);\
 } while(0)
 
+// KLBDC KOLIBA_BGRA8PIXEL * KOLIBA_ScaledBgra8Pixel(KOLIBA_BGRA8PIXEL *pixelout, const KOLIBA_BGRA8PIXEL *pixelin, const KOLIBA_FLUT *fLut, KOLIBA_FLAGS flags, const double *iconv, const unsigned char *oconv);
+
+#define	KOLIBA_ScaledBgra8Pixel(pxout,pxin,fLut,flags,iconv,oconv)	do {\
+	KOLIBA_XYZ koliba_x_y_z_5_0_1111;\
+	KOLIBA_ScaledXyzToBgra8Pixel(pxout, KOLIBA_ApplyXyz(&koliba_x_y_z_5_0_1111, KOLIBA_Bgra8PixelToXyz(&koliba_x_y_z_5_0_1111, pxin, iconv), fLut, flags), oconv);\
+} while(0)
+
 // KLBDC KOLIBA_BGRA8PIXEL * KOLIBA_PolyBgra8Pixel(KOLIBA_BGRA8PIXEL *pixelout, const KOLIBA_BGRA8PIXEL *pixelin, const KOLIBA_FFLUT *ffLut, unsigned int n, const double *iconv, const unsigned char *oconv);
 
 #define	KOLIBA_PolyBgra8Pixel(pxout,pxin,ffLut,n,iconv,oconv) do {\
@@ -4556,6 +4679,13 @@ inline KOLIBA_ABGR32PIXEL * KOLIBA_Abgr32PixelLumidux(KOLIBA_ABGR32PIXEL *pixelo
 #define	KOLIBA_Argb8Pixel(pxout,pxin,fLut,flags,iconv,oconv)	do {\
 	KOLIBA_XYZ koliba_x_y_z_5_0_1;\
 	KOLIBA_XyzToArgb8Pixel(pxout, KOLIBA_ApplyXyz(&koliba_x_y_z_5_0_1, KOLIBA_Argb8PixelToXyz(&koliba_x_y_z_5_0_1, pxin, iconv), fLut, flags), oconv);\
+} while(0)
+
+// KLBDC KOLIBA_ARGB8PIXEL * KOLIBA_ScaledArgb8Pixel(KOLIBA_ARGB8PIXEL *pixelout, const KOLIBA_ARGB8PIXEL *pixelin, const KOLIBA_FLUT *fLut, KOLIBA_FLAGS flags, const double *iconv, const unsigned char *oconv);
+
+#define	KOLIBA_ScaledArgb8Pixel(pxout,pxin,fLut,flags,iconv,oconv)	do {\
+	KOLIBA_XYZ koliba_x_y_z_5_0_171;\
+	KOLIBA_ScaledXyzToArgb8Pixel(pxout, KOLIBA_ApplyXyz(&koliba_x_y_z_5_0_171, KOLIBA_Argb8PixelToXyz(&koliba_x_y_z_5_0_171, pxin, iconv), fLut, flags), oconv);\
 } while(0)
 
 // KLBDC KOLIBA_ARGB8PIXEL * KOLIBA_PolyArgb8Pixel(KOLIBA_ARGB8PIXEL *pixelout, const KOLIBA_ARGB8PIXEL *pixelin, const KOLIBA_FFLUT *ffLut, unsigned int n, const double *iconv, const unsigned char *oconv);
@@ -4608,6 +4738,13 @@ inline KOLIBA_ABGR32PIXEL * KOLIBA_Abgr32PixelLumidux(KOLIBA_ABGR32PIXEL *pixelo
 #define	KOLIBA_Abgr8Pixel(pxout,pxin,fLut,flags,iconv,oconv)	do {\
 	KOLIBA_XYZ koliba_x_y_z_5_0_1;\
 	KOLIBA_XyzToAbgr8Pixel(pxout, KOLIBA_ApplyXyz(&koliba_x_y_z_5_0_1, KOLIBA_Abgr8PixelToXyz(&koliba_x_y_z_5_0_1, pxin, iconv), fLut, flags), oconv);\
+} while(0)
+
+// KLBDC KOLIBA_ABGR8PIXEL * KOLIBA_ScaledAbgr8Pixel(KOLIBA_ABGR8PIXEL *pixelout, const KOLIBA_ABGR8PIXEL *pixelin, const KOLIBA_FLUT *fLut, KOLIBA_FLAGS flags, const double *iconv, const unsigned char *oconv);
+
+#define	KOLIBA_ScaledAbgr8Pixel(pxout,pxin,fLut,flags,iconv,oconv)	do {\
+	KOLIBA_XYZ koliba_x_y_z_5_0_13;\
+	KOLIBA_ScaledXyzToAbgr8Pixel(pxout, KOLIBA_ApplyXyz(&koliba_x_y_z_5_0_13, KOLIBA_Abgr8PixelToXyz(&koliba_x_y_z_5_0_13, pxin, iconv), fLut, flags), oconv);\
 } while(0)
 
 // KLBDC KOLIBA_ABGR8PIXEL * KOLIBA_PolyAbgr8Pixel(KOLIBA_ABGR8PIXEL *pixelout, const KOLIBA_ABGR8PIXEL *pixelin, const KOLIBA_FFLUT *ffLut, unsigned int n, const double *iconv, const unsigned char *oconv);
