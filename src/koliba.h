@@ -622,7 +622,7 @@ typedef struct _KOLIBA_CFLT2 {
 // saturation derives from chrominance). And sometimes even a combination of
 // luminance with either the chrominance or the saturation.
 //
-// Now, from now on, instead of saying "chrominance or stauration" we will use
+// Now, from now on, instead of saying "chrominance or saturation" we will use
 // "saturance" (a portmanteau word of saturation and chrominance).
 //
 // Surprisingly, we could not find a way of combining the original and the
@@ -1005,6 +1005,25 @@ KLBDC extern const unsigned char KOLIBA_FundamentalMalletFlags[KOLIBA_FUNDAMENTA
 KLBDC extern const double KOLIBA_SrgbByteToLinear[256];
 KLBDC extern const double KOLIBA_ByteDiv255[256];
 KLBDC extern const unsigned char KOLIBA_LinearByteToSrgb[256];
+
+// Quick lookup tables.
+//
+// Unlike with the simple 8 bpc table, we need two tables
+// (one table would certainly work but would be huge),
+// one for the high byte, one for the low byte.
+//
+// This works because (a+b)/c = a/c + b/c, or in our case,
+// (HighByte*256+LowByte)/65535 =
+// HighByte*256/65535 + LowByte/65535.
+// So we pass the high byte as index to HighWordDiv65535,
+// the low byte to LowWordDiv65535, and add up the results.
+// This is faster than dividing by 65535.0.
+//
+// We, however, do not have such a pair of tables for sRGB
+// because of its non-linearity which would require a huge
+// table.
+KLBDC const uint64_t KOLIBA_HighWordDiv65535[256];
+KLBDC const uint64_t KOLIBA_LowWordDiv65535[256];
 
 // Some help to produce primary through quintary color LUTs
 /*
