@@ -482,6 +482,11 @@ typedef union	_KOLIBA_ABGR8PIXEL {
 	uint32_t px;
 } KOLIBA_ABGR8PIXEL;
 
+// PNG bitmaps may also use unsigned 16-bit integers per channel.
+typedef	struct _KOLIBA_RGBA16PIXEL {
+	uint16_t	r, g, b, a;
+} KOLIBA_RGBA16PIXEL;
+
 // Most professional video editors use 32-bit floats for color grading to
 // reduce crushing and clipping.
 typedef	struct _KOLIBA_RGBA32PIXEL {
