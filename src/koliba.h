@@ -2616,6 +2616,10 @@ KLBDC KOLIBA_SLUT * KOLIBA_ConvertColorFilterToSlut(
 	const KOLIBA_CFLT * const cFlt
 );
 
+// Apply a ring to a SLUT. Apply strut to the ring color.
+
+KLBDC KOLIBA_SLUT * KOLIBA_ApplyStrutRing(KOLIBA_SLUT *sLut, const KOLIBA_VERTEX * const ring, KOLIBA_Pluts plut, double strut);
+
 
 
 
