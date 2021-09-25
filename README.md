@@ -41,20 +41,8 @@ text files as it needs to obtain its data, it is possible to add
 comments in any human language _after_ the data.
 
 For example, the `MQ` matrix was produced by chaining several matrices
-using the `MatrixChain` utility and saved in the binary `MQ.m3x4 file`.
-If it ended there, we would soon forget what matrices were chained
-to produce the `MQ` matrix. To preserve that information, I used `sltconv`
-to convert the binary file to a text file `MQ.m34t`, which looked like this:
-
-```
-m3x4
-3FF4AF3A15B14F33 BFB254DC70F21066 3FC9AA78ADBF73EC BFC1FDF3B645A1C9
-3FD11031D0FB633E 3FF1593272064884 3FB21FC7E14FB5B8 BFC1FDF3B645A1CF
-3FADA6D1B194F400 3FF51C1796266BFB 3FA6BDA814E1229E BFC1FDF3B645A1D0
-```
-
-I then opened it in a plain text editor and added a comment, so now the
-file looks like this:
+using the `MatrixChain` utility and saved in the text `MQ.m34t file`.
+It looked like this:
 
 ```
 m3x4
@@ -72,11 +60,10 @@ m3x4
 # More Saturation (Rec 2020).m3x4
 ```
 
-That way I will always know how I created the MQ matrix because all
-I have to do is to read the information I added (by the way `libkoliba`
+Thanks to those comments, I will always know how I created the MQ matrix
+because all I have to do is to read the extra information (by the way `libkoliba`
 ignores all of that extra information, so the `#` at the start of each
-line is not needed, but it is customary to start comments with it, so
-I added them there).
+line is not needed, but it is customary to start comments with it).
 
 ## sltconv
 
@@ -167,6 +154,100 @@ image or video editor you use.
 > b' = 0.05791335385r + 1.319358431g  + 0.04441571479b -0.1405625
 > ```
 
+Use the `-e` command line argument to change the `efficacy` of
+the look-up table. To make the effect stronger, use an efficacy
+greater than `1`. To make it weaker, use an efficacy greater than
+`0` and lesser than `1`. To get the opposite effect, try the efficacy
+of `-1`. You can use any number. Just bear in mind that venturing
+outside the `0` to `1` range is generally not what the designer of the
+look-up table had in mind (not that it should stop you).
+
+For example,
+
+```
+$ sltconv MQ.m34t -e 1.2
+sltconv, v.0.5.8
+Copyright 2019-2021 G. Adam Stanislav
+All rights reserved
+
+TITLE "MQ.m34t"
+DOMAIN_MIN 0 0 0
+DOMAIN_MAX 1 1 1
+LUT_3D_SIZE 2
+# Converted from the matrix:
+#
+#       1.292780003 -0.0716073776 0.2005148743 -0.1405625
+#       0.2666134396 1.084276624 0.07079743624 -0.1405625
+#       0.05791335385 1.319358431 0.04441571479 -0.1405625
+#
+# With 120% efficacy.
+#
+-0.168675 -0.168675 -0.168675
+1.182661004 0.1512611276 -0.09917897538
+-0.2546038531 0.9324569489 1.414555118
+1.096732151 1.252393077 1.484051142
+0.07194284916 -0.08371807651 -0.3153761423
+1.423278853 0.2362180511 -0.2458801176
+-0.01398600396 1.017413872 1.267853975
+1.33735 1.33735 1.33735
+
+## Converted from "MQ.m34t" by sltconv, v.0.5.8
+```
+
+and,
+
+```
+sltconv MQ.m34t -e -0.75
+sltconv, v.0.5.8
+Copyright 2019-2021 G. Adam Stanislav
+All rights reserved
+
+TITLE "MQ.m34t"
+DOMAIN_MIN 0 0 0
+DOMAIN_MAX 1 1 1
+LUT_3D_SIZE 2
+# Converted from the matrix:
+#
+#       1.292780003 -0.0716073776 0.2005148743 -0.1405625
+#       0.2666134396 1.084276624 0.07079743624 -0.1405625
+#       0.05791335385 1.319358431 0.04441571479 -0.1405625
+#
+# With -75% efficacy.
+#
+0.105421875 0.105421875 0.105421875
+0.8858368725 -0.09453820473 0.06198685961
+0.1591274082 1.042214407 -0.8840969485
+0.9395424057 0.8422543272 -0.9275319639
+-0.04496428073 0.05232379782 1.822110089
+0.7354507168 -0.1476362819 1.778675074
+0.008741252472 0.9891163297 0.8325912654
+0.78915625 0.78915625 0.78915625
+
+## Converted from "MQ.m34t" by sltconv, v.0.5.8
+```
+
+If you run `sltconv` with no command line switches, it will say,
+
+```
+Usage: sltconv [-i] input [[-o] output] [-t|T|s|c] [-e efficacy]
+```
+
+The `[-t|T|s|c]` switches are mutually exclusive. If you use
+any of them more than once, the one used last overrides the rest.
+
+The `-s` switch instructs `sltconv` to output the `Simple Look-Up
+Table` binary format, which is the main workhorse of the `Koliba
+Library`. You should tell it the output file name, too, because
+otherwise `sltconv` will just write it to `stdout`. This is on
+purpose because in operating systems other than Windows it is
+possible to pipe the binary output of one program as the input
+of another.
+
+At any rate, the file should have the extension `.sLut`
+(pronounced in English the same as `salute`, of course). `sltconv`
+does not care what extension you use, but if you stick with `.sLut`,
+every `libkoliba` user will expect the file to contain the binary
+version of the `Simple Look-Up Table`.
 
 ## ConvertRecs
 
