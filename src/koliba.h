@@ -1236,6 +1236,13 @@ inline KOLIBA_SLUT *KOLIBA_ApplySphericalAngleEfficaciesX(KOLIBA_SLUT *sLut, con
 KLBDC signed int KOLIBA_AngleToQuintaryIndex(double angle);
 KLBDC signed int KOLIBA_TokenToQuintaryIndex(const char * const token);
 
+// Set the farbosity of a sLut without changing its svit.
+// It is defined by its center and its width and is applied
+// to all six farba vertices.
+//
+// Default center is 0.5, default width is 1.0.
+KLBDC KOLIBA_SLUT * KOLIBA_SetFarbosity(KOLIBA_SLUT *sLut, double center, double width);
+
 
 
 /****************************************************************************/

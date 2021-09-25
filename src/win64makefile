@@ -37,7 +37,7 @@
 CC=gcc
 CFLG=-O3 -s
 CFLAGS=$(CFLG) -fPIC -DDLL
-OBJS=sltconv.o pullmat.o invertmat.o effimat.o \
+OBJS=sltconv.o pullmat.o invertmat.o effimat.o farbosity.o \
 	ConvertRecs.o RotationMatrix.o quintluts.o \
 	eryslut.o dblhex.o MatrixChain.o dichromatic.o 
 APPS=sltconv.exe pullmat.exe invertmat.exe effimat.exe \
@@ -62,6 +62,12 @@ invertmat.exe: invertmat.o
 
 effimat.exe: effimat.o
 	$(CC) $(CFLG) -o effimat.exe effimat.o -L. -lkoliba
+
+farbosity.exe: farbosity.o farbosityres.o
+	$(CC) $(CFLG) -o farbosity.exe farbosity.o farbosityres.o -L. -lkoliba
+
+farbosityres.o: farbosity.rc
+	windres -i farbosity.rc -o farbosityres.o
 
 ConvertRecs.exe: ConvertRecs.o
 	$(CC) $(CFLG) -o ConvertRecs.exe ConvertRecs.o -L. -lkoliba
@@ -98,6 +104,9 @@ invertmat.o: invertmat.c koliba.h
 
 effimat.o: effimat.c koliba.h
 	$(CC) $(CFLG) -c effimat.c -I.
+
+farbosity.o: farbosity.c koliba.h
+	$(CC) $(CFLG) -c farbosity.c -I.
 
 ConvertRecs.o: ConvertRecs.c koliba.h
 	$(CC) $(CFLG) -c ConvertRecs.c -I.

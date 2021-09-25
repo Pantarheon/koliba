@@ -39,7 +39,7 @@ CFLG=-O3
 CFLAGS=$(CFLG) -fPIC
 ASFLAGS=--gstabs
 PREFIX=/usr
-OBJS=sltconv.o pullmat.o invertmat.o effimat.o \
+OBJS=sltconv.o pullmat.o invertmat.o effimat.o farbosity.o \
 	ConvertRecs.o RotationMatrix.o quintluts.o \
 	eryslut.o dblhex.o MatrixChain.o dichromatic.o 
 APPS=sltconv pullmat invertmat effimat \
@@ -61,6 +61,9 @@ invertmat: invertmat.o
 
 effimat: effimat.o
 	$(CC) $(CFLG) -o effimat effimat.o -L$(PREFIX)/lib -lkoliba
+
+farbosity: farbosity.o
+	$(CC) $(CFLG) -o farbosity farbosity.o  -L$(PREFIX)/lib -lkoliba
 
 ConvertRecs: ConvertRecs.o
 	$(CC) $(CFLG) -o ConvertRecs ConvertRecs.o -L$(PREFIX)/lib -lkoliba
@@ -94,6 +97,9 @@ invertmat.o: invertmat.c koliba.h
 
 effimat.o: effimat.c koliba.h
 	$(CC) $(CFLG) -c effimat.c -I$(PREFIX)/include
+
+farbosity.o: farbosity.c koliba.h
+	$(CC) $(CFLG) -c farbosity.c -I$(PREFIX)/include
 
 ConvertRecs.o: ConvertRecs.c koliba.h
 	$(CC) $(CFLG) -c ConvertRecs.c -I$(PREFIX)/include
