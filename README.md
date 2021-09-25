@@ -249,6 +249,61 @@ does not care what extension you use, but if you stick with `.sLut`,
 every `libkoliba` user will expect the file to contain the binary
 version of the `Simple Look-Up Table`.
 
+The `-t` and `-T` switches tell `sltconv` to produce a `text` version
+of the `Simple Look-Up Table` (which normally have the `.sltt` file
+extension). The only difference is in the level of information appended 
+after the end of the table. So, if we use the `-t` switch with our
+example (with the `-e 0.75` switch), we get,
+
+```
+sLut
+3FBAFCED916872AE 3FBAFCED916872B6 3FBAFCED916872B8
+BFA7058EE66D7669 3FAACA2F50D954D9 3FFD275CE899405C
+3FC45E49730EFF7D 3FF0ACE90391D0C8 BFEC4A85AF0C93A2
+3F81E6EF0BF688C0 3FEFA6D74A042887 3FEAA4966FF8DEBF
+3FEC58C691A31789 BFB833A7E189B704 3FAFBCBDDDA12E70
+3FE788CFF10F31CE BFC2E5BEE542BFA7 3FFC7573FE6FC2A4
+3FEE10BB3C39C912 3FEAF3BF58C55C59 BFEDAE57835F8F12
+3FE940C49BA5E356 3FE940C49BA5E34F 3FE940C49BA5E34F
+# Converted from the matrix:
+#
+#	1.292780003 -0.0716073776 0.2005148743 -0.1405625
+#	0.2666134396 1.084276624 0.07079743624 -0.1405625
+#	0.05791335385 1.319358431 0.04441571479 -0.1405625
+#
+# With -75% efficacy.
+#
+```
+
+But if we use the `-T` switch, the result is,
+
+```
+sLut
+3FBAFCED916872AE 3FBAFCED916872B6 3FBAFCED916872B8
+BFA7058EE66D7669 3FAACA2F50D954D9 3FFD275CE899405C
+3FC45E49730EFF7D 3FF0ACE90391D0C8 BFEC4A85AF0C93A2
+3F81E6EF0BF688C0 3FEFA6D74A042887 3FEAA4966FF8DEBF
+3FEC58C691A31789 BFB833A7E189B704 3FAFBCBDDDA12E70
+3FE788CFF10F31CE BFC2E5BEE542BFA7 3FFC7573FE6FC2A4
+3FEE10BB3C39C912 3FEAF3BF58C55C59 BFEDAE57835F8F12
+3FE940C49BA5E356 3FE940C49BA5E34F 3FE940C49BA5E34F
+
+## Converted from "MQ.m34t" by sltconv, v.0.5.8
+
+```
+
+So, the `-t` switch is more informative. But if you want to
+let everyone use a LUT you made, but want or need to keep
+the method you created it with to yourself, then take
+advantage of `-T` instead.
+
+Last but not least, the `-c` switch forces `sltconv`
+to output the `.cube` format. That is the default anyway,
+but the switch is added so you can override any of the
+other switches already given in a situation where you
+cannot (or it is too much trouble) just delete them from
+the command line.
+
 ## ConvertRecs
 
 A very simple example of using the `koliba` library to create
