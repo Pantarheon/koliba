@@ -69,8 +69,11 @@ farbosity.exe: farbosity.o farbosityres.o
 farbosityres.o: farbosity.rc
 	windres -i farbosity.rc -o farbosityres.o
 
-ConvertRecs.exe: ConvertRecs.o
-	$(CC) $(CFLG) -o ConvertRecs.exe ConvertRecs.o -L. -lkoliba
+ConvertRecs.exe: ConvertRecs.o ConvertRecsRes.o
+	$(CC) $(CFLG) -o ConvertRecs.exe ConvertRecs.o ConvertRecsRes.o -L. -lkoliba
+
+ConvertRecsRes.o: ConvertRecs.rc
+	windres -i ConvertRecs.rc -o ConvertRecsRes.o
 
 RotationMatrix.exe: RotationMatrix.o
 	$(CC) $(CFLG) -o RotationMatrix.exe RotationMatrix.o -L. -lkoliba -lm
