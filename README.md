@@ -250,7 +250,7 @@ every `libkoliba` user will expect the file to contain the binary
 version of the `Simple Look-Up Table`.
 
 The `-t` and `-T` switches tell `sltconv` to produce a `text` version
-of the `Simple Look-Up Table` (which normally have the `.sltt` file
+of the `Simple Look-Up Table` (which normally sports the `.sltt` file
 extension). The only difference is in the level of information appended 
 after the end of the table. So, if we use the `-t` switch with our
 example (with the `-e 0.75` switch), we get,
@@ -303,6 +303,314 @@ but the switch is added so you can override any of the
 other switches already given in a situation where you
 cannot (or it is too much trouble) just delete them from
 the command line.
+
+## dblhex
+
+The `dblhex` utility is strictly speaking not `libkoliba`
+related (and does not bind to it, so it can be run even
+without `libkoliba` installed on your system). But I wrote
+it specifically to help with the task of editing the newly
+textual file formats added to `libkoliba`.
+
+As described above, these files store the floating-point
+double values in hexadecimal notation which captures their
+bit-by-bit representation inside a computer. For example,
+the decimal number `1.0` is `3FF0000000000000` in hexadecimal,
+while the decimal `0.0` is `0000000000000000`. The `Identity
+Simple Look-Up Table` consists of just zeros and ones, and
+would look like this in plain decimal:
+
+```
+0 0 0
+0 0 1
+0 1 0
+0 1 1
+1 0 0
+1 0 1
+1 1 0
+1 1 1
+```
+
+If you are familiar with binary notation, this looks very
+much like the binary representation of the numbers `0` - `7`:
+
+```
+000 (= 0)
+001 (= 1)
+010 (= 2)
+011 (= 3)
+100 (= 4)
+101 (= 5)
+110 (= 6)
+111 (= 7)
+```
+
+And if you think of the first digit in each row as representing
+the `red` channel of a `LUT vertex`, the second number as representing
+its `green` channel, and the third (rightmost) number the `blue`
+channel, you will be able to surmise without memorizing, that in the
+`000` line all three channels are `0`, so it represents the `black`
+vertex, in the `001` line only the blue channel is `1`, so the line
+represents the `blue` vertex, and so on, `010` = `green`, `011` =
+`green+blue` = `cyan`, etc. In other words, the `Identity sLut` with
+annotation is,
+
+```
+0 0 0 (Black)
+0 0 1 (Blue)
+0 1 0 (Green)
+0 1 1 (Cyan)
+1 0 0 (Red)
+1 0 1 (Magenta)
+1 1 0 (Yellow)
+1 1 1 (White)
+```
+
+If this is clear, you will never have to look up this list again
+because you will always be able to figure out which line represents
+which vertex of the `Koliba` `Simple Look-Up Table`.
+
+Then again, that is the `decimal` notation. In the `hexadecimal`
+notation, the `identity.sltt` text file looks like,
+
+```
+sLut
+0000000000000000 0000000000000000 0000000000000000
+0000000000000000 0000000000000000 3FF0000000000000
+0000000000000000 3FF0000000000000 0000000000000000
+0000000000000000 3FF0000000000000 3FF0000000000000
+3FF0000000000000 0000000000000000 0000000000000000
+3FF0000000000000 0000000000000000 3FF0000000000000
+3FF0000000000000 3FF0000000000000 0000000000000000
+3FF0000000000000 3FF0000000000000 3FF0000000000000
+```
+
+That is the formatting produced by `libkoliba` functions to make
+it easier for us biologicals to see the pattern of eight lines,
+with three numbers each. But that formatting is not required. So,
+if we just wrote those 8*3=24 numbers each on a separate line,
+or all of them in one line, or whatever, `libkoliba` will understand
+it. The only requirement is that the text start with the case-sensitive
+signature of `sLut`, and be followed by those 24 numbers in their right
+order expressed in the hexadecimal notation, all separated by some blank
+space, such as space, tab, new line...
+
+So this version is exactly the same as the above `identity.slt`,
+
+```
+sLut
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+3FF0000000000000
+0000000000000000
+3FF0000000000000
+0000000000000000
+0000000000000000
+3FF0000000000000
+3FF0000000000000
+3FF0000000000000
+0000000000000000
+0000000000000000
+3FF0000000000000
+0000000000000000
+3FF0000000000000
+3FF0000000000000
+3FF0000000000000
+0000000000000000
+3FF0000000000000
+3FF0000000000000
+3FF0000000000000
+```
+
+Or even this,
+
+```
+sLut 0000000000000000 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+3FF0000000000000 0000000000000000 3FF0000000000000 0000000000000000
+0000000000000000 3FF0000000000000 3FF0000000000000
+3FF0000000000000 0000000000000000
+0000000000000000
+	3FF0000000000000
+		0000000000000000
+			3FF0000000000000
+				3FF0000000000000
+					3FF0000000000000
+				0000000000000000
+			3FF0000000000000
+		3FF0000000000000
+	3FF0000000000000
+```
+
+The machine does not care (try to copy them from here and paste
+them to a text file, separate file each time, then use `sltconv`
+to show you the `.cube` version, which, by the way, uses a
+different line order, but they will all give you the same `sltconv`
+output). Of course the one shown first is much easier on us, humans.
+
+To convert any group of `decimal` numbers to the `hexadecimal`
+representation of them as floating-point `doubles`, just type
+`dblhex` followed by those numbers on the command line. If you
+want to type them as groups of three (or any other group), try
+typing a comma (`,`) immediately after each third number. And by
+_immediately_ I mean with no blank space after the number.
+
+For example to produce a valid `identity.sltt` file, whether on
+Unix or Windows or some other system, type,
+
+```
+$ echo sLut > identity.sltt
+$ dblhex 0 0 0, 0 0 1, 0 1 0, 0 1 1, 1 0 0, 1 0 1, 1 1 0, 1 1 1 >> identity.sltt
+```
+
+The first line creates a new `identity.sltt` file and writes
+`sLut` followed by a new line to it. The second line appends
+all those hexadecimals, each on a separate line.
+
+If you then try to convert it to the `.cube` format with `sltconv`,
+you may be surprised by the result:
+
+```
+sltconv identity.sltt
+sltconv, v.0.5.8
+Copyright 2019-2021 G. Adam Stanislav
+All rights reserved
+
+TITLE "identity.sltt"
+DOMAIN_MIN 0 0 0
+DOMAIN_MAX 1 1 1
+LUT_1D_SIZE 2
+0 0 0
+1 1 1
+
+## Converted from "identity.sltt" by sltconv, v.0.5.8
+```
+
+Yes, `sltconv` has recognized it as the `Identity LUT` and
+produced the smallest and simplest way of expressing it.
+
+The `Identity LUT` (`ILUT`) is a very important starting point in creating
+color effects, but their whole usefulness is in what we change
+the `ILUT` to and how we go about it.
+
+As an obvious example, suppose you were asked to edit some scenes
+in a movie to give the actors a happy and healthy look, and to do
+it in a subtle and non-obvious way. After all, just as we do not
+ask the actors to overact but be natural, we do not want our
+colorists to overcolor but be natural.
+
+Regardless of the race, the color of the human skin is produced by just
+different amounts of two types of melanin, and the result is somewhere
+around the orange color, albeit of varying darkness.
+
+So we want to create a `LUT` that will augment the `orange vertex`.
+But wait... What orange vertex??? We have just eight `vertices`, black,
+white, red, green, blue, cyan, magenta, and yellow!
+
+Of course we do. But the whole point of having the vertices is to be able to
+mix any color from them. Orange is just an equal amount of red and
+yellow. All we need to do is enhance, very subtly, `red` and `yellow`.
+But perhaps not in an equal strength because we want to avoid going too yellow.
+
+In our exercise, then, we shall boost `yellow` a bit, `red` twice
+as much as `yellow` and leave everything else at default. How do we
+boom `red` (or any color)? Remember, in the LUT, the vertices other
+than `black` and `white` consist of a `1` and two `0`s, or a `0` and two
+`1`s. To strenghten the color controlled by a vertex, we have to _increase_
+the `1`s and _decrease_ the `0`s. Just a little.
+
+So let us change `red` from `1 0 0` to `1.2 -0.1 -0.1` and `yellow` from `1 1 0`
+to `1.1 1.1 -0.05`. Everything else stays the same as in the `ILUT`. If, then,
+we decide to call the new file `rus.sltt`, we create it by typing these two commands,
+
+```
+echo sLut > rus.sltt
+dblhex 0 0 0, 0 0 1, 0 1 0, 0 1 1, 1.2 -0.1 -0.1, 1 0 1, 1.1 1.1 -0.05, 1 1 1 >> rus.sltt
+```
+
+We can view it in the `.cube` format,
+
+```
+$ sltconv rus.sltt
+sltconv, v.0.5.8
+Copyright 2019-2021 G. Adam Stanislav
+All rights reserved
+
+TITLE "rus.sltt"
+DOMAIN_MIN 0 0 0
+DOMAIN_MAX 1 1 1
+LUT_3D_SIZE 2
+0 0 0
+1.2 -0.1 -0.1
+0 1 0
+1.1 1.1 -0.05
+0 0 1
+1 0 1
+0 1 1
+1 1 1
+
+## Converted from "rus.sltt" by sltconv, v.0.5.8
+```
+
+And if you add the output file name, say `rus.cube`, you now have
+a nice `LUT` that makes people look happy and healthy. Try it, it works!
+
+Now suppose the people who asked you to do it were so impressed by your
+skill they want you to produce the opposite effect in other scenes, where
+the same actors are struggling, and do not look so happy and healthy.
+
+OK, what do you do? Do you demote the `red` and `yellow` vertices now?
+Or do you reset them to their defaults and elevate all the other color
+vertices? Well, you can try, but neither would be the best solution.
+
+I mean yes, you would probably restore `red` and `yellow` to their `ILUT`
+values. But the next step should be doing the same as you did before, just not
+to all the other vertices but only to the `complementary` vertices of `red` and
+`yellow`. The complement of `red` is `cyan`. So we are going to change it
+exactly how we changed `red` before and replace the default `cyan` values
+from `0 1 1` to `-0.1 1.2 1.2`.
+
+The opposite of yellow is `blue`. We will change it from `0 0 1` to
+`-0.05 -0.05 1.1`. Perhaps we should save it all in the file called `sur.sltt`
+since _sur_ is _rus_ backwards,
+
+```
+echo sLut > sur.sltt
+dblhex 0 0 0, -0.05 -0.05 1.1, 0 1 0, -0.1 1.2 1.2, 1 0 0, 1 0 1, 1 1 0, 1 1 1 >> sur.sltt
+```
+
+Then we just make a `.cube` file from it (unless your software supports
+`libkoliba` file formats directly),
+
+```
+$ sltconv sur.sltt
+sltconv, v.0.5.8
+Copyright 2019-2021 G. Adam Stanislav
+All rights reserved
+
+TITLE "sur.sltt"
+DOMAIN_MIN 0 0 0
+DOMAIN_MAX 1 1 1
+LUT_3D_SIZE 2
+0 0 0
+1 0 0
+0 1 0
+1 1 0
+-0.05 -0.05 1.1
+1 0 1
+-0.1 1.2 1.2
+1 1 1
+
+## Converted from "sur.sltt" by sltconv, v.0.5.8
+```
+
+So why not just type in the `.cube` files directly, with no need to go
+hexadecimal? Because remember, `sltconv` has the `-e` flag. So if you find the
+effects too strong, just re-run `sltconv` with an efficacy less than `1`.
+Or if you find the effects too weak, opt for `sltconv` with an efficacy of more
+than `1` (perhaps even a lot more). There are no limits!
 
 ## ConvertRecs
 
