@@ -473,7 +473,7 @@ If you then try to convert it to the `.cube` format with `sltconv`,
 you may be surprised by the result:
 
 ```
-sltconv identity.sltt
+$ sltconv identity.sltt
 sltconv, v.0.5.8
 Copyright 2019-2021 G. Adam Stanislav
 All rights reserved
