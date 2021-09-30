@@ -1825,6 +1825,10 @@ KLBDC KOLIBA_MATRIX * KOLIBA_ResetMatrixBlue(
 	KOLIBA_MATRIX * matrix
 );
 
+// Normalizes a matrix row in place, but only if wade is not zero.
+
+KLBDC KOLIBA_ROW * KOLIBA_NormalizeMatrixRow(KOLIBA_ROW *row, unsigned int wade);
+
 // We can apply a matrix to another matrix, i.e., multiply them. The
 // multiplier modifies the multiplicand here, not the other way.
 //
@@ -4200,10 +4204,6 @@ KLBDC extern const unsigned char KOLIBA_ldxHeader[SLTCFILEHEADERBYTES];
 
 // This is local to the library. It is not exported, and it is not guaranteed
 // to be present in any other version of the library.
-
-// Normalizes a matrix row in place, but only if wade is not zero.
-
-KLBHID KOLIBA_ROW * KOLIBA_NormalizeMatrixRow(KOLIBA_ROW *row, unsigned int wade);
 
 // Copy RGB color to all vertices of a sLut.
 KLBHID KOLIBA_SLUT * KOLIBA_CopyColorToSlutVertices(KOLIBA_SLUT *sLut, const KOLIBA_RGB *rgb);
