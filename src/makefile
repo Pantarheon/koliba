@@ -41,10 +41,12 @@ ASFLAGS=--gstabs
 PREFIX=/usr
 OBJS=sltconv.o pullmat.o invertmat.o effimat.o farbosity.o \
 	ConvertRecs.o RotationMatrix.o quintluts.o \
-	eryslut.o dblhex.o MatrixChain.o dichromatic.o 
+	eryslut.o dblhex.o MatrixChain.o dichromatic.o \
+	matconv.o 
 APPS=sltconv pullmat invertmat effimat \
 	ConvertRecs RotationMatrix quintluts \
-	eryslut dblhex MatrixChain dichromatic
+	eryslut dblhex MatrixChain dichromatic \
+	matconv
 
 build-all: $(APPS)
 
@@ -52,6 +54,9 @@ rebuild: clean build
 
 sltconv: sltconv.o
 	$(CC) $(CFLG) -o sltconv sltconv.o -L$(PREFIX)/lib -lkoliba
+
+matconv: matconv.o
+	$(CC) $(CFLG) -o matconv matconv.o -L$(PREFIX)/lib -lkoliba
 
 pullmat: pullmat.o
 	$(CC) $(CFLG) -o pullmat pullmat.o -L$(PREFIX)/lib -lkoliba
@@ -88,6 +93,9 @@ dichromatic: dichromatic.o
 
 sltconv.o: sltconv.c koliba.h
 	$(CC) $(CFLG) -c sltconv.c -I$(PREFIX)/include
+
+matconv.o: matconv.c koliba.h
+	$(CC) $(CFLG) -c matconv.c -I$(PREFIX)/include
 
 pullmat.o: pullmat.c koliba.h
 	$(CC) $(CFLG) -c pullmat.c -I$(PREFIX)/include
