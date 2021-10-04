@@ -1,0 +1,35 @@
+#include <windows.h>
+
+// APP version information.
+VS_VERSION_INFO    VERSIONINFO
+FILEVERSION        1,0,0,0
+PRODUCTVERSION     1,0,0,0
+FILEFLAGSMASK      VS_FFI_FILEFLAGSMASK
+#ifdef _DEBUG
+  FILEFLAGS        VS_FF_DEBUG | VS_FF_PRERELEASE
+#else
+  FILEFLAGS        0
+#endif
+FILEOS             VOS_NT_WINDOWS32
+FILETYPE           VFT_APP
+FILESUBTYPE        VFT2_UNKNOWN
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "CompanyName", "Pantarheon"
+      VALUE "FileDescription", "Creates a matrix with a predefined range/span."
+      VALUE "FileVersion", "1.0.0.0"
+      VALUE "InternalName", "matspan"
+      VALUE "LegalCopyright", "© 2021 G. Adam Stanislav"
+      VALUE "OriginalFilename", "matspan.exe"
+      VALUE "ProductName", "m3x4/m34t Span"
+      VALUE "ProductVersion", "1.0.0.0"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1252
+  END
+ END

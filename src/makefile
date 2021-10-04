@@ -42,11 +42,11 @@ PREFIX=/usr
 OBJS=sltconv.o pullmat.o invertmat.o effimat.o farbosity.o \
 	ConvertRecs.o RotationMatrix.o quintluts.o \
 	eryslut.o dblhex.o MatrixChain.o dichromatic.o \
-	matconv.o 
+	matconv.o matspan.o 
 APPS=sltconv pullmat invertmat effimat \
 	ConvertRecs RotationMatrix quintluts \
 	eryslut dblhex MatrixChain dichromatic \
-	matconv
+	matconv matspan 
 
 build-all: $(APPS)
 
@@ -57,6 +57,9 @@ sltconv: sltconv.o
 
 matconv: matconv.o
 	$(CC) $(CFLG) -o matconv matconv.o -L$(PREFIX)/lib -lkoliba
+
+matspan: matspan.o
+	$(CC) $(CFLG) -o matspan matspan.o -L$(PREFIX)/lib -lkoliba
 
 pullmat: pullmat.o
 	$(CC) $(CFLG) -o pullmat pullmat.o -L$(PREFIX)/lib -lkoliba
@@ -97,6 +100,9 @@ sltconv.o: sltconv.c koliba.h
 matconv.o: matconv.c koliba.h
 	$(CC) $(CFLG) -c matconv.c -I$(PREFIX)/include
 
+matspan.o: matspan.c koliba.h
+	$(CC) $(CFLG) -c matspan.c -I$(PREFIX)/include
+
 pullmat.o: pullmat.c koliba.h
 	$(CC) $(CFLG) -c pullmat.c -I$(PREFIX)/include
 
@@ -133,6 +139,12 @@ dblhex.o: dblhex.c
 install-sltconv: sltconv
 	install -p -s sltconv $(PREFIX)/bin
 
+install-matconv: matconv
+	install -p -s matconv $(PREFIX)/bin
+
+install-matspan: matspan
+	install -p -s matspan $(PREFIX)/bin
+
 install-pullmat: pullmat
 	install -p -s pullmat $(PREFIX)/bin
 
@@ -163,7 +175,7 @@ install-MatrixChain: MatrixChain
 install-dichromatic: dichromatic
 	install -p -s dichromatic $(PREFIX)/bin
 
-install-all: install-sltconv install-pullmat install-invertmat install-effimat install-ConvertRecs install-RotationMatrix install-quintluts install-eryslut install-dblhex install-MatrixChain install-dichromatic
+install-all: install-sltconv install-matconv install-matspan install-pullmat install-invertmat install-effimat install-ConvertRecs install-RotationMatrix install-quintluts install-eryslut install-dblhex install-MatrixChain install-dichromatic
 
 clean:
 	rm -f $(OBJS) $(APPS)
