@@ -1829,6 +1829,11 @@ KLBDC KOLIBA_MATRIX * KOLIBA_ResetMatrixBlue(
 
 KLBDC KOLIBA_ROW * KOLIBA_NormalizeMatrixRow(KOLIBA_ROW *row, unsigned int wade);
 
+// Create a matrix to control top and bottom values,
+// roughly corresponding to gain and lift.
+
+KLBDC KOLIBA_MATRIX * KOLIBA_MatrixSpan(KOLIBA_MATRIX *mat, KOLIBA_RGB *top, KOLIBA_RGB *bottom);
+
 // We can apply a matrix to another matrix, i.e., multiply them. The
 // multiplier modifies the multiplicand here, not the other way.
 //
