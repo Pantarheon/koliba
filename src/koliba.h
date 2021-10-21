@@ -44,11 +44,14 @@
 #define	_KOLIBA_H_
 
 #ifdef	SWIG
-%module	koliba
-%{
-	#include "koliba.h"
-%}
-%rename("%(regex:/^KOLIBA_(.*)/klb\\1/)s") "";
+%rename("%(strip:[KOLIBA_])s") "";
+%rename(TwoPi) KOLIBA_2Pi;
+%rename(OneEightyDivPi) KOLIBA_180DivPi;
+%rename(OneDiv2Pi)	KOLIBA_1Div2Pi;
+%rename(OneDiv360)	KOLIBA_1Div360;
+%rename(OneDFlutFlags) KOLIBA_1DFlutFlags;
+%rename(EightBitBuffer) KOLIBA_8BitBuffer;
+%ignore KOLIBA_360;
 #endif
 
 #include <stdlib.h>
@@ -941,6 +944,8 @@ KLBDC extern const double KOLIBA_PiDiv2;
 KLBDC extern const double KOLIBA_PiDiv180;
 KLBDC extern const double KOLIBA_180DivPi;
 KLBDC extern const double KOLIBA_1Div2Pi;
+KLBDC extern const double KOLIBA_1Div360;
+KLBDC extern const double KOLIBA_360;
 
 // And some macros/inlines for their use.
 #ifdef	NOKLINLIN
@@ -948,6 +953,8 @@ KLBDC extern const double KOLIBA_1Div2Pi;
 #define	KOLIBA_ConvertRadiansToDegrees(rad)	((double)(rad)*KOLIBA_180DivPi)
 #define	KOLIBA_ConvertTurnsToRadians(t)	((double)(t)*KOLIBA_2Pi)
 #define	KOLIBA_ConvertRadiansToTurns(rad)	((double)(rad)*KOLIBA_1Div2Pi)
+#define	KOLIBA_ConvertDegreesToTurns(deg)	((double)(deg)*KOLIBA_1Div360)
+#define	KOLIBA_ConvertTurnsToDegrees(t)	((double)(t)*KOLIBA_360)
 #else
 inline double KOLIBA_ConvertDegreesToRadians(double deg) {
 	return deg * KOLIBA_PiDiv180;
@@ -960,6 +967,12 @@ inline double KOLIBA_ConvertTurnsToRadians(double t) {
 }
 inline double KOLIBA_ConvertRadiansToTurns(double rad) {
 	return rad * KOLIBA_1Div2Pi;
+}
+inline double KOLIBA_ConvertDegreesToTurns(double deg) {
+	return deg * KOLIBA_1Div360;
+}
+inline double KOLIBA_ConvertTurnsToDegrees(double t) {
+	return t * KOLIBA_360;
 }
 #endif
 
@@ -1073,7 +1086,7 @@ KLBDC extern const KOLIBA_QUINTARYCOLORS KOLIBA_QuintaryColorCount;
 
 // A pass-through buffer of unmodified 8-bit values.
 
-KLBDC extern const unsigned char KOLIBA_8BitBuffer[256];
+KLBDC extern const uint8_t KOLIBA_8BitBuffer[256];
 
 
 
