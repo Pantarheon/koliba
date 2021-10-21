@@ -56,8 +56,13 @@
 
 #include <stdlib.h>
 #include <inttypes.h>
+#include <stdint.h>
+#include <stdbool.h>
 
-#if defined _WIN32
+#ifdef	NOKLIBLIB	// Should you need a static library...
+# define	KLBHID
+# define	KLBDC
+#elif defined _WIN32
 # define	KLBHID
 #ifdef	DLL
 # define	KLBDC	__declspec(dllexport)
@@ -1050,8 +1055,8 @@ KLBDC extern const unsigned char KOLIBA_LinearByteToSrgb[256];
 // We, however, do not have such a pair of tables for sRGB
 // because of its non-linearity which would require a huge
 // table.
-KLBDC const uint64_t KOLIBA_HighWordDiv65535[256];
-KLBDC const uint64_t KOLIBA_LowWordDiv65535[256];
+KLBDC extern const uint64_t KOLIBA_HighWordDiv65535[256];
+KLBDC extern const uint64_t KOLIBA_LowWordDiv65535[256];
 
 // Some help to produce primary through quintary color LUTs
 /*
@@ -1398,12 +1403,12 @@ KLBDC KOLIBA_FLAGS KOLIBA_FlutFlags(
 // It may be useful to determine if a FLUT is Identity FLUT. It, for example,
 // alows us to just quickly copy all the input pixels to the output pixels.
 
-KLBDC int KOLIBA_IsIdentityFlut(
+KLBDC bool KOLIBA_IsIdentityFlut(
 	const KOLIBA_FLUT * const fLut
 );
 
 // And sometimes we need to see if a SLUT is Identity SLUT.
-KLBDC int KOLIBA_IsIdentitySlut(const KOLIBA_SLUT * const sLut);
+KLBDC bool KOLIBA_IsIdentitySlut(const KOLIBA_SLUT * const sLut);
 
 // Apply a chain of n FLUTs to an XYZ vector. If n is zero, just copy the
 // input to the output. In that case, FFLUT may be NULL because it is not used
@@ -1636,7 +1641,7 @@ KLBDC KOLIBA_SLUT * KOLIBA_MonoFarbaToSlut(
 	const KOLIBA_RGB * const gray,	// May be NULL.
 	double primarysaturation,
 	double secondarysaturation,
-	unsigned char flags
+	uint8_t flags
 );
 
 #ifdef NOKLINLIN
