@@ -2175,7 +2175,7 @@ KLBDC KOLIBA_CHROMAT * KOLIBA_SetChromaticMatrixModel(
 KLBDC KOLIBA_MATRIX * KOLIBA_DichromaticMatrix(
 	KOLIBA_MATRIX * mat,
 	const KOLIBA_DICHROMA * const dicr,
-	unsigned int normalize,
+	bool normalize,
 	unsigned int channel
 );
 
@@ -2207,13 +2207,13 @@ inline KOLIBA_DICHROMA * KOLIBA_ResetDichromaticMatrix(KOLIBA_DICHROMA *dicr) {
 	return dicr;
 }
 
-inline KOLIBA_SLUT * KOLIBA_ConvertDichromaticMatrixToSlut(KOLIBA_SLUT *sLut, const KOLIBA_DICHROMA *dicr, unsigned int normalize, unsigned int channel) {
+inline KOLIBA_SLUT * KOLIBA_ConvertDichromaticMatrixToSlut(KOLIBA_SLUT *sLut, const KOLIBA_DICHROMA *dicr, bool normalize, unsigned int channel) {
 	KOLIBA_MATRIX mat;
 
 	return KOLIBA_ConvertMatrixToSlut(sLut, KOLIBA_DichromaticMatrix(&mat, dicr, normalize, channel));
 }
 
-inline KOLIBA_FLUT * KOLIBA_ConvertDichromaticMatrixToFlut(KOLIBA_FLUT *fLut, const KOLIBA_DICHROMA *dicr, unsigned int normalize, unsigned int channel) {
+inline KOLIBA_FLUT * KOLIBA_ConvertDichromaticMatrixToFlut(KOLIBA_FLUT *fLut, const KOLIBA_DICHROMA *dicr, bool normalize, unsigned int channel) {
 	KOLIBA_MATRIX mat;
 
 	return KOLIBA_ConvertMatrixToFlut(fLut, KOLIBA_DichromaticMatrix(&mat, dicr, normalize, channel));
