@@ -1652,7 +1652,7 @@ KLBDC KOLIBA_SLUT * KOLIBA_MonoFarbaToSlut(
 	KOLIBA_ConvertSlutToFlut(output,&vert_0_0_0_0_2);\
 } while(0)
 #else
-inline KOLIBA_FLUT * KOLIBA_MonoFarbaToFlut(KOLIBA_FLUT * output, const KOLIBA_RGB * gray, double primary, double secondary, unsigned char flags)	{
+inline KOLIBA_FLUT * KOLIBA_MonoFarbaToFlut(KOLIBA_FLUT * output, const KOLIBA_RGB * gray, double primary, double secondary, uint8_t flags)	{
 	KOLIBA_SLUT sLut;
 	KOLIBA_VERTICES vert;
 
@@ -1799,11 +1799,9 @@ KLBDC KOLIBA_SLUT * KOLIBA_ConvertMatrixToSlut(
 	const KOLIBA_MATRIX * const mat
 );
 
-// We can test if a FLUT or a SLUT could be a matrix. The result is boolean
-// but we declare the functions as returning int to be compatible with all
-// C compilers.
+// We can test if a FLUT or a SLUT could be a matrix. The result is boolean.
 
-KLBDC int KOLIBA_FlutIsMatrix(
+KLBDC bool KOLIBA_FlutIsMatrix(
 	const KOLIBA_FLUT * const f
 );
 
