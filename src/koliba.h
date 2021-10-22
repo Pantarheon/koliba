@@ -43,17 +43,6 @@
 #ifndef	_KOLIBA_H_
 #define	_KOLIBA_H_
 
-#ifdef	SWIG
-%rename("%(strip:[KOLIBA_])s") "";
-%rename(TwoPi) KOLIBA_2Pi;
-%rename(OneEightyDivPi) KOLIBA_180DivPi;
-%rename(OneDiv2Pi)	KOLIBA_1Div2Pi;
-%rename(OneDiv360)	KOLIBA_1Div360;
-%rename(OneDFlutFlags) KOLIBA_1DFlutFlags;
-%rename(EightBitBuffer) KOLIBA_8BitBuffer;
-%ignore KOLIBA_360;
-#endif
-
 #include <stdlib.h>
 #include <inttypes.h>
 #include <stdint.h>
@@ -920,9 +909,7 @@ KLBDC extern const KOLIBA_CHANNELBLEND KOLIBA_IdentityChannelBlend;
 #define KOLIBA_IdentityMatrix	(KOLIBA_IdentityChannelBlend.mat)
 KLBDC extern const KOLIBA_CHROMA KOLIBA_IdentityChroma;
 KLBDC extern const KOLIBA_PALETTE KOLIBA_IdentityPalette;
-#ifndef	SWIG
 KLBHID extern const KOLIBA_MALLET KOLIBA_IdentityMallet;
-#endif
 
 // Not exactly a default, but useful, a sLut with all zeros
 // except in the white vertex.
@@ -1069,10 +1056,8 @@ KLBDC extern const KOLIBA_EFFILUT KOLIBA_QuintaryColorsX[];
 /*
 	These two replace them internally, but are not exported.
 */
-#ifndef	SWIG
 KLBHID extern const KOLIBA_EFFILUT KOLIBA_TriFarbaF[3];
 KLBHID extern const KOLIBA_EFFILUT KOLIBA_TriFarbaX[3];
-#endif
 
 KLBDC extern const char * const KOLIBA_QuintaryColorTokens[KQC_COUNT];
 KLBDC extern const char * const KOLIBA_QuintaryColorNames[KQC_COUNT];
@@ -4238,7 +4223,6 @@ KLBDC extern const unsigned char KOLIBA_ldxHeader[SLTCFILEHEADERBYTES];
 // This is local to the library. It is not exported, and it is not guaranteed
 // to be present in any other version of the library.
 
-#ifndef SWIG
 // Copy RGB color to all vertices of a sLut.
 KLBHID KOLIBA_SLUT * KOLIBA_CopyColorToSlutVertices(KOLIBA_SLUT *sLut, const KOLIBA_RGB *rgb);
 
@@ -4249,7 +4233,6 @@ KLBHID extern const KOLIBA_SLUT KOLIBA_Ones;
 KLBHID extern const KOLIBA_SLUT KOLIBA_NaturalContrastSlut;
 KLBHID extern const KOLIBA_SLUT KOLIBA_Rec2020Slut;
 KLBHID extern const double KOLIBA_NaN;
-#endif
 
 // And some globally useful.
 KLBDC extern const KOLIBA_SLUT KOLIBA_NaturalFarbaContrastSlut;
