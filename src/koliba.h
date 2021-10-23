@@ -2283,7 +2283,7 @@ inline KOLIBA_FLUT * KOLIBA_ConvertAnachromaticMatrixToFlut(KOLIBA_FLUT *fLut, c
 KLBDC KOLIBA_MATRIX * KOLIBA_DiachromaticMatrix(
 	KOLIBA_MATRIX * mat,
 	const KOLIBA_DIACHROMA * const dacr,
-	unsigned int normalize
+	bool normalize
 );
 
 #ifdef	NOKLINLIN
@@ -2300,13 +2300,13 @@ KLBDC KOLIBA_MATRIX * KOLIBA_DiachromaticMatrix(
 
 #else
 
-inline KOLIBA_SLUT * KOLIBA_ConvertDiachromaticMatrixToSlut(KOLIBA_SLUT *sLut, const KOLIBA_DIACHROMA *dacr, unsigned int normalize) {
+inline KOLIBA_SLUT * KOLIBA_ConvertDiachromaticMatrixToSlut(KOLIBA_SLUT *sLut, const KOLIBA_DIACHROMA *dacr, bool normalize) {
 	KOLIBA_MATRIX mat;
 
 	return KOLIBA_ConvertMatrixToSlut(sLut, KOLIBA_DiachromaticMatrix(&mat, dacr, normalize));
 }
 
-inline KOLIBA_FLUT * KOLIBA_ConvertDiachromaticMatrixToFlut(KOLIBA_FLUT *fLut, const KOLIBA_DIACHROMA *dacr, unsigned int normalize) {
+inline KOLIBA_FLUT * KOLIBA_ConvertDiachromaticMatrixToFlut(KOLIBA_FLUT *fLut, const KOLIBA_DIACHROMA *dacr, bool normalize) {
 	KOLIBA_MATRIX mat;
 
 	return KOLIBA_ConvertMatrixToFlut(fLut, KOLIBA_DiachromaticMatrix(&mat, dacr, normalize));
