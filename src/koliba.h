@@ -1840,7 +1840,7 @@ KLBDC KOLIBA_MATRIX * KOLIBA_ResetMatrixBlue(
 
 // Normalizes a matrix row in place, but only if wade is not zero.
 
-KLBDC KOLIBA_ROW * KOLIBA_NormalizeMatrixRow(KOLIBA_ROW *row, unsigned int wade);
+KLBDC KOLIBA_ROW * KOLIBA_NormalizeMatrixRow(KOLIBA_ROW *row, bool wade);
 
 // Create a matrix to control top and bottom values,
 // roughly corresponding to gain and lift.
@@ -2233,7 +2233,7 @@ inline KOLIBA_FLUT * KOLIBA_ConvertDichromaticMatrixToFlut(KOLIBA_FLUT *fLut, co
 KLBDC KOLIBA_MATRIX * KOLIBA_AnachromaticMatrix(
 	KOLIBA_MATRIX * mat,
 	const KOLIBA_ANACHROMA * const ancr,
-	unsigned int normalize,
+	bool normalize,
 	unsigned int channel
 );
 
@@ -2251,13 +2251,13 @@ KLBDC KOLIBA_MATRIX * KOLIBA_AnachromaticMatrix(
 
 #else
 
-inline KOLIBA_SLUT * KOLIBA_ConvertAnachromaticMatrixToSlut(KOLIBA_SLUT *sLut, const KOLIBA_ANACHROMA *ancr, unsigned int normalize, unsigned int channel) {
+inline KOLIBA_SLUT * KOLIBA_ConvertAnachromaticMatrixToSlut(KOLIBA_SLUT *sLut, const KOLIBA_ANACHROMA *ancr, bool normalize, unsigned int channel) {
 	KOLIBA_MATRIX mat;
 
 	return KOLIBA_ConvertMatrixToSlut(sLut, KOLIBA_AnachromaticMatrix(&mat, ancr, normalize, channel));
 }
 
-inline KOLIBA_FLUT * KOLIBA_ConvertAnachromaticMatrixToFlut(KOLIBA_FLUT *fLut, const KOLIBA_ANACHROMA *ancr, unsigned int normalize, unsigned int channel) {
+inline KOLIBA_FLUT * KOLIBA_ConvertAnachromaticMatrixToFlut(KOLIBA_FLUT *fLut, const KOLIBA_ANACHROMA *ancr, bool normalize, unsigned int channel) {
 	KOLIBA_MATRIX mat;
 
 	return KOLIBA_ConvertMatrixToFlut(fLut, KOLIBA_AnachromaticMatrix(&mat, ancr, normalize, channel));
