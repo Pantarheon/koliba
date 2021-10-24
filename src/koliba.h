@@ -1538,7 +1538,7 @@ KLBDC KOLIBA_SLUT *KOLIBA_VerticesToSlut(
 );
 
 // Find out if a 3D SLUT is really just a 1D Lut.
-KLBDC int KOLIBA_SlutIs1D(
+KLBDC bool KOLIBA_SlutIs1D(
 	const KOLIBA_SLUT * const sLut
 );
 
