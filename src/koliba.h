@@ -47,6 +47,7 @@
 #include <inttypes.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 
 #ifdef	NOKLIBLIB	// Should you need a static library...
 # define	KLBHID
@@ -4236,6 +4237,9 @@ KLBHID extern const double KOLIBA_NaN;
 
 // And some globally useful.
 KLBDC extern const KOLIBA_SLUT KOLIBA_NaturalFarbaContrastSlut;
+KLBDC const KOLIBA_SLUT KOLIBA_ContrastSlut;
+KLBDC const KOLIBA_SLUT KOLIBA_FarbaContrastSlut;
+KLBDC const KOLIBA_SLUT KOLIBA_SvitContrastSlut;
 
 
 
