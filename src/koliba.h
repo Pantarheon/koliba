@@ -1791,12 +1791,12 @@ KLBDC bool KOLIBA_FlutIsMatrix(
 	const KOLIBA_FLUT * const f
 );
 
-KLBDC int KOLIBA_SlutIsMatrix(
+KLBDC bool KOLIBA_SlutIsMatrix(
 	const KOLIBA_SLUT * const s
 );
 
 // And a VERTICES version of SlutIsMatrix.
-KLBDC int KOLIBA_VerticesIsMatrix(
+KLBDC bool KOLIBA_VerticesIsMatrix(
 	const KOLIBA_VERTICES * const s
 );
 
