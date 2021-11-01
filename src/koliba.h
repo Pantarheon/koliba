@@ -3694,7 +3694,6 @@ KLBDC extern const char KOLIBA_ScanPlttFormat[];
 KLBDC extern const char KOLIBA_ScanPlttHeaderFormat[];
 
 
-KLBDC KOLIBA_SLUT * KOLIBA_MarshalSlutFromCompatibleString(KOLIBA_SLUT *sLut, const unsigned char * const string, KOLIBA_ftype *ft);
 
 
 
