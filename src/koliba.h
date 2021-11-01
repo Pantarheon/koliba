@@ -3578,7 +3578,7 @@ KLBDC double * KOLIBA_NetDoubles(
 
 // Check the sum of the data in a file.
 
-KLBDC int KOLIBA_CheckSum(
+KLBDC bool KOLIBA_CheckSum(
 	const double * const d,
 	double chsum,
 	unsigned int n
@@ -3772,8 +3772,7 @@ KLBDC extern const unsigned char KOLIBA_sLutHeader[SLTCFILEHEADERBYTES];
 // After reading and verifying its header, we can get the SLUT from the file,
 // convert the values from MSB first to the local system (using
 // KOLIBA_FixDoubles() declared earlier in this header), and check if it is a
-// valid SLUT (returns 1 if valid, 0 if not, so it really is Boolean, but
-// since C does not have a Boolean type, we use int).
+// valid SLUT (returns true if valid, false if not).
 
 #ifdef	NOKLINLIN
 
@@ -3781,7 +3780,7 @@ KLBDC extern const unsigned char KOLIBA_sLutHeader[SLTCFILEHEADERBYTES];
 
 #else
 
-inline int KOLIBA_CheckSlut(KOLIBA_SLUT *sLut, double chsum) {
+inline bool KOLIBA_CheckSlut(KOLIBA_SLUT *sLut, double chsum) {
 	return KOLIBA_CheckSum((double *)sLut, chsum, sizeof(KOLIBA_SLUT)/sizeof(double));
 }
 
@@ -3879,7 +3878,7 @@ KLBDC extern const unsigned char KOLIBA_m3x4Header[SLTCFILEHEADERBYTES];
 
 #else
 
-inline int KOLIBA_CheckMat(KOLIBA_MATRIX *matrix, double chsum) {
+inline bool KOLIBA_CheckMat(KOLIBA_MATRIX *matrix, double chsum) {
 	return KOLIBA_CheckSum((double*)matrix, chsum, sizeof(KOLIBA_MATRIX)/sizeof(double));
 }
 
@@ -3949,7 +3948,7 @@ KLBDC extern const unsigned char KOLIBA_kPltHeader01[SLTCFILEHEADERBYTES];
 
 #else
 
-inline int KOLIBA_CheckKplt(KOLIBA_PALETTE2 * kPlt, double chsum) {
+inline bool KOLIBA_CheckKplt(KOLIBA_PALETTE2 * kPlt, double chsum) {
 	return KOLIBA_CheckSum((double*)kPlt, chsum, (sizeof(KOLIBA_PALETTE2)/sizeof(double))-1);
 }
 
@@ -3986,7 +3985,7 @@ KLBDC KOLIBA_PALETTE * KOLIBA_ReadPaletteFromNamedFile(
 
 #else
 
-inline int KOLIBA_CheckChrm(KOLIBA_CHROMAT *chrm, double chsum) {
+inline bool KOLIBA_CheckChrm(KOLIBA_CHROMAT *chrm, double chsum) {
 	return KOLIBA_CheckSum((double*)chrm, chsum, sizeof(KOLIBA_CHROMAT)/sizeof(double));
 }
 
@@ -4052,7 +4051,7 @@ KLBDC KOLIBA_CHROMAT * KOLIBA_ReadChrtFromNamedFile(
 
 #else
 
-inline int KOLIBA_CheckDicr(KOLIBA_DICHROMA * dicr, double chsum) {
+inline bool KOLIBA_CheckDicr(KOLIBA_DICHROMA * dicr, double chsum) {
 	return KOLIBA_CheckSum((double*)dicr, chsum, sizeof(KOLIBA_DICHROMA)/sizeof(double));
 }
 
@@ -4115,7 +4114,7 @@ KLBDC extern const unsigned char KOLIBA_cFltHeader[SLTCFILEHEADERBYTES];
 
 #else
 
-inline int KOLIBA_CheckCflt(KOLIBA_CFLT *cFlt, double chsum) {
+inline bool KOLIBA_CheckCflt(KOLIBA_CFLT *cFlt, double chsum) {
 	return KOLIBA_CheckSum((double*)cFlt, chsum, sizeof(KOLIBA_CFLT)/sizeof(double));
 }
 
