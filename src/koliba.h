@@ -1544,7 +1544,7 @@ KLBDC bool KOLIBA_SlutIs1D(
 );
 
 // Here is a VERTICES version of SlutIs1D.
-KLBDC int KOLIBA_VerticesIs1D(
+KLBDC bool KOLIBA_VerticesIs1D(
 	const KOLIBA_VERTICES * const vert
 );
 
