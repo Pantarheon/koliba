@@ -3809,9 +3809,10 @@ KLBDC KOLIBA_SLUT * KOLIBA_ReadSlutFromNamedFile(
 // the KOLIBA_SLUT structure into text using the following format string:
 //
 // Such a file should have the .sltt extension and MUST start with the
-// text formated by KOLIBA_PrintSlttFormat[]. The text MAY be followed by any other text,
-// which we will ignore. But no comments are permissable within the
-// KOLIBA_PrintSlttFormat-formated string, or else the KOLIBA_ScanSlttFormat[] scan would fail.
+// text formated by KOLIBA_PrintSlttFormat[]. The text MAY be followed by any
+// other text, which we will ignore. But no comments are permissable *within*
+// the KOLIBA_PrintSlttFormat-formated string, or else the KOLIBA_ScanSlttFormat[]
+// scan would fail.
 
 // Write a SLUT to a named .sltt file. Returns 0 on success, non-0
 // on failure.
