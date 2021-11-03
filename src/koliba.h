@@ -2026,19 +2026,19 @@ KLBDC KOLIBA_MATRIX * KOLIBA_GrayComplementMatrix(
 #define	KOLIBA_GreyComplementMatrix(p,q,r)	KOLIBA_GrayComplementMatrix(p,q,r)
 
 #ifdef	NOKLINLIN
-#define	KOLIBARedComplementMatrix(output,rec)	KOLIBA_GrayComplementMatrix((output), (rec), 0)
-#define	KOLIBAGreenComplementMatrix(output,rec)	KOLIBA_GrayComplementMatrix((output), (rec), 1)
-#define	KOLIBABlueComplementMatrix(output,rec)	KOLIBA_GrayComplementMatrix((output), (rec), 2)
+#define	KOLIBA_RedComplementMatrix(output,rec)	KOLIBA_GrayComplementMatrix((output), (rec), 0)
+#define	KOLIBA_GreenComplementMatrix(output,rec)	KOLIBA_GrayComplementMatrix((output), (rec), 1)
+#define	KOLIBA_BlueComplementMatrix(output,rec)	KOLIBA_GrayComplementMatrix((output), (rec), 2)
 #else
-inline KOLIBA_MATRIX * KOLIBARedComplementMatrix(KOLIBA_MATRIX *output, KOLIBA_RGB *rec) {
+inline KOLIBA_MATRIX * KOLIBA_RedComplementMatrix(KOLIBA_MATRIX *output, KOLIBA_RGB *rec) {
 	return KOLIBA_GrayComplementMatrix(output, rec, 0);
 }
 
-inline KOLIBA_MATRIX * KOLIBAGreenComplementMatrix(KOLIBA_MATRIX *output, KOLIBA_RGB *rec) {
+inline KOLIBA_MATRIX * KOLIBA_GreenComplementMatrix(KOLIBA_MATRIX *output, KOLIBA_RGB *rec) {
 	return KOLIBA_GrayComplementMatrix(output, rec, 1);
 }
 
-inline KOLIBA_MATRIX * KOLIBABlueComplementMatrix(KOLIBA_MATRIX *output, KOLIBA_RGB *rec) {
+inline KOLIBA_MATRIX * KOLIBA_BlueComplementMatrix(KOLIBA_MATRIX *output, KOLIBA_RGB *rec) {
 	return KOLIBA_GrayComplementMatrix(output, rec, 2);
 }
 #endif
