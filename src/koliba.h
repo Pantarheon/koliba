@@ -1839,6 +1839,9 @@ KLBDC KOLIBA_MATRIX * KOLIBA_ResetMatrixBlue(
 	KOLIBA_MATRIX * matrix
 );
 
+// We can fix a matrix if it contains miniscule values.
+KLBDC KOLIBA_MATRIX * KOLIBA_FixMatrix(KOLIBA_MATRIX *matrix);
+
 // Normalizes a matrix row in place, but only if wade is not zero.
 
 KLBDC KOLIBA_ROW * KOLIBA_NormalizeMatrixRow(
