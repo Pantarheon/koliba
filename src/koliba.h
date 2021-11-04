@@ -2470,7 +2470,7 @@ KLBDC KOLIBA_MATRIX * KOLIBA_GrayscaleMatrix(
 // false, or actually 1 and 0 since old-fashioned C knows nothing about
 // booleans.
 
-KLBDC unsigned int KOLIBA_MatrixIs3x3(
+KLBDC bool KOLIBA_MatrixIs3x3(
 	const KOLIBA_MATRIX * const mat
 );
 
