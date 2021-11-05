@@ -4163,7 +4163,11 @@ KLBDC KOLIBA_SLUT * KOLIBA_ReadSlutFromCompatibleNamedFile(
 // NULL on failure. If, however, mat is not NULL, its
 // contents will be filled with the identity mat on failure.
 
-KLBDC KOLIBA_MATRIX * KOLIBA_ReadMatrixFromCompatibleNamedFile(KOLIBA_MATRIX *mat, char *fname, KOLIBA_ftype *ft);
+KLBDC KOLIBA_MATRIX * KOLIBA_ReadMatrixFromCompatibleNamedFile(
+	KOLIBA_MATRIX *mat,
+	char *fname,
+	KOLIBA_ftype *ft
+);
 
 
 // A Lumidux file, extension .ldx (lower case only) is different from all
