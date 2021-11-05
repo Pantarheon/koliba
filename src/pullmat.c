@@ -26,7 +26,7 @@ int notslut(char *path, char *file) {
 int main(int argc, char *argv[]) {
 	KOLIBA_SLUT sLut;
 	KOLIBA_MATRIX mat;
-	int is;
+	bool is;
 	double sum;
 
 	if ((argc != 2) && (argc != 3)) return usage(argv[0]);
@@ -34,10 +34,10 @@ int main(int argc, char *argv[]) {
 	if (KOLIBA_ReadSlutFromCompatibleNamedFile( &sLut, argv[1], NULL) == NULL)
  		return notslut(argv[0], argv[1]);
 
-	if ((is = KOLIBA_SlutIsMatrix(&sLut)) == 0)
+	if ((is = KOLIBA_SlutIsMatrix(&sLut)) == false)
 		fprintf(stderr, "%sThe matrix w%s only be a simplified version of %s.\n", "Warning: " + (argc == 2) * 9, (argc == 3) ? "ill" : "ould", argv[1]);
 
-	if (KOLIBA_ConvertSlutToMatrix(&mat, &sLut) == NULL) {
+	if (KOLIBA_ConvertSlutToMatrix(&mat, &sLut, false) == NULL) {
 		fprintf(stderr, "%s: Failed to convert %s to a matrix\n", argv[0], argv[1]);
 		return 4;
 	}

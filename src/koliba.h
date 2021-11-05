@@ -1818,7 +1818,8 @@ KLBDC KOLIBA_MATRIX * KOLIBA_ConvertFlutToMatrix(
 
 KLBDC KOLIBA_MATRIX * KOLIBA_ConvertSlutToMatrix(
 	KOLIBA_MATRIX * mat,
-	const KOLIBA_SLUT * const sLut
+	const KOLIBA_SLUT * const sLut,
+	bool secondary
 );
 
 // We can reset a matrix or one of its rows to the identity (default).
