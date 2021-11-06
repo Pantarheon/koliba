@@ -1785,6 +1785,12 @@ KLBDC KOLIBA_SLUT * KOLIBA_ConvertMatrixToSlut(
 	const KOLIBA_MATRIX * const mat
 );
 
+KLBDC KOLIBA_SLUT * KOLIBA_ConvertMatricesToSlut(
+	KOLIBA_SLUT * sLut,
+	const KOLIBA_MATRIX * const primary,
+	const KOLIBA_MATRIX * const secondary
+);
+
 // We can test if a FLUT or a SLUT could be a matrix. The result is boolean.
 
 KLBDC bool KOLIBA_FlutIsMatrix(
