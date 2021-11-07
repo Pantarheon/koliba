@@ -1806,6 +1806,10 @@ KLBDC KOLIBA_SLUT * KOLIBA_ConvertGeminixToSlut(
 	const KOLIBA_GEMINIX * const gem
 );
 
+KLBDC KOLIBA_GEMINIX * KOLIBA_SwapGeminix(
+	KOLIBA_GEMINIX * gem
+);
+
 KLBDC KOLIBA_GEMINIX * KOLIBA_ConvertSlutToGeminix(
 	KOLIBA_GEMINIX * geminix,
 	const KOLIBA_SLUT * const sLut
