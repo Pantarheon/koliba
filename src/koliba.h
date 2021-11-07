@@ -620,6 +620,16 @@ typedef struct _KOLIBA_CFLT2 {
 	double checksum;
 } KOLIBA_CFLT2;
 
+// It may be useful to treat a SLUT as a twin matrix, where one matrix
+// corresponds to black, red, green and blue (the primary farba plus black),
+// and the other to cyan, magenta, yellow and white (the secondary farba
+// plus white). That way we can use matrix multiplication to chain SLUTs
+// as opposed to just trying to concatenate SLUTs and hoping for the best.
+typedef struct _KOLIBA_GEMINIX {
+	KOLIBA_MATRIX p;
+	KOLIBA_MATRIX s;
+} KOLIBA_GEMINIX;
+
 // Sometimes a simple LUT (SLUT) does not seem enough to represent the desired
 // color change, and we might be tempted to create a large LUT in its stead.
 //
@@ -1791,6 +1801,16 @@ KLBDC KOLIBA_SLUT * KOLIBA_ConvertMatricesToSlut(
 	const KOLIBA_MATRIX * const secondary
 );
 
+KLBDC KOLIBA_SLUT * KOLIBA_ConvertGeminixToSlut(
+	KOLIBA_SLUT * sLut,
+	const KOLIBA_GEMINIX * const gem
+);
+
+KLBDC KOLIBA_GEMINIX * KOLIBA_ConvertSlutToGeminix(
+	KOLIBA_GEMINIX * geminix,
+	const KOLIBA_SLUT * const sLut
+);
+
 // We can test if a FLUT or a SLUT could be a matrix. The result is boolean.
 
 KLBDC bool KOLIBA_FlutIsMatrix(
@@ -1910,6 +1930,16 @@ KLBDC KOLIBA_SLUT * KOLIBA_MultiplySluts(
 	KOLIBA_SLUT * output,
 	const KOLIBA_SLUT * const multiplicand,
 	const KOLIBA_SLUT * const multiplier
+);
+
+// This one seems better than the above MultiplySluts, but you need to
+// convert sLuts into geminices first (and then back to sLuts). Or you
+// can plan ahead...
+
+KLBDC KOLIBA_GEMINIX * KOLIBA_MultiplyGeminices(
+	KOLIBA_GEMINIX * output,
+	const KOLIBA_GEMINIX * const multiplicand,
+	const KOLIBA_GEMINIX * const multiplier
 );
 
 // Flutter is derived from matrix multiplication, then modified. It was
