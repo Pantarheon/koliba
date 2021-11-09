@@ -1966,6 +1966,10 @@ KLBDC KOLIBA_GEMINIX * KOLIBA_MatrixGeminixProduct(
 	bool matmod
 );
 
+KLBDC KOLIBA_GEMINIX * KOLIBA_MultiplyGeminixBySlut(
+	KOLIBA_GEMINIX * output,
+	const KOLIBA_GEMINIX * const multiplicand, const KOLIBA_SLUT * const multiplier
+);
 
 // Flutter is derived from matrix multiplication, then modified. It was
 // originally called "KOLIBA_MultiplyFluts", then I decided to call it
