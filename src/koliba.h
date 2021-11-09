@@ -1872,7 +1872,14 @@ KLBDC KOLIBA_MATRIX * KOLIBA_ResetMatrixBlue(
 );
 
 // We can fix a matrix if it contains miniscule values.
-KLBDC KOLIBA_MATRIX * KOLIBA_FixMatrix(KOLIBA_MATRIX *matrix);
+KLBDC KOLIBA_MATRIX * KOLIBA_FixMatrix(
+	KOLIBA_MATRIX *matrix
+);
+
+// We can also fix a geminix it is contains miniscule values.
+KLBDC KOLIBA_GEMINIX * KOLIBA_FixGeminix(
+	KOLIBA_GEMINIX *gem
+);
 
 // Normalizes a matrix row in place, but only if wade is not zero.
 
@@ -1946,6 +1953,19 @@ KLBDC KOLIBA_GEMINIX * KOLIBA_MultiplyGeminices(
 	const KOLIBA_GEMINIX * const multiplicand,
 	const KOLIBA_GEMINIX * const multiplier
 );
+
+// Multiply a matrix by a geminix (if matmod is false),
+// or a geminix by a matrix (if matmod is true).
+//
+// In either case, the result is a geminix.
+
+KLBDC KOLIBA_GEMINIX * KOLIBA_MatrixGeminixProduct(
+	KOLIBA_GEMINIX * output,
+	const KOLIBA_GEMINIX * const gem,
+	const KOLIBA_MATRIX * const mat,
+	bool matmod
+);
+
 
 // Flutter is derived from matrix multiplication, then modified. It was
 // originally called "KOLIBA_MultiplyFluts", then I decided to call it
