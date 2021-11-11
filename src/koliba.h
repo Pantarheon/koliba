@@ -1936,7 +1936,7 @@ KLBDC KOLIBA_MATRIX * KOLIBA_MultiplyMatrices(
 
 // "Multiply" SLUTs. This operation is only analogous to matrix multiplication
 // but is not as precise (because a LUT is not a function, only an
-// approximation of a function).
+// approximation of a function) and is now deprecated.
 
 KLBDC KOLIBA_SLUT * KOLIBA_MultiplySluts(
 	KOLIBA_SLUT * output,
@@ -1954,6 +1954,20 @@ KLBDC KOLIBA_GEMINIX * KOLIBA_MultiplyGeminices(
 	const KOLIBA_GEMINIX * const multiplier
 );
 
+KLBDC KOLIBA_GEMINIX * KOLIBA_MultiplyGeminixBySlut(
+	KOLIBA_GEMINIX * output,
+	const KOLIBA_GEMINIX * const multiplicand, const KOLIBA_SLUT * const multiplier
+);
+
+// And this one should be used instead of the KOLIBA_MultiplySluts.
+// It uses the KOLIBA_MultiplyGeminixBySlut internally.
+
+KLBDC KOLIBA_SLUT * KOLIBA_MultiplySlutBySlut(
+	KOLIBA_SLUT * output,
+	const KOLIBA_SLUT * const multiplicand,
+	const KOLIBA_SLUT * const multiplier
+);
+
 // Multiply a matrix by a geminix (if matmod is false),
 // or a geminix by a matrix (if matmod is true).
 //
@@ -1964,11 +1978,6 @@ KLBDC KOLIBA_GEMINIX * KOLIBA_MatrixGeminixProduct(
 	const KOLIBA_GEMINIX * const gem,
 	const KOLIBA_MATRIX * const mat,
 	bool matmod
-);
-
-KLBDC KOLIBA_GEMINIX * KOLIBA_MultiplyGeminixBySlut(
-	KOLIBA_GEMINIX * output,
-	const KOLIBA_GEMINIX * const multiplicand, const KOLIBA_SLUT * const multiplier
 );
 
 // Flutter is derived from matrix multiplication, then modified. It was
