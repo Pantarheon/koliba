@@ -3954,6 +3954,12 @@ KLBDC KOLIBA_SLUT * KOLIBA_ReadSlttFromNamedFile(
 	char *fname
 );
 
+KLBDC int KOLIBA_WriteGmnxToNamedFile(
+	const KOLIBA_GEMINIX *gem,
+	const char *fname
+);
+
+
 
 // If an effect can be expressed as a 3x4 matrix (i.e., KOLIBA_MATRIX), it
 // should be saved in the 3x4 Matrix file (extension .m3x4), rather than the
@@ -5355,6 +5361,12 @@ KLBDC int KOLIBA_WriteColorFilterToOpenFile(
 	const KOLIBA_CFLT *cFlt,
 	FILE *f
 );
+
+KLBDC int KOLIBA_WriteGmnxToOpenFile(
+	const KOLIBA_GEMINIX *gem,
+	FILE *f
+);
+
 
 // Read a SLUT from an open .sLut file. It needs to be open for reading binary
 // data. It remains open upon return, so the caller needs to close it. Returns
