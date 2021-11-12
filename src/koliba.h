@@ -73,6 +73,21 @@ extern "C" {
 
 
 #define	SLTCFILEHEADERBYTES	24
+// Minimum char buffer sizes (including the terminating NUL)
+// to produce default marshal strings of various structures.
+//
+// The initial 6 is for the four character identifier, followed
+// by a line feed, and the terminating NUL. If it is more than
+// 6, it is for any extra line feeds separating portions
+// of data (e.g. twin matrices).
+//
+// The 17 multiplier is the number of hexadecimal characters
+// of a double followed by either a blank space or a line feed.
+//
+// The multiplicand is the count of hexadecimal numbers.
+//
+// (An) optional final number(s) may be used for values specific
+// to certain structures, such as a digit for a boolean value.
 #define	SLTAMINCHARS	(6+17*24)
 #define	MATAMINCHARS	(6+17*12)
 #define	CHRAMINCHARS	(6+17*8)
@@ -627,6 +642,10 @@ typedef struct _KOLIBA_CFLT2 {
 // and the other to cyan, magenta, yellow and white (the secondary farba
 // plus white). That way we can use matrix multiplication to chain SLUTs
 // as opposed to just trying to concatenate SLUTs and hoping for the best.
+//
+// Also, technically, the rows in the s matrix should be labeled
+// cyan, magenta, yellow, but that would complicate things and force
+// us into unnecessary typecasting.
 typedef struct _KOLIBA_GEMINIX {
 	KOLIBA_MATRIX p;
 	KOLIBA_MATRIX s;
@@ -3784,6 +3803,18 @@ KLBDC extern const char KOLIBA_ScanPlttHeaderFormat[];
 KLBDC extern const char KOLIBA_PrintGmnxFormat[];
 KLBDC extern const char KOLIBA_ScanGmnxFormat[];
 KLBDC extern const char KOLIBA_ScanGmnxHeaderFormat[];
+
+KLBDC char * KOLIBA_GeminixToString(
+	char * string,
+	const KOLIBA_GEMINIX * const gem,
+	unsigned int strsize
+);
+
+KLBDC KOLIBA_GEMINIX * KOLIBA_StringToGeminix(
+	KOLIBA_GEMINIX * gem,
+	const char * const string
+);
+
 
 
 
