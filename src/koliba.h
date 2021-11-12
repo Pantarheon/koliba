@@ -76,6 +76,7 @@ extern "C" {
 #define	SLTAMINCHARS	(6+17*24)
 #define	MATAMINCHARS	(6+17*12)
 #define	CHRAMINCHARS	(6+17*8)
+#define	GMXAMINCHARS	(7+17*24)
 
 typedef	enum {
 	KOLIBA_ftnoslut,
@@ -92,7 +93,8 @@ typedef	enum {
 	KOLIBA_ftdcrt,
 	KOLIBA_ftpalette,
 	KOLIBA_ftkptt,
-	KOLIBA_ftcftt
+	KOLIBA_ftcftt,
+	KOLIBA_ftgmnx
 } KOLIBA_ftype;
 
 typedef enum {
@@ -3777,6 +3779,11 @@ KLBDC KOLIBA_SLUT * KOLIBA_MarshalSlutFromCompatibleString(KOLIBA_SLUT *sLut, co
 KLBDC extern const char KOLIBA_PrintPlttFormat[];
 KLBDC extern const char KOLIBA_ScanPlttFormat[];
 KLBDC extern const char KOLIBA_ScanPlttHeaderFormat[];
+
+// Text version of Koliba geminix (.gmnx)
+KLBDC extern const char KOLIBA_PrintGmnxFormat[];
+KLBDC extern const char KOLIBA_ScanGmnxFormat[];
+KLBDC extern const char KOLIBA_ScanGmnxHeaderFormat[];
 
 
 
