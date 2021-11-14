@@ -43,24 +43,28 @@
 #define USECLIB
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
 #include <koliba.h>
 
-#define	VERSION	"v1.0.0.0"
+#define	VERSION	"v1.1.0.0"
 
 int usage(int retval) {
-	fprintf((retval) ? stderr : stdout, "Usage: matconv [-i] input [[-o] output] [-n|N] [-t|s]\n");
+	fprintf((retval) ? stderr : stdout, "Usage: matconv [-i] input [[-o] output] [-e efficacy] [-n|N] [-t|s|f|F]\n");
 	return retval;
 }
 
 int main(unsigned int argc, char *argv[]) {
 	KOLIBA_MATRIX mat, *m;
 	FILE *f;
+	char *ptr;
 	unsigned int i;
+	double efficacy = 1.0;
 	char *input     = NULL;
 	char *output    = NULL;
 	bool  normalize = false;
 	bool  textual   = false;
+	bool  svg       = false;
 
 	if (argc < 2) return usage(1);
 
@@ -75,6 +79,20 @@ int main(unsigned int argc, char *argv[]) {
 			case '?':
 #endif
 				return usage(0);
+				break;
+			case 'e':
+				if (argv[i][2]) ptr = argv[i]+2;
+				else if (++i < argc) ptr = argv[i];
+				else return usage(3);
+				efficacy = atof(ptr);
+				break;
+			case 'F':
+				svg     = true;
+				textual = true;
+				break;
+			case 'f':
+				svg     = true;
+				textual = false;
 				break;
 			case 'i':
 				if (argv[i][2]) input = argv[i]+2;
@@ -94,9 +112,11 @@ int main(unsigned int argc, char *argv[]) {
 				break;
 			case 's':
 				textual = false;
+				svg     = false;
 				break;
 			case 't':
 				textual = true;
+				svg     = false;
 				break;
 		}
 		else if (input  == NULL) input  = argv[i];
@@ -126,13 +146,26 @@ int main(unsigned int argc, char *argv[]) {
 		return 7;
 	}
 
+	if (efficacy != 1.0) KOLIBA_MatrixEfficacy(m, m, efficacy);
+
 	if (normalize) {
 		KOLIBA_NormalizeMatrixRow(&mat.red, 1);
 		KOLIBA_NormalizeMatrixRow(&mat.green, 1);
 		KOLIBA_NormalizeMatrixRow(&mat.blue, 1);
 	}
 
-	if (textual) {
+	if (svg) {
+		i = fprintf(f, (textual) ?
+			"<filter id=\"Matrix\" filterUnits=\"objectBoundingBox\" x=\"0%%\" y=\"0%%\" width=\"100%%\" height=\"100%%\">\n"
+			"\t<feColorMatrix type=\"matrix\" in=\"SourceGraphic\" values=\"%g %g %g %g 0  %g %g %g %g 0  %g %g %g %g 0  0 0 0 1 0\"/>\n"
+			"</filter>\n"
+			: "<feColorMatrix type=\"matrix\" in=\"SourceGraphic\" values=\"%g %g %g %g 0  %g %g %g %g 0  %g %g %g %g 0  0 0 0 1 0\"/>\n",
+			mat.red.r,   mat.red.g,   mat.red.b,   mat.red.o,
+			mat.green.r, mat.green.g, mat.green.b, mat.green.o,
+			mat.blue.r,  mat.blue.g,  mat.blue.b,  mat.blue.o
+		) <= 0;
+	}
+	else if (textual) {
 		i = KOLIBA_WriteM34tToOpenFile(&mat, f);
 		fprintf(f, "\n# Created with matconv " VERSION "\n");
 	}
