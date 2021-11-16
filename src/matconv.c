@@ -47,7 +47,7 @@
 #include <string.h>
 #include <koliba.h>
 
-#define	VERSION	"v1.1.0.0"
+#define	VERSION	"v1.1.0.1"
 
 int usage(int retval) {
 	fprintf((retval) ? stderr : stdout, "Usage: matconv [-i] input [[-o] output] [-e efficacy] [-n|N] [-t|s|f|F]\n");
@@ -157,9 +157,9 @@ int main(unsigned int argc, char *argv[]) {
 	if (svg) {
 		i = fprintf(f, (textual) ?
 			"<filter id=\"Matrix\" filterUnits=\"objectBoundingBox\" x=\"0%%\" y=\"0%%\" width=\"100%%\" height=\"100%%\">\n"
-			"\t<feColorMatrix type=\"matrix\" in=\"SourceGraphic\" values=\"%g %g %g %g 0  %g %g %g %g 0  %g %g %g %g 0  0 0 0 1 0\"/>\n"
+			"\t<feColorMatrix in=\"SourceGraphic\" type=\"matrix\" values=\"%g %g %g %g 0  %g %g %g %g 0  %g %g %g %g 0  0 0 0 1 0\"/>\n"
 			"</filter>\n"
-			: "<feColorMatrix type=\"matrix\" in=\"SourceGraphic\" values=\"%g %g %g %g 0  %g %g %g %g 0  %g %g %g %g 0  0 0 0 1 0\"/>\n",
+			: "<feColorMatrix in=\"SourceGraphic\" type=\"matrix\" values=\"%g %g %g %g 0  %g %g %g %g 0  %g %g %g %g 0  0 0 0 1 0\"/>\n",
 			mat.red.r,   mat.red.g,   mat.red.b,   mat.red.o,
 			mat.green.r, mat.green.g, mat.green.b, mat.green.o,
 			mat.blue.r,  mat.blue.g,  mat.blue.b,  mat.blue.o
