@@ -47,7 +47,7 @@
 #include <string.h>
 #include <koliba.h>
 
-#define	VERSION	"v1.1.0.1"
+#define	VERSION	"v1.1.0.2"
 
 int usage(int retval) {
 	fprintf((retval) ? stderr : stdout, "Usage: matconv [-i] input [[-o] output] [-e efficacy] [-n|N] [-t|s|f|F]\n");
@@ -153,6 +153,8 @@ int main(unsigned int argc, char *argv[]) {
 		KOLIBA_NormalizeMatrixRow(&mat.green, 1);
 		KOLIBA_NormalizeMatrixRow(&mat.blue, 1);
 	}
+
+	KOLIBA_FixMatrix(&mat);
 
 	if (svg) {
 		i = fprintf(f, (textual) ?

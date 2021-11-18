@@ -2,8 +2,8 @@
 
 // APP version information.
 VS_VERSION_INFO    VERSIONINFO
-FILEVERSION        1,1,0,1
-PRODUCTVERSION     1,1,0,1
+FILEVERSION        1,1,0,2
+PRODUCTVERSION     1,1,0,2
 FILEFLAGSMASK      VS_FFI_FILEFLAGSMASK
 #ifdef _DEBUG
   FILEFLAGS        VS_FF_DEBUG | VS_FF_PRERELEASE
@@ -20,12 +20,12 @@ BEGIN
     BEGIN
       VALUE "CompanyName", "Pantarheon"
       VALUE "FileDescription", "Matrix Converter"
-      VALUE "FileVersion", "1.1.0.1"
+      VALUE "FileVersion", "1.1.0.2"
       VALUE "InternalName", "matconv"
       VALUE "LegalCopyright", "© 2021 G. Adam Stanislav"
       VALUE "OriginalFilename", "matconv.exe"
       VALUE "ProductName", "m3x4/m34t Converter"
-      VALUE "ProductVersion", "1.1.0.1"
+      VALUE "ProductVersion", "1.1.0.2"
     END
   END
   BLOCK "VarFileInfo"
