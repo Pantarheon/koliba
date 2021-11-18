@@ -551,13 +551,27 @@ typedef struct _KOLIBA_MATRIX2 {
 // offering the option to normalize any or all rows, as well as have an
 // efficacy to bring it closer to or further away from an identity matrix
 // (after applying any normalizations that may be needed).
+//
+// N.B. The original definition had unsigned char instead of bool.
+//      I hesitated to change those to bool because as of this writing
+//      different C compilers are free to use a different sizeof(bool).
+//
+//      The only reason I did change it because when ported to scripting
+//      languages, such as python, users could not type in boolean
+//      names, as some of those languages have very strong types. :(
+//
+//      Luckily, I suppose, this structure is used internally by the
+//      library. But be careful if you want to save this structure
+//      in a binary file, as that may not be portable. Of course, we
+//      can save a marshaling text in a file, and that should be
+//      portable
 typedef struct _KOLIBA_CHANNELBLEND {
 	KOLIBA_MATRIX mat;
 	double efficacy;
-	unsigned char nr;		// normalize red row
-	unsigned char ng;		// normalize green row
-	unsigned char nb;		// normalize blue row
-	unsigned char na;		// normalize all rows, overruling nr, ng, nb
+	bool nr;		// normalize red row
+	bool ng;		// normalize green row
+	bool nb;		// normalize blue row
+	bool na;		// normalize all rows, overruling nr, ng, nb
 } KOLIBA_CHANNELBLEND;
 
 // A "chroma matrix" is the base type of several other "matrix" types that
@@ -3959,6 +3973,10 @@ KLBDC int KOLIBA_WriteGmnxToNamedFile(
 	const char *fname
 );
 
+KLBDC KOLIBA_GEMINIX * KOLIBA_ReadGmnxFromNamedFile(
+	KOLIBA_GEMINIX *Gemi,
+	char *fname
+);
 
 
 // If an effect can be expressed as a 3x4 matrix (i.e., KOLIBA_MATRIX), it
@@ -5451,6 +5469,11 @@ KLBDC KOLIBA_DICHROMA * KOLIBA_ReadDichromaticMatrixFromOpenFile(
 
 KLBDC KOLIBA_CFLT * KOLIBA_ReadColorFilterFromOpenFile(
 	KOLIBA_CFLT *cFlt,
+	FILE *f
+);
+
+KLBDC KOLIBA_GEMINIX * KOLIBA_ReadGmnxFromOpenFile(
+	KOLIBA_GEMINIX *geminix,
 	FILE *f
 );
 
