@@ -92,6 +92,7 @@ extern "C" {
 #define	MATAMINCHARS	(6+17*12)
 #define	CHRAMINCHARS	(6+17*8)
 #define	GMXAMINCHARS	(7+17*24)
+#define	CBLAMINCHARS	(6+17*13+5)
 
 typedef	enum {
 	KOLIBA_ftnoslut,
@@ -564,7 +565,7 @@ typedef struct _KOLIBA_MATRIX2 {
 //      library. But be careful if you want to save this structure
 //      in a binary file, as that may not be portable. Of course, we
 //      can save a marshaling text in a file, and that should be
-//      portable
+//      portable.
 typedef struct _KOLIBA_CHANNELBLEND {
 	KOLIBA_MATRIX mat;
 	double efficacy;
@@ -3789,6 +3790,24 @@ KLBDC KOLIBA_MATRIX * KOLIBA_StringToMatrix(
 	const char * const string
 );
 
+KLBDC extern const char KOLIBA_PrintCblnFormat[];
+KLBDC extern const char KOLIBA_ScanCblnFormat[];
+KLBDC extern const char KOLIBA_ScanCblnHeaderFormat[];
+
+
+KLBDC char * KOLIBA_ChannelBlendToString(
+	char * string,
+	const KOLIBA_CHANNELBLEND * const cb,
+	unsigned int strsize
+);
+
+KLBDC KOLIBA_CHANNELBLEND * KOLIBA_StringToChannelBlend(
+	KOLIBA_CHANNELBLEND * cb,
+	const char * const string
+);
+
+
+
 // We also have a text version (*.chrt) of the chromat file.
 KLBDC extern const char KOLIBA_PrintChrtFormat[];
 KLBDC extern const char KOLIBA_ScanChrtFormat[];
@@ -4394,9 +4413,9 @@ KLBHID extern const double KOLIBA_NaN;
 
 // And some globally useful.
 KLBDC extern const KOLIBA_SLUT KOLIBA_NaturalFarbaContrastSlut;
-KLBDC const KOLIBA_SLUT KOLIBA_ContrastSlut;
-KLBDC const KOLIBA_SLUT KOLIBA_FarbaContrastSlut;
-KLBDC const KOLIBA_SLUT KOLIBA_SvitContrastSlut;
+KLBDC extern const KOLIBA_SLUT KOLIBA_ContrastSlut;
+KLBDC extern const KOLIBA_SLUT KOLIBA_FarbaContrastSlut;
+KLBDC extern const KOLIBA_SLUT KOLIBA_SvitContrastSlut;
 KLBDC extern const KOLIBA_SLUT KOLIBA_Rec2020Slut;
 
 
