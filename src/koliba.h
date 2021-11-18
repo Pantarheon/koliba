@@ -110,7 +110,8 @@ typedef	enum {
 	KOLIBA_ftpalette,
 	KOLIBA_ftkptt,
 	KOLIBA_ftcftt,
-	KOLIBA_ftgmnx
+	KOLIBA_ftgmnx,
+	KOLIBA_ftcbln
 } KOLIBA_ftype;
 
 typedef enum {
