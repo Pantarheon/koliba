@@ -3998,6 +3998,14 @@ KLBDC KOLIBA_GEMINIX * KOLIBA_ReadGmnxFromNamedFile(
 	char *fname
 );
 
+// Write a KOLIBA_CHANNELBLEND to a named .cbln file.
+// Returns 0 on success, non-0 on failure.
+
+KLBDC int KOLIBA_WriteCblnToNamedFile(
+	const KOLIBA_CHANNELBLEND *cb,
+	const char *fname
+);
+
 
 // If an effect can be expressed as a 3x4 matrix (i.e., KOLIBA_MATRIX), it
 // should be saved in the 3x4 Matrix file (extension .m3x4), rather than the
@@ -5402,6 +5410,15 @@ KLBDC int KOLIBA_WriteColorFilterToOpenFile(
 
 KLBDC int KOLIBA_WriteGmnxToOpenFile(
 	const KOLIBA_GEMINIX *gem,
+	FILE *f
+);
+
+// Write a KOLIBA_CHANNELBLEND to an open .cbln file. It remains
+// open upon return, so the caller needs to close it. Returns 0
+// on success, non-0 on failure.
+
+KLBDC int KOLIBA_WriteCblnToOpenFile(
+	const KOLIBA_CHANNELBLEND *cb,
 	FILE *f
 );
 
