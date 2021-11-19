@@ -4006,6 +4006,15 @@ KLBDC int KOLIBA_WriteCblnToNamedFile(
 	const char *fname
 );
 
+// Read a blend from a named .cBln file. Returns cb on success,
+// NULL on failure. If, however, cb is not NULL, its
+// contents will be filled with the identity cb on failure.
+
+KLBDC KOLIBA_CHANNELBLEND * KOLIBA_ReadCblnFromNamedFile(
+	KOLIBA_CHANNELBLEND *cb,
+	char *fname
+);
+
 
 // If an effect can be expressed as a 3x4 matrix (i.e., KOLIBA_MATRIX), it
 // should be saved in the 3x4 Matrix file (extension .m3x4), rather than the
@@ -5511,6 +5520,17 @@ KLBDC KOLIBA_CFLT * KOLIBA_ReadColorFilterFromOpenFile(
 
 KLBDC KOLIBA_GEMINIX * KOLIBA_ReadGmnxFromOpenFile(
 	KOLIBA_GEMINIX *geminix,
+	FILE *f
+);
+
+// Read a KOLIBA_CHANNELBLEND from an open .cBln file. It may be open
+// for reading binary or text data. It remains open upon return,
+// so the caller needs to close it. Returns blend on success, NULL
+// on failure. If, however, blend is not NULL, its contents
+// will be reset on failure.
+
+KLBDC KOLIBA_CHANNELBLEND * KOLIBA_ReadCblnFromOpenFile(
+	KOLIBA_CHANNELBLEND *blend,
 	FILE *f
 );
 
