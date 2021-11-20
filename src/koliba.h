@@ -771,9 +771,9 @@ typedef struct _KOLIBA_LDX {
 // So, we start by defining a pigment, which is a double RGB color with an
 // efficacy added.
 typedef struct _KOLIBA_PIGMENT {
-	double	r;			// [0..1] only.
-	double	g;			// [0..1] only.
-	double	b;			// [0..1] only.
+	double	rp;			// [0..1] only.
+	double	gp;			// [0..1] only.
+	double	bp;			// [0..1] only.
 	double	efficacy;	// Any real value, though keep it realistic.
 } KOLIBA_PIGMENT;
 

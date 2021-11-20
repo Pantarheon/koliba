@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <koliba.h>
 
-#define	ver	"v.0.4.1"
+#define	ver	"v.0.4.2"
 
 #define	ZFLAG	1
 #define	OFLAG	2
@@ -244,39 +244,39 @@ int main(unsigned int argc, char *argv[]) {
 		KOLIBA_ResetPalette(&plt);
 		switch (pluts) {
 			default:
-				plt.red.r           = r;
-				plt.red.g           = g;
-				plt.red.b           = b;
+				plt.red.rp          = r;
+				plt.red.gp          = g;
+				plt.red.bp          = b;
 				plt.red.efficacy    = efficacy;
 				break;
 			case KOLIBA_PlutGreen:
-				plt.green.r         = r;
-				plt.green.g         = g;
-				plt.green.b         = b;
+				plt.green.rp        = r;
+				plt.green.gp        = g;
+				plt.green.bp        = b;
 				plt.green.efficacy  = efficacy;
 				break;
 			case KOLIBA_PlutBlue:
-				plt.blue.r          = r;
-				plt.blue.g          = g;
-				plt.blue.b          = b;
+				plt.blue.rp         = r;
+				plt.blue.gp         = g;
+				plt.blue.bp         = b;
 				plt.blue.efficacy   = efficacy;
 				break;
 			case KOLIBA_PlutCyan:
-				plt.cyan.r          = r;
-				plt.cyan.g          = g;
-				plt.cyan.b          = b;
+				plt.cyan.rp         = r;
+				plt.cyan.gp         = g;
+				plt.cyan.bp         = b;
 				plt.cyan.efficacy   = efficacy;
 				break;
 			case KOLIBA_PlutMagenta:
-				plt.magenta.r        = r;
-				plt.magenta.g        = g;
-				plt.magenta.b        = b;
+				plt.magenta.rp       = r;
+				plt.magenta.gp       = g;
+				plt.magenta.bp       = b;
 				plt.magenta.efficacy = efficacy;
 				break;
 			case KOLIBA_PlutYellow:
-				plt.yellow.r         = r;
-				plt.yellow.g         = g;
-				plt.yellow.b         = b;
+				plt.yellow.rp        = r;
+				plt.yellow.gp        = g;
+				plt.yellow.bp        = b;
 				plt.yellow.efficacy  = efficacy;
 				break;
 		}

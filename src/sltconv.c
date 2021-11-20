@@ -46,9 +46,9 @@
 #include <string.h>
 #include <koliba.h>
 
-#define	version	"v.0.5.8"
+#define	version	"v.0.5.9"
 
-#define	pv(color)	slt->plt.color.r, slt->plt.color.g, slt->plt.color.b, slt->plt.color.efficacy
+#define	pv(color)	slt->plt.color.rp, slt->plt.color.gp, slt->plt.color.bp, slt->plt.color.efficacy
 
 typedef	union {
 	KOLIBA_CHROMAT chrm;
