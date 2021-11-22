@@ -138,9 +138,9 @@ void describe(KOLIBA_ftype ftype, FILE *f, saluti *slt, double efficacy) {
 	switch (ftype) {
 		case KOLIBA_ftmatrix:
 		case KOLIBA_ftm34t:
-			fprintf(f, matrixdesc, slt->m3x4.red.r, slt->m3x4.red.g, slt->m3x4.red.b, slt->m3x4.red.o,
-				slt->m3x4.green.r, slt->m3x4.green.g, slt->m3x4.green.b, slt->m3x4.green.o,
-				slt->m3x4.blue.r, slt->m3x4.blue.g, slt->m3x4.blue.b, slt->m3x4.blue.o
+			fprintf(f, matrixdesc, slt->m3x4.Red.r, slt->m3x4.Red.g, slt->m3x4.Red.b, slt->m3x4.Red.o,
+				slt->m3x4.Green.r, slt->m3x4.Green.g, slt->m3x4.Green.b, slt->m3x4.Green.o,
+				slt->m3x4.Blue.r, slt->m3x4.Blue.g, slt->m3x4.Blue.b, slt->m3x4.Blue.o
 			);
 			break;
 		case KOLIBA_ftchrm:
@@ -169,8 +169,8 @@ void describe(KOLIBA_ftype ftype, FILE *f, saluti *slt, double efficacy) {
 			break;
 		case KOLIBA_ftpalette:
 			fprintf(f, palettedesc,
-			pv(black), pv(white), pv(red), pv(green),
-			pv(blue), pv(cyan), pv(magenta), pv(yellow),
+			pv(Black), pv(White), pv(Red), pv(Green),
+			pv(Blue), pv(Cyan), pv(Magenta), pv(Yellow),
 			slt->plt.efficacy,
 			(slt->plt.erythropy) ? "True" : "False"
 			);
@@ -342,17 +342,17 @@ int main(int argc, char *argv[]) {
 
 		fprintf(f, cubehead, iname, is1d ? 1 : 3);
 		describe(ftype, f, &slt, efficacy);
-		fprintf(f, cubeline, sLut.black.r, sLut.black.g, sLut.black.b);
+		fprintf(f, cubeline, sLut.Black.r, sLut.Black.g, sLut.Black.b);
 
 		if (!is1d) {
-			fprintf(f, cubeline, sLut.red.r, sLut.red.g, sLut.red.b);
-			fprintf(f, cubeline, sLut.green.r, sLut.green.g, sLut.green.b);
-			fprintf(f, cubeline, sLut.yellow.r, sLut.yellow.g, sLut.yellow.b);
-			fprintf(f, cubeline, sLut.blue.r, sLut.blue.g, sLut.blue.b);
-			fprintf(f, cubeline, sLut.magenta.r, sLut.magenta.g, sLut.magenta.b);
-			fprintf(f, cubeline, sLut.cyan.r, sLut.cyan.g, sLut.cyan.b);
+			fprintf(f, cubeline, sLut.Red.r, sLut.Red.g, sLut.Red.b);
+			fprintf(f, cubeline, sLut.Green.r, sLut.Green.g, sLut.Green.b);
+			fprintf(f, cubeline, sLut.Yellow.r, sLut.Yellow.g, sLut.Yellow.b);
+			fprintf(f, cubeline, sLut.Blue.r, sLut.Blue.g, sLut.Blue.b);
+			fprintf(f, cubeline, sLut.Magenta.r, sLut.Magenta.g, sLut.Magenta.b);
+			fprintf(f, cubeline, sLut.Cyan.r, sLut.Cyan.g, sLut.Cyan.b);
 		}
-		fprintf(f, cubeline, sLut.white.r, sLut.white.g, sLut.white.b);
+		fprintf(f, cubeline, sLut.White.r, sLut.White.g, sLut.White.b);
 	}
 	if ((cltt <= 0) && (bin == 0)) fprintf(f, "\n## Converted from \"%s\" by sltconv, " version "\n\n", iname);
 	if (cltt>0) describe(ftype, f, &slt, efficacy);

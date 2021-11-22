@@ -231,14 +231,14 @@ typedef	struct _KOLIBA_XYZ {
 // The workhorse of the Koliba library is the FLUT, representing the
 // multiplication factors of a simple look-up table.
 typedef struct	_KOLIBA_FLUT {
-	KOLIBA_VERTEX	black;
-	KOLIBA_VERTEX	red;
-	KOLIBA_VERTEX	green;
-	KOLIBA_VERTEX	blue;
-	KOLIBA_VERTEX	yellow;
-	KOLIBA_VERTEX	magenta;
-	KOLIBA_VERTEX	cyan;
-	KOLIBA_VERTEX	white;
+	KOLIBA_VERTEX	Black;
+	KOLIBA_VERTEX	Red;
+	KOLIBA_VERTEX	Green;
+	KOLIBA_VERTEX	Blue;
+	KOLIBA_VERTEX	Yellow;
+	KOLIBA_VERTEX	Magenta;
+	KOLIBA_VERTEX	Cyan;
+	KOLIBA_VERTEX	White;
 } KOLIBA_FLUT;
 
 // The most important support type in the Koliba library is a list of 24
@@ -271,14 +271,14 @@ typedef struct	_KOLIBA_FFLUT {
 // converting the SLUT into a FLUT (and the corresponding flags), which can,
 // and does, work much faster.
 typedef struct	_KOLIBA_SLUT {
-	KOLIBA_VERTEX	black;
-	KOLIBA_VERTEX	blue;
-	KOLIBA_VERTEX	green;
-	KOLIBA_VERTEX	cyan;
-	KOLIBA_VERTEX	red;
-	KOLIBA_VERTEX	magenta;
-	KOLIBA_VERTEX	yellow;
-	KOLIBA_VERTEX	white;
+	KOLIBA_VERTEX	Black;
+	KOLIBA_VERTEX	Blue;
+	KOLIBA_VERTEX	Green;
+	KOLIBA_VERTEX	Cyan;
+	KOLIBA_VERTEX	Red;
+	KOLIBA_VERTEX	Magenta;
+	KOLIBA_VERTEX	Yellow;
+	KOLIBA_VERTEX	White;
 } KOLIBA_SLUT;
 
 // Since, in the .sLut file (defined later), this is followed by a checksum,
@@ -300,14 +300,14 @@ typedef struct _KOLIBA_SLUT2 {
 // contains an efficacy value to make it possible to fade a LUT in
 // and out.
 typedef struct _KOLIBA_PLUT {
-	KOLIBA_VERTEX black;
-	KOLIBA_VERTEX white;
-	KOLIBA_VERTEX red;
-	KOLIBA_VERTEX green;
-	KOLIBA_VERTEX blue;
-	KOLIBA_VERTEX cyan;
-	KOLIBA_VERTEX magenta;
-	KOLIBA_VERTEX yellow;
+	KOLIBA_VERTEX Black;
+	KOLIBA_VERTEX White;
+	KOLIBA_VERTEX Red;
+	KOLIBA_VERTEX Green;
+	KOLIBA_VERTEX Blue;
+	KOLIBA_VERTEX Cyan;
+	KOLIBA_VERTEX Magenta;
+	KOLIBA_VERTEX Yellow;
 	double	divisor;	// >= 1.0, so we can deal with 8-bit LUTs and such
 	double	efficacy;
 } KOLIBA_PLUT;
@@ -353,14 +353,14 @@ typedef struct _KOLIBA_XYZINDEX {
 // We then arrange the indices to indicate individual members of a KOLIBA_FLUT
 // as doubles distanced from a base.
 typedef struct _KOLIBA_FLINDEX {
-	KOLIBA_XYZINDEX	black;
-	KOLIBA_XYZINDEX	red;
-	KOLIBA_XYZINDEX	green;
-	KOLIBA_XYZINDEX	blue;
-	KOLIBA_XYZINDEX	yellow;
-	KOLIBA_XYZINDEX	magenta;
-	KOLIBA_XYZINDEX	cyan;
-	KOLIBA_XYZINDEX	white;
+	KOLIBA_XYZINDEX	Black;
+	KOLIBA_XYZINDEX	Red;
+	KOLIBA_XYZINDEX	Green;
+	KOLIBA_XYZINDEX	Blue;
+	KOLIBA_XYZINDEX	Yellow;
+	KOLIBA_XYZINDEX	Magenta;
+	KOLIBA_XYZINDEX	Cyan;
+	KOLIBA_XYZINDEX	White;
 } KOLIBA_FLINDEX;
 // It is possible (indeed, that is the reason to have indices) for several
 // indices to indicate the same double. For example, the identity FLUT
@@ -402,14 +402,14 @@ typedef struct _KOLIBA_XYZBINDEX {
 } KOLIBA_XYZBINDEX;
 
 typedef struct _KOLIBA_FLBINDEX {
-	KOLIBA_XYZBINDEX	black;
-	KOLIBA_XYZBINDEX	red;
-	KOLIBA_XYZBINDEX	green;
-	KOLIBA_XYZBINDEX	blue;
-	KOLIBA_XYZBINDEX	yellow;
-	KOLIBA_XYZBINDEX	magenta;
-	KOLIBA_XYZBINDEX	cyan;
-	KOLIBA_XYZBINDEX	white;
+	KOLIBA_XYZBINDEX	Black;
+	KOLIBA_XYZBINDEX	Red;
+	KOLIBA_XYZBINDEX	Green;
+	KOLIBA_XYZBINDEX	Blue;
+	KOLIBA_XYZBINDEX	Yellow;
+	KOLIBA_XYZBINDEX	Magenta;
+	KOLIBA_XYZBINDEX	Cyan;
+	KOLIBA_XYZBINDEX	White;
 } KOLIBA_FLBINDEX;
 //
 // As a compromise, we can use 16-bit unsigned short integers if the total
@@ -419,14 +419,14 @@ typedef struct _KOLIBA_XYZWINDEX {
 } KOLIBA_XYZWINDEX;
 
 typedef struct _KOLIBA_FLWINDEX {
-	KOLIBA_XYZWINDEX	black;
-	KOLIBA_XYZWINDEX	red;
-	KOLIBA_XYZWINDEX	green;
-	KOLIBA_XYZWINDEX	blue;
-	KOLIBA_XYZWINDEX	yellow;
-	KOLIBA_XYZWINDEX	magenta;
-	KOLIBA_XYZWINDEX	cyan;
-	KOLIBA_XYZWINDEX	white;
+	KOLIBA_XYZWINDEX	Black;
+	KOLIBA_XYZWINDEX	Red;
+	KOLIBA_XYZWINDEX	Green;
+	KOLIBA_XYZWINDEX	Blue;
+	KOLIBA_XYZWINDEX	Yellow;
+	KOLIBA_XYZWINDEX	Magenta;
+	KOLIBA_XYZWINDEX	Cyan;
+	KOLIBA_XYZWINDEX	White;
 } KOLIBA_FLWINDEX;
 //
 // Similarly, we may index the FLAGS required for each indexed FLUT. Such an
@@ -539,9 +539,9 @@ typedef struct	_KOLIBA_ROW {
 } KOLIBA_ROW;
 
 typedef struct _KOLIBA_MATRIX {
-	KOLIBA_ROW	red;
-	KOLIBA_ROW	green;
-	KOLIBA_ROW	blue;
+	KOLIBA_ROW	Red;
+	KOLIBA_ROW	Green;
+	KOLIBA_ROW	Blue;
 } KOLIBA_MATRIX;
 // When stored in a file, we use this:
 typedef struct _KOLIBA_MATRIX2 {
@@ -792,14 +792,14 @@ typedef struct _KOLIBA_PIGMENT {
 //
 // So here is our palette definition.
 typedef struct _KOLIBA_PALETTE {
-	KOLIBA_PIGMENT	black;
-	KOLIBA_PIGMENT	white;
-	KOLIBA_PIGMENT	red;
-	KOLIBA_PIGMENT	green;
-	KOLIBA_PIGMENT	blue;
-	KOLIBA_PIGMENT	cyan;
-	KOLIBA_PIGMENT	magenta;
-	KOLIBA_PIGMENT	yellow;
+	KOLIBA_PIGMENT	Black;
+	KOLIBA_PIGMENT	White;
+	KOLIBA_PIGMENT	Red;
+	KOLIBA_PIGMENT	Green;
+	KOLIBA_PIGMENT	Blue;
+	KOLIBA_PIGMENT	Cyan;
+	KOLIBA_PIGMENT	Magenta;
+	KOLIBA_PIGMENT	Yellow;
 	double	efficacy;
 	unsigned char	erythropy;
 } KOLIBA_PALETTE;
@@ -807,14 +807,14 @@ typedef struct _KOLIBA_PALETTE {
 // structure (this is explained further later in the section describing
 // various file formats).
 typedef struct _KOLIBA_PALETTE2 {
-	KOLIBA_PIGMENT	black;
-	KOLIBA_PIGMENT	white;
-	KOLIBA_PIGMENT	red;
-	KOLIBA_PIGMENT	green;
-	KOLIBA_PIGMENT	blue;
-	KOLIBA_PIGMENT	cyan;
-	KOLIBA_PIGMENT	magenta;
-	KOLIBA_PIGMENT	yellow;
+	KOLIBA_PIGMENT	Black;
+	KOLIBA_PIGMENT	White;
+	KOLIBA_PIGMENT	Red;
+	KOLIBA_PIGMENT	Green;
+	KOLIBA_PIGMENT	Blue;
+	KOLIBA_PIGMENT	Cyan;
+	KOLIBA_PIGMENT	Magenta;
+	KOLIBA_PIGMENT	Yellow;
 	double	efficacy;
 	double	checksum;
 } KOLIBA_PALETTE2;
@@ -2634,10 +2634,10 @@ KLBDC KOLIBA_MATRIX * KOLIBA_InvertMatrix(
 // KOLIBA_PALETTE and KOLIBA_PALETTE2 after a typecast),
 // i.e., check all RGB values are within the [0..1] range.
 //
-// Return value of 0 (false) means the palette is not valid,
+// Return value of false means the palette is not valid,
 // otherwise it is valid.
 
-KLBDC unsigned int KOLIBA_IsPaletteValid(
+KLBDC bool KOLIBA_IsPaletteValid(
 	const KOLIBA_PALETTE * const plt
 );
 // Apply a ring to a palette.

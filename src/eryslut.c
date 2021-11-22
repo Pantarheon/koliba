@@ -116,9 +116,9 @@ int main(int argc, char *argv[]) {
 
 	KOLIBA_ResetSlut(&sLut);
 
-	sLut.red.r = KOLIBA_ByteDiv255[red];
-	sLut.red.g = KOLIBA_ByteDiv255[green];
-	sLut.red.b = KOLIBA_ByteDiv255[blue];
+	sLut.Red.r = KOLIBA_ByteDiv255[red];
+	sLut.Red.g = KOLIBA_ByteDiv255[green];
+	sLut.Red.b = KOLIBA_ByteDiv255[blue];
 
 	f = fopen(filename, "wb");
 	if (f == NULL) {

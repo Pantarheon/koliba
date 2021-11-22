@@ -191,9 +191,9 @@ int main(unsigned int argc, char *argv[]) {
 
 	i = (isbinary(otype)) ? KOLIBA_WriteMatrixToOpenFile(&mat, f) :
 		(istextual(otype)) ? KOLIBA_WriteM34tToOpenFile(&mat, f) :
-		(fprintf(f, decimal, mat.red.r, mat.red.g, mat.red.b, mat.red.o,
-			mat.green.r, mat.green.g, mat.green.b, mat.green.o,
-			mat.blue.r, mat.blue.g, mat.blue.b, mat.blue.o) <= 0);
+		(fprintf(f, decimal, mat.Red.r, mat.Red.g, mat.Red.b, mat.Red.o,
+			mat.Green.r, mat.Green.g, mat.Green.b, mat.Green.o,
+			mat.Blue.r, mat.Blue.g, mat.Blue.b, mat.Blue.o) <= 0);
 
 	if (output) fclose(f);
 

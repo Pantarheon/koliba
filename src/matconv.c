@@ -149,9 +149,9 @@ int main(unsigned int argc, char *argv[]) {
 	if (efficacy != 1.0) KOLIBA_MatrixEfficacy(m, m, efficacy);
 
 	if (normalize) {
-		KOLIBA_NormalizeMatrixRow(&mat.red, 1);
-		KOLIBA_NormalizeMatrixRow(&mat.green, 1);
-		KOLIBA_NormalizeMatrixRow(&mat.blue, 1);
+		KOLIBA_NormalizeMatrixRow(&mat.Red, 1);
+		KOLIBA_NormalizeMatrixRow(&mat.Green, 1);
+		KOLIBA_NormalizeMatrixRow(&mat.Blue, 1);
 	}
 
 	KOLIBA_FixMatrix(&mat);
@@ -162,9 +162,9 @@ int main(unsigned int argc, char *argv[]) {
 			"\t<feColorMatrix in=\"SourceGraphic\" type=\"matrix\" values=\"%g %g %g %g 0  %g %g %g %g 0  %g %g %g %g 0  0 0 0 1 0\"/>\n"
 			"</filter>\n"
 			: "<feColorMatrix in=\"SourceGraphic\" type=\"matrix\" values=\"%g %g %g %g 0  %g %g %g %g 0  %g %g %g %g 0  0 0 0 1 0\"/>\n",
-			mat.red.r,   mat.red.g,   mat.red.b,   mat.red.o,
-			mat.green.r, mat.green.g, mat.green.b, mat.green.o,
-			mat.blue.r,  mat.blue.g,  mat.blue.b,  mat.blue.o
+			mat.Red.r,   mat.Red.g,   mat.Red.b,   mat.Red.o,
+			mat.Green.r, mat.Green.g, mat.Green.b, mat.Green.o,
+			mat.Blue.r,  mat.Blue.g,  mat.Blue.b,  mat.Blue.o
 		) <= 0;
 	}
 	else if (textual) {

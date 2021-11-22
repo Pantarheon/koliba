@@ -46,23 +46,23 @@ int main(int argc, char *argv[]) {
 		if (is == 0) {
 			// If the original was normalized, try normalizing
 			// the matrix. Whether it helps is another matter.
-			if ((sLut.black.r == 0.0) && (sLut.white.r == 1.0)) {
-				if ((sum = mat.red.r + mat.red.g + mat.red.b) != 0.0) {
-					mat.red.r /= sum;
-					mat.red.g /= sum;
-					mat.red.b /= sum;
+			if ((sLut.Black.r == 0.0) && (sLut.White.r == 1.0)) {
+				if ((sum = mat.Red.r + mat.Red.g + mat.Red.b) != 0.0) {
+					mat.Red.r /= sum;
+					mat.Red.g /= sum;
+					mat.Red.b /= sum;
 				}
 
-				if ((sum = mat.green.r + mat.green.g + mat.green.b) != 0.0) {
-					mat.green.r /= sum;
-					mat.green.g /= sum;
-					mat.green.b /= sum;
+				if ((sum = mat.Green.r + mat.Green.g + mat.Green.b) != 0.0) {
+					mat.Green.r /= sum;
+					mat.Green.g /= sum;
+					mat.Green.b /= sum;
 				}
 
-				if ((sum = mat.blue.r + mat.blue.g + mat.blue.b) != 0.0) {
-					mat.blue.r /= sum;
-					mat.blue.g /= sum;
-					mat.blue.b /= sum;
+				if ((sum = mat.Blue.r + mat.Blue.g + mat.Blue.b) != 0.0) {
+					mat.Blue.r /= sum;
+					mat.Blue.g /= sum;
+					mat.Blue.b /= sum;
 				}
 			}
 		}

@@ -244,40 +244,40 @@ int main(unsigned int argc, char *argv[]) {
 		KOLIBA_ResetPalette(&plt);
 		switch (pluts) {
 			default:
-				plt.red.rp          = r;
-				plt.red.gp          = g;
-				plt.red.bp          = b;
-				plt.red.efficacy    = efficacy;
+				plt.Red.rp          = r;
+				plt.Red.gp          = g;
+				plt.Red.bp          = b;
+				plt.Red.efficacy    = efficacy;
 				break;
 			case KOLIBA_PlutGreen:
-				plt.green.rp        = r;
-				plt.green.gp        = g;
-				plt.green.bp        = b;
-				plt.green.efficacy  = efficacy;
+				plt.Green.rp        = r;
+				plt.Green.gp        = g;
+				plt.Green.bp        = b;
+				plt.Green.efficacy  = efficacy;
 				break;
 			case KOLIBA_PlutBlue:
-				plt.blue.rp         = r;
-				plt.blue.gp         = g;
-				plt.blue.bp         = b;
-				plt.blue.efficacy   = efficacy;
+				plt.Blue.rp         = r;
+				plt.Blue.gp         = g;
+				plt.Blue.bp         = b;
+				plt.Blue.efficacy   = efficacy;
 				break;
 			case KOLIBA_PlutCyan:
-				plt.cyan.rp         = r;
-				plt.cyan.gp         = g;
-				plt.cyan.bp         = b;
-				plt.cyan.efficacy   = efficacy;
+				plt.Cyan.rp         = r;
+				plt.Cyan.gp         = g;
+				plt.Cyan.bp         = b;
+				plt.Cyan.efficacy   = efficacy;
 				break;
 			case KOLIBA_PlutMagenta:
-				plt.magenta.rp       = r;
-				plt.magenta.gp       = g;
-				plt.magenta.bp       = b;
-				plt.magenta.efficacy = efficacy;
+				plt.Magenta.rp       = r;
+				plt.Magenta.gp       = g;
+				plt.Magenta.bp       = b;
+				plt.Magenta.efficacy = efficacy;
 				break;
 			case KOLIBA_PlutYellow:
-				plt.yellow.rp        = r;
-				plt.yellow.gp        = g;
-				plt.yellow.bp        = b;
-				plt.yellow.efficacy  = efficacy;
+				plt.Yellow.rp        = r;
+				plt.Yellow.gp        = g;
+				plt.Yellow.bp        = b;
+				plt.Yellow.efficacy  = efficacy;
 				break;
 		}
 
