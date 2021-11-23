@@ -801,7 +801,7 @@ typedef struct _KOLIBA_PALETTE {
 	KOLIBA_PIGMENT	Magenta;
 	KOLIBA_PIGMENT	Yellow;
 	double	efficacy;
-	unsigned char	erythropy;
+	bool	erythropy;
 } KOLIBA_PALETTE;
 // For the use a Koliba palette (.kPlt) file, we use a slightly modified
 // structure (this is explained further later in the section describing
@@ -4109,8 +4109,8 @@ KLBDC KOLIBA_MATRIX * KOLIBA_ReadM34tFromNamedFile(
 // So what happens to erythropy? How do we save it in a file?
 //
 // Simple! We use a different UUID for a palette that has its erythropy set to
-// 0 (so effectively it does not use erythropy) and another one for a palette
-// that has erythropy set to 1 (or any other non-zero value, i.e., true).
+// false (so effectively it does not use erythropy) and another one for a palette
+// that has erythropy set to true.
 //
 // The file with no erythropy shall have the UUID of
 // 7de56100-5a59-11e9-9df9-003048fd9f6e, while the one with erythropy set to
