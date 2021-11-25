@@ -1308,6 +1308,23 @@ KLBDC KOLIBA_SLUT * KOLIBA_SetFarbosity(KOLIBA_SLUT *sLut, double center, double
 
 
 
+
+/****************************************************************************/
+/*****************                                        *******************/
+/***************** T H E  KOLIBA  C O N S T R U C T O R S *******************/
+/*****************                                        *******************/
+/****************************************************************************/
+
+// When porting libkoliba to a language that needs the library to give objects
+// an initial value, we can use these "constructors".
+
+// Initialize a vertex from another vertex.
+
+KLBDC KOLIBA_VERTEX * KOLIBA_VertexCopy(
+	KOLIBA_VERTEX *destination,
+	const KOLIBA_VERTEX const *source
+);
+
 /****************************************************************************/
 /********************                                  **********************/
 /******************** T H E  KOLIBA  F U N C T I O N S **********************/
