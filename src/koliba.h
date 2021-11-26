@@ -986,33 +986,62 @@ KLBDC extern const double KOLIBA_180DivPi;
 KLBDC extern const double KOLIBA_1Div2Pi;
 KLBDC extern const double KOLIBA_1Div360;
 KLBDC extern const double KOLIBA_360;
+KLBDC extern const double KOLIBA_1Div2;
+KLBDC extern const double KOLIBA_1DivPi;
+KLBDC extern const double KOLIBA_180;
+KLBDC extern const double KOLIBA_1Div180;
+KLBDC extern const double KOLIBA_2;
 
 // And some macros/inlines for their use.
 #ifdef	NOKLINLIN
 #define	KOLIBA_ConvertDegreesToRadians(deg)	((double)(deg)*KOLIBA_PiDiv180)
-#define	KOLIBA_ConvertRadiansToDegrees(rad)	((double)(rad)*KOLIBA_180DivPi)
-#define	KOLIBA_ConvertTurnsToRadians(t)	((double)(t)*KOLIBA_2Pi)
-#define	KOLIBA_ConvertRadiansToTurns(rad)	((double)(rad)*KOLIBA_1Div2Pi)
 #define	KOLIBA_ConvertDegreesToTurns(deg)	((double)(deg)*KOLIBA_1Div360)
+#define	KOLIBA_ConvertDegreesToPis(p)	((double)(p)*KOLIBA_1Div180)
+#define	KOLIBA_ConvertRadiansToDegrees(rad)	((double)(rad)*KOLIBA_180DivPi)
+#define	KOLIBA_ConvertRadiansToTurns(rad)	((double)(rad)*KOLIBA_1Div2Pi)
+#define	KOLIBA_ConvertRadiansToPis(rad)	((double)(rad)*KOLIBA_1DivPi)
 #define	KOLIBA_ConvertTurnsToDegrees(t)	((double)(t)*KOLIBA_360)
+#define	KOLIBA_ConvertTurnsToRadians(t)	((double)(t)*KOLIBA_2Pi)
+#define	KOLIBA_ConvertTurnsToPis(t)	((double)(t)*KOLIBA_2)
+#define	KOLIBA_ConvertPisToDegrees(p)	((double)(p)*KOLIBA_180)
+#define	KOLIBA_ConvertPisToRadians(p)	((double)(p)*KOLIBA_Pi)
+#define	KOLIBA_ConvertPisToTurns(p)	((double)(p)*KOLIBA_1Div2)
 #else
 inline double KOLIBA_ConvertDegreesToRadians(double deg) {
 	return deg * KOLIBA_PiDiv180;
 }
+inline double KOLIBA_ConvertDegreesToTurns(double deg) {
+	return deg * KOLIBA_1Div360;
+}
+inline double KOLIBA_ConvertDegreesToPis(double deg) {
+	return deg * KOLIBA_1Div180;
+}
 inline double KOLIBA_ConvertRadiansToDegrees(double rad) {
 	return rad * KOLIBA_180DivPi;
-}
-inline double KOLIBA_ConvertTurnsToRadians(double t) {
-	return t * KOLIBA_2Pi;
 }
 inline double KOLIBA_ConvertRadiansToTurns(double rad) {
 	return rad * KOLIBA_1Div2Pi;
 }
-inline double KOLIBA_ConvertDegreesToTurns(double deg) {
-	return deg * KOLIBA_1Div360;
+inline double KOLIBA_ConvertRadiansToPis(double rad) {
+	return rad * KOLIBA_1DivPi;
 }
 inline double KOLIBA_ConvertTurnsToDegrees(double t) {
 	return t * KOLIBA_360;
+}
+inline double KOLIBA_ConvertTurnsToRadians(double t) {
+	return t * KOLIBA_2Pi;
+}
+inline double KOLIBA_ConvertTurnsToPis(double t) {
+	return t * KOLIBA_2;
+}
+inline double KOLIBA_ConvertPisToDegrees(double p) {
+	return p * KOLIBA_180;
+}
+inline double KOLIBA_ConvertPisToRadians(double p) {
+	return p * KOLIBA_Pi;
+}
+inline double KOLIBA_ConvertPisToTurns(double p) {
+	return p * KOLIBA_1Div2;
 }
 #endif
 
