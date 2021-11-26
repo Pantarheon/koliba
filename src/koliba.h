@@ -200,6 +200,14 @@ typedef enum {
 	KQC_COUNT
 } KOLIBA_QUINTARYCOLORS;
 
+typedef enum {
+	KAU_degrees,
+	KAU_radians,
+	KAU_turns,
+	KAU_pis,
+	KAU_COUNT
+} KOLIBA_ANGLEUNITS;
+
 /****************************************************************************/
 /*******************                                   **********************/
 /******************* T H E  KOLIBA  D A T A  T Y P E S **********************/
@@ -575,6 +583,13 @@ typedef struct _KOLIBA_CHANNELBLEND {
 	bool nb;		// normalize blue row
 	bool na;		// normalize all rows, overruling nr, ng, nb
 } KOLIBA_CHANNELBLEND;
+
+// An angle structure (or should we say class) helps converting among degrees,
+// radians, turns, pis, and potentially other units added in the future.
+typedef struct _KOLIBA_ANGLE {
+	double angle;
+	KOLIBA_ANGLEUNITS units;
+} KOLIBA_ANGLE;
 
 // A "chroma matrix" is the base type of several other "matrix" types that
 // define changes to apply to a pixel in the YCbCr color space. That is to
