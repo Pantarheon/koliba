@@ -3780,6 +3780,7 @@ KLBDC double KOLIBA_AngleDegrees(const KOLIBA_ANGLE * const angle);
 KLBDC double KOLIBA_AngleRadians(const KOLIBA_ANGLE * const angle);
 KLBDC double KOLIBA_AngleTurns(const KOLIBA_ANGLE * const angle);
 KLBDC double KOLIBA_AnglePis(const KOLIBA_ANGLE * const angle);
+KLBDC double KOLIBA_AngleSine(const KOLIBA_ANGLE * const angle);
 
 
 
