@@ -3774,6 +3774,10 @@ KLBDC double KOLIBA_CalcSum(
 	unsigned int n
 );
 
+// Angle "class" functions
+
+KLBDC double KOLIBA_AngleDegrees(const KOLIBA_ANGLE * const angle);
+
 
 
 
