@@ -1006,6 +1006,7 @@ KLBDC extern const double KOLIBA_1DivPi;
 KLBDC extern const double KOLIBA_180;
 KLBDC extern const double KOLIBA_1Div180;
 KLBDC extern const double KOLIBA_2;
+KLBDC extern const double KOLIBA_Kappa;
 
 // And some macros/inlines for their use.
 #ifdef	NOKLINLIN
@@ -1366,7 +1367,7 @@ KLBDC KOLIBA_SLUT * KOLIBA_SetFarbosity(KOLIBA_SLUT *sLut, double center, double
 
 KLBDC KOLIBA_VERTEX * KOLIBA_VertexCopy(
 	KOLIBA_VERTEX *destination,
-	const KOLIBA_VERTEX const *source
+	const KOLIBA_VERTEX * const source
 );
 
 /****************************************************************************/
@@ -3774,56 +3775,89 @@ KLBDC double KOLIBA_CalcSum(
 	unsigned int n
 );
 
-// Angle "class" functions
-
-KLBDC double KOLIBA_AngleDegrees(const KOLIBA_ANGLE * const angle);
-KLBDC double KOLIBA_AngleRadians(const KOLIBA_ANGLE * const angle);
-KLBDC double KOLIBA_AngleTurns(const KOLIBA_ANGLE * const angle);
-KLBDC double KOLIBA_AnglePis(const KOLIBA_ANGLE * const angle);
-KLBDC double KOLIBA_AngleSine(const KOLIBA_ANGLE * const angle);
-KLBDC double KOLIBA_AngleCosine(const KOLIBA_ANGLE * const angle);
-
-KLBDC KOLIBA_ANGLE *  KOLIBA_AngleSet(
-	KOLIBA_ANGLE * kAngle,
-	double angle,
-	KOLIBA_ANGLEUNITS units
-);
-
-#ifdef	NOKLINLIN
-#define KOLIBA_AngleSetDegrees(kAngle,angle)	KOLIBA_AngleSet(kAngle, angle, KAU_degrees)
-#define KOLIBA_AngleSetRadians(kAngle,angle)	KOLIBA_AngleSet(kAngle, angle, KAU_radians)
-#define KOLIBA_AngleSetTurns(kAngle,angle)	KOLIBA_AngleSet(kAngle, angle, KAU_turns)
-#define KOLIBA_AngleSetPis(kAngle,angle)	KOLIBA_AngleSet(kAngle, angle, KAU_pis)
-#else
-inline KOLIBA_ANGLE *  KOLIBA_AngleSetDegrees(KOLIBA_ANGLE *kAngle, double angle) {
-	return KOLIBA_AngleSet(kAngle, angle, KAU_degrees);
-}
-
-inline KOLIBA_ANGLE *  KOLIBA_AngleSetRadians(KOLIBA_ANGLE *kAngle, double angle) {
-	return KOLIBA_AngleSet(kAngle, angle, KAU_radians);
-}
-
-inline KOLIBA_ANGLE *  KOLIBA_AngleSetTurns(KOLIBA_ANGLE *kAngle, double angle) {
-	return KOLIBA_AngleSet(kAngle, angle, KAU_turns);
-}
-
-inline KOLIBA_ANGLE *  KOLIBA_AngleSetPis(KOLIBA_ANGLE *kAngle, double angle) {
-	return KOLIBA_AngleSet(kAngle, angle, KAU_pis);
-}
-#endif
-
-
-
-
 
 
 // This gets the library version, in the ((major << 16) | minor) format.
 
 KLBDC unsigned int KOLIBA_GetLibraryVersion(void);
-
 KLBDC unsigned int KOLIBA_GetMajorLibraryVersion(void);
-
 KLBDC unsigned int KOLIBA_GetMinorLibraryVersion(void);
+
+
+
+
+/****************************************************************************/
+/*****************                                         ******************/
+/***************** T H E  KOLIBA  C L A S S  M E T H O D S ******************/
+/*****************                                         ******************/
+/****************************************************************************/
+
+// Perhaps not strictly classes, but if we were in a class-conscious
+// programming language, the first argument to each "method" would
+// probably be just implied as it effectively is a this pointer.
+
+
+// Angle "class" functions. We could wrap it in a C++ class,
+// e.g., something like this,
+//
+//	class Angle
+//	{
+//	public:
+//		double degrees() {return KOLIBA_AngleDegrees(&kAng);}
+//		...
+//	private:
+//		KOLIBA_ANGLE kAng;
+//	};
+//
+// Or perhaps even like this,
+//
+//	class Angle : KOLIBA_ANGLE
+//	{
+//	public:
+//		double degrees() {
+//			return KOLIBA_AngleDegrees(static_cast<KOLIBA_ANGLE*>this);
+//		}
+//		...
+//	}
+
+KLBDC double KOLIBA_AngleDegrees(const KOLIBA_ANGLE * const kAng);
+KLBDC double KOLIBA_AngleRadians(const KOLIBA_ANGLE * const kAng);
+KLBDC double KOLIBA_AngleTurns(const KOLIBA_ANGLE * const kAng);
+KLBDC double KOLIBA_AnglePis(const KOLIBA_ANGLE * const kAng);
+KLBDC double KOLIBA_AngleSine(const KOLIBA_ANGLE * const kAng);
+KLBDC double KOLIBA_AngleCosine(const KOLIBA_ANGLE * const kAng);
+
+KLBDC KOLIBA_ANGLE *  KOLIBA_AngleSet(
+	KOLIBA_ANGLE * kAng,
+	double angle,
+	KOLIBA_ANGLEUNITS units
+);
+
+#ifdef	NOKLINLIN
+#define KOLIBA_AngleSetDegrees(kAng,angle)	KOLIBA_AngleSet(kAng, angle, KAU_degrees)
+#define KOLIBA_AngleSetRadians(kAng,angle)	KOLIBA_AngleSet(kAng, angle, KAU_radians)
+#define KOLIBA_AngleSetTurns(kAng,angle)	KOLIBA_AngleSet(kAng, angle, KAU_turns)
+#define KOLIBA_AngleSetPis(kAng,angle)	KOLIBA_AngleSet(kAng, angle, KAU_pis)
+#else
+inline KOLIBA_ANGLE *  KOLIBA_AngleSetDegrees(KOLIBA_ANGLE *kAng, double angle) {
+	return KOLIBA_AngleSet(kAng, angle, KAU_degrees);
+}
+
+inline KOLIBA_ANGLE *  KOLIBA_AngleSetRadians(KOLIBA_ANGLE *kAng, double angle) {
+	return KOLIBA_AngleSet(kAng, angle, KAU_radians);
+}
+
+inline KOLIBA_ANGLE *  KOLIBA_AngleSetTurns(KOLIBA_ANGLE *kAng, double angle) {
+	return KOLIBA_AngleSet(kAng, angle, KAU_turns);
+}
+
+inline KOLIBA_ANGLE *  KOLIBA_AngleSetPis(KOLIBA_ANGLE *kAng, double angle) {
+	return KOLIBA_AngleSet(kAng, angle, KAU_pis);
+}
+#endif
+
+
+
 
 
 
