@@ -46,7 +46,7 @@
 #include <string.h>
 #include <koliba.h>
 
-#define	version	"v.0.5.9"
+#define	version	"v.0.6.0"
 
 #define	pv(color)	slt->plt.color.rp, slt->plt.color.gp, slt->plt.color.bp, slt->plt.color.efficacy
 
@@ -129,7 +129,7 @@ int nofile(char *fname) {
 }
 
 int invalid(FILE *f, char *fname) {
-	fclose(f);
+	KOLIBA_Close(f);
 	fprintf(stderr, "sltconv error (\"%s\"): Unknown or invalid input format\n", fname);
 	return 3;
 }
@@ -254,14 +254,17 @@ int main(int argc, char *argv[]) {
 	if (iname == NULL)
 		return usage();
 
-	f = fopen(iname, "rb");
+	// We used the fopen() included in the koliba library
+	// because the library and our program are not necessarily
+	// linked to the same C library.
+	f = KOLIBA_OpenToRead(iname);
 	if (f == NULL) return nofile(iname);
 
 	if (fread(ptr, 1, SLTCFILEHEADERBYTES, f) < SLTCFILEHEADERBYTES)
 		return invalid(f, iname);
 
 	if ( fseek(f, -(SLTCFILEHEADERBYTES), SEEK_CUR) != 0) {
-		fclose(f);
+		KOLIBA_Close(f);
 		fprintf(stderr, "Could not rewind file '%s'\n", iname);
 		return 37;
 	}
@@ -314,26 +317,26 @@ int main(int argc, char *argv[]) {
 			break;
 	}
 
-	fclose(f);
+	KOLIBA_Close(f);
 
 	if (efficacy != 1.0) KOLIBA_SlutEfficacy(&sLut, &sLut, efficacy);
 	KOLIBA_FixSlut(&sLut);
 
 	if (oname != NULL) {
-		f = fopen(oname, "wb");
+		f = KOLIBA_OpenToWrite(oname);
 		if (f == NULL) return nofile(oname);
 	}
 	else f = stdout;
 
 	if (cltt != '\0') {
 		if (i = KOLIBA_WriteSlttToOpenFile(&sLut, f)) {
-			if (oname) fclose(f);
+			if (oname) KOLIBA_Close(f);
 			return i;
 		}
 	}
 	else if (bin != '\0') {
 		if (i = KOLIBA_WriteSlutToOpenFile(&sLut, f)) {
-			if (oname) fclose(f);
+			if (oname) KOLIBA_Close(f);
 			return i;
 		}
 	}
@@ -357,7 +360,7 @@ int main(int argc, char *argv[]) {
 	if ((cltt <= 0) && (bin == 0)) fprintf(f, "\n## Converted from \"%s\" by sltconv, " version "\n\n", iname);
 	if (cltt>0) describe(ftype, f, &slt, efficacy);
 
-	if (f != stdout) fclose(f);
+	if (f != stdout) KOLIBA_Close(f);
 
 	return 0;
 }
