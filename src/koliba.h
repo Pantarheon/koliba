@@ -5474,11 +5474,15 @@ inline KOLIBA_ABGR32PIXEL * KOLIBA_Abgr32PixelLumidux(KOLIBA_ABGR32PIXEL *pixelo
 
 #include <stdio.h>
 
+typedef int (*KOLIBA_FPRINTF)(FILE *, const char *, ...);
+KLBDC KOLIBA_FPRINTF const KOLIBA_Fprintf;
+
 // File open and close routines to be used only with
 // the "OpenFile" routines in the library.
 
 KLBDC FILE * KOLIBA_OpenToRead(const char const *filename);
 KLBDC FILE * KOLIBA_OpenToWrite(const char const *filename);
+KLBDC FILE * KOLIBA_StdOut(void);
 KLBDC int KOLIBA_Close(FILE *f);
 
 // Write a SLUT to an open .sLut file. It needs to be open for writing binary
