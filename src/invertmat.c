@@ -20,7 +20,7 @@ int usage(char *path) {
 
 int notmat(char *path, char *file, FILE *input) {
 	fprintf(stderr, "%s: %s is not a valid m3x4 file\n", path, file);
-	fclose(input);
+	KOLIBA_Close(input);
 	return 3;
 }
 
@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 
 	if ((argc != 2) && (argc != 3)) return usage(argv[0]);
 
-	if ((input = fopen(argv[1], "rb")) == NULL) {
+	if ((input = KOLIBA_OpenToRead(argv[1])) == NULL) {
 		fprintf(stderr, "%s: Could not open file %s\n", argv[0], argv[1]);
 		return 2;
 	}
@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
 	if (KOLIBA_ReadMatrixFromCompatibleOpenFile(&mat, input, NULL) == NULL)
 		return notmat(argv[0], argv[1], input);
 
-	fclose(input);
+	KOLIBA_Close(input);
 
 	if (KOLIBA_InvertMatrix(&mat, &mat) == NULL) {
 		fprintf(stderr, "%sThe matrix is not invertible.\n", "Error: " + (argc == 2) * 7);
@@ -49,13 +49,13 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (argc == 3) {
-		if ((output = fopen(argv[2], "wb")) == NULL) {
+		if ((output = KOLIBA_OpenToWrite(argv[2])) == NULL) {
 			fprintf(stderr, "%s: Could not create file %s\n", argv[0], argv[2]);
 			return 5;
 		}
 
 		KOLIBA_WriteMatrixToOpenFile(&mat, output);
-		fclose(output);
+		KOLIBA_Close(output);
 	}
 	else fprintf(stderr, "%s is an invertible matrix.\n", argv[1]);
 
