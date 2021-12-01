@@ -47,7 +47,7 @@
 #include <string.h>
 #include <koliba.h>
 
-#define	VERSION	"v1.1.0.2"
+#define	VERSION	"v1.1.0.3"
 
 int usage(int retval) {
 	fprintf((retval) ? stderr : stdout, "Usage: matconv [-i] input [[-o] output] [-e efficacy] [-n|N] [-t|s|f|F]\n");
@@ -127,21 +127,21 @@ int main(unsigned int argc, char *argv[]) {
 	fprintf(stderr, "matconv, " VERSION "\nCopyright 2021 G. Adam Stanislav\nAll rights reserved\n\n");
 
 	if (input == NULL) return usage(5);
-	if ((f = fopen(input, "rb")) == NULL) {
+	if ((f = KOLIBA_OpenToRead(input)) == NULL) {
 		fprintf(stderr, "matconv: Could not open input file '%s'.\n", input);
 		return 5;
 	}
 
 	m = KOLIBA_ReadMatrixFromCompatibleOpenFile(&mat, f, NULL);
-	fclose(f);
+	KOLIBA_Close(f);
 
 	if (m == NULL) {
 		fprintf(stderr, "matconv: '%s' does not appear to be a supported matrix file.\n", input);
 		return 6;
 	}
 
-	if (output == NULL) f = stdout;
-	else if ((f = fopen(output, "wb")) == NULL) {
+	if (output == NULL) f = KOLIBA_StdOut();
+	else if ((f = KOLIBA_OpenToWrite(output)) == NULL) {
 		fprintf(stderr, "matconv: Could not create output file '%s'.\n", output);
 		return 7;
 	}
@@ -157,7 +157,7 @@ int main(unsigned int argc, char *argv[]) {
 	KOLIBA_FixMatrix(&mat);
 
 	if (svg) {
-		i = fprintf(f, (textual) ?
+		i = KOLIBA_Fprintf(f, (textual) ?
 			"<filter id=\"Matrix\" filterUnits=\"objectBoundingBox\" x=\"0%%\" y=\"0%%\" width=\"100%%\" height=\"100%%\">\n"
 			"\t<feColorMatrix in=\"SourceGraphic\" type=\"matrix\" values=\"%g %g %g %g 0  %g %g %g %g 0  %g %g %g %g 0  0 0 0 1 0\"/>\n"
 			"</filter>\n"
@@ -169,10 +169,10 @@ int main(unsigned int argc, char *argv[]) {
 	}
 	else if (textual) {
 		i = KOLIBA_WriteM34tToOpenFile(&mat, f);
-		fprintf(f, "\n# Created with matconv " VERSION "\n");
+		KOLIBA_Fprintf(f, "\n# Created with matconv " VERSION "\n");
 	}
 	else i = KOLIBA_WriteMatrixToOpenFile(&mat, f);
-	if (output != NULL) fclose(f);
+	if (output != NULL) KOLIBA_Close(f);
 	if (i) {
 		fprintf(stderr, "matconv: Failed to write matrix to output.\n");
 		return 8;
