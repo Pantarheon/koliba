@@ -4,3 +4,6 @@
 [submodule "freliba"]
 	path = freliba
 	url = https://github.com/Pantarheon/freliba
+[submodule "python"]
+	path = python
+	url = https://github.com/Pantarheon/koliba-python
