@@ -138,24 +138,24 @@ void describe(KOLIBA_ftype ftype, FILE *f, saluti *slt, double efficacy) {
 	switch (ftype) {
 		case KOLIBA_ftmatrix:
 		case KOLIBA_ftm34t:
-			fprintf(f, matrixdesc, slt->m3x4.Red.r, slt->m3x4.Red.g, slt->m3x4.Red.b, slt->m3x4.Red.o,
+			KOLIBA_Fprintf(f, matrixdesc, slt->m3x4.Red.r, slt->m3x4.Red.g, slt->m3x4.Red.b, slt->m3x4.Red.o,
 				slt->m3x4.Green.r, slt->m3x4.Green.g, slt->m3x4.Green.b, slt->m3x4.Green.o,
 				slt->m3x4.Blue.r, slt->m3x4.Blue.g, slt->m3x4.Blue.b, slt->m3x4.Blue.o
 			);
 			break;
 		case KOLIBA_ftchrm:
 		case KOLIBA_ftchrt:
-			fprintf(f, chrmdesc, slt->chrm.model.r, slt->chrm.model.g, slt->chrm.model.b,
+			KOLIBA_Fprintf(f, chrmdesc, slt->chrm.model.r, slt->chrm.model.g, slt->chrm.model.b,
 				slt->chrm.chroma.angle, slt->chrm.chroma.magnitude,
 				slt->chrm.chroma.saturation,
 				slt->chrm.chroma.black, slt->chrm.chroma.white
 			);
 			break;
 		case KOLIBA_ftcflt:
-			fprintf(f, cfltdesc, slt->cflt.r, slt->cflt.g, slt->cflt.b, slt->cflt.d);
+			KOLIBA_Fprintf(f, cfltdesc, slt->cflt.r, slt->cflt.g, slt->cflt.b, slt->cflt.d);
 			break;
 		case KOLIBA_ftdicr:
-			fprintf(f, dicrdesc, slt->dicr.chr.model.r,  slt->dicr.chr.model.g,
+			KOLIBA_Fprintf(f, dicrdesc, slt->dicr.chr.model.r,  slt->dicr.chr.model.g,
 				 slt->dicr.chr.model.b, slt->dicr.chr.chroma.angle,
 				 slt->dicr.chr.chroma.magnitude,
 				 slt->dicr.chr.chroma.saturation,
@@ -168,7 +168,7 @@ void describe(KOLIBA_ftype ftype, FILE *f, saluti *slt, double efficacy) {
 			);
 			break;
 		case KOLIBA_ftpalette:
-			fprintf(f, palettedesc,
+			KOLIBA_Fprintf(f, palettedesc,
 			pv(Black), pv(White), pv(Red), pv(Green),
 			pv(Blue), pv(Cyan), pv(Magenta), pv(Yellow),
 			slt->plt.efficacy,
@@ -178,7 +178,7 @@ void describe(KOLIBA_ftype ftype, FILE *f, saluti *slt, double efficacy) {
 		default:
 			break;
 	}
-	if (efficacy != 1.0) fprintf(f, withefficacy, 100.0*efficacy);
+	if (efficacy != 1.0) KOLIBA_Fprintf(f, withefficacy, 100.0*efficacy);
 }
 
 int main(int argc, char *argv[]) {
@@ -326,7 +326,7 @@ int main(int argc, char *argv[]) {
 		f = KOLIBA_OpenToWrite(oname);
 		if (f == NULL) return nofile(oname);
 	}
-	else f = stdout;
+	else f = KOLIBA_StdOut();
 
 	if (cltt != '\0') {
 		if (i = KOLIBA_WriteSlttToOpenFile(&sLut, f)) {
@@ -343,24 +343,24 @@ int main(int argc, char *argv[]) {
 	else {
 		is1d = KOLIBA_SlutIs1D(&sLut);
 
-		fprintf(f, cubehead, iname, is1d ? 1 : 3);
+		KOLIBA_Fprintf(f, cubehead, iname, is1d ? 1 : 3);
 		describe(ftype, f, &slt, efficacy);
-		fprintf(f, cubeline, sLut.Black.r, sLut.Black.g, sLut.Black.b);
+		KOLIBA_Fprintf(f, cubeline, sLut.Black.r, sLut.Black.g, sLut.Black.b);
 
 		if (!is1d) {
-			fprintf(f, cubeline, sLut.Red.r, sLut.Red.g, sLut.Red.b);
-			fprintf(f, cubeline, sLut.Green.r, sLut.Green.g, sLut.Green.b);
-			fprintf(f, cubeline, sLut.Yellow.r, sLut.Yellow.g, sLut.Yellow.b);
-			fprintf(f, cubeline, sLut.Blue.r, sLut.Blue.g, sLut.Blue.b);
-			fprintf(f, cubeline, sLut.Magenta.r, sLut.Magenta.g, sLut.Magenta.b);
-			fprintf(f, cubeline, sLut.Cyan.r, sLut.Cyan.g, sLut.Cyan.b);
+			KOLIBA_Fprintf(f, cubeline, sLut.Red.r, sLut.Red.g, sLut.Red.b);
+			KOLIBA_Fprintf(f, cubeline, sLut.Green.r, sLut.Green.g, sLut.Green.b);
+			KOLIBA_Fprintf(f, cubeline, sLut.Yellow.r, sLut.Yellow.g, sLut.Yellow.b);
+			KOLIBA_Fprintf(f, cubeline, sLut.Blue.r, sLut.Blue.g, sLut.Blue.b);
+			KOLIBA_Fprintf(f, cubeline, sLut.Magenta.r, sLut.Magenta.g, sLut.Magenta.b);
+			KOLIBA_Fprintf(f, cubeline, sLut.Cyan.r, sLut.Cyan.g, sLut.Cyan.b);
 		}
-		fprintf(f, cubeline, sLut.White.r, sLut.White.g, sLut.White.b);
+		KOLIBA_Fprintf(f, cubeline, sLut.White.r, sLut.White.g, sLut.White.b);
 	}
-	if ((cltt <= 0) && (bin == 0)) fprintf(f, "\n## Converted from \"%s\" by sltconv, " version "\n\n", iname);
+	if ((cltt <= 0) && (bin == 0)) KOLIBA_Fprintf(f, "\n## Converted from \"%s\" by sltconv, " version "\n\n", iname);
 	if (cltt>0) describe(ftype, f, &slt, efficacy);
 
-	if (f != stdout) KOLIBA_Close(f);
+	if (f != KOLIBA_StdOut()) KOLIBA_Close(f);
 
 	return 0;
 }
