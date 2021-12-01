@@ -120,14 +120,30 @@ int main(int argc, char *argv[]) {
 	sLut.Red.g = KOLIBA_ByteDiv255[green];
 	sLut.Red.b = KOLIBA_ByteDiv255[blue];
 
-	f = fopen(filename, "wb");
+	// Because we want libkoliba to write to the output file,
+	// and because it is possible that libkoliba was compiled
+	// to use a different Clib than our program, we open (and
+	// close) the output file using libkoliba.
+
+	f = KOLIBA_OpenToWrite(filename);
 	if (f == NULL) {
 		fprintf(stderr, "eryslut: Could not create file '%s'.\n", filename);
 		return -2;
 	}
 	i = (t == '\0') ? KOLIBA_WriteSlutToOpenFile(KOLIBA_ApplyErythropy(&sLut, &sLut), f) :
 		KOLIBA_WriteSlttToOpenFile(KOLIBA_ApplyErythropy(&sLut, &sLut), f);
-	if (t>0) fprintf(f, "\n## Created by eryslut (v." version ") -r %u -g %u -b %u\n", red, green, blue);
+	KOLIBA_Close(f);
+
+	// If we are going to add an extra comment to the output
+	// file, we have to reopen it, this time using whatever
+	// Clib this program is linked to. That allows us to
+	// write the comment safely, independent of whatever
+	// Clib libkoliba is linked to.
+
+	if ((t>0) && ((f = fopen(filename, "ab")))) {
+		fprintf(f, "\n## Created by eryslut (v." version ") -r %u -g %u -b %u\n", red, green, blue);
+		fclose(f);
+	}
 	if (i) fprintf(stderr, "eryslut: Failed to write to file '%s'.\n", filename);
 
 	return i;
