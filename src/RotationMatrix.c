@@ -1,5 +1,5 @@
 /*
-	Copyright 2019 G. Adam Stanislav
+	Copyright 2019-2021 G. Adam Stanislav
 	All rights reserved
 */
 
@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 
 	if ((argc < 2) || (argc > 7)) return usage(argv[0]);
 
-	if ((f = fopen(argv[1], "wb")) == NULL) {
+	if ((f = KOLIBA_OpenToWrite(argv[1])) == NULL) {
 		fprintf(stderr, "%s: Could not create file %s\n", argv[0], argv[1]);
 		return 2;
 	}
@@ -45,6 +45,6 @@ int main(int argc, char *argv[]) {
 	if (argc > 6) chromat.chroma.black      = atof(argv[6]);
 
 	KOLIBA_WriteChromaticMatrixToOpenFile(&chromat, f);
-	fclose(f);
+	KOLIBA_Close(f);
 	return 0;
 }
