@@ -45,7 +45,7 @@
 #include <string.h>
 #include <koliba.h>
 
-#define	VERSION	"v1.0.0"
+#define	VERSION	"v1.1.0"
 
 #define	BINARY	0
 #define	TEXTUAL	1
@@ -183,19 +183,19 @@ int main(unsigned int argc, char *argv[]) {
 
 	KOLIBA_MatrixSpan(&mat, &a, &b);
 
-	if (output == NULL) f = stdout;
-	else if ((f = fopen(output, "wb")) == NULL) {
+	if (output == NULL) f = KOLIBA_StdOut();
+	else if ((f = KOLIBA_OpenToWrite(output)) == NULL) {
 		fprintf(stderr, "matspan: Could not open output file '%s'.\n", output);
 		return 6;
 	}
 
 	i = (isbinary(otype)) ? KOLIBA_WriteMatrixToOpenFile(&mat, f) :
 		(istextual(otype)) ? KOLIBA_WriteM34tToOpenFile(&mat, f) :
-		(fprintf(f, decimal, mat.Red.r, mat.Red.g, mat.Red.b, mat.Red.o,
+		(KOLIBA_Fprintf(f, decimal, mat.Red.r, mat.Red.g, mat.Red.b, mat.Red.o,
 			mat.Green.r, mat.Green.g, mat.Green.b, mat.Green.o,
 			mat.Blue.r, mat.Blue.g, mat.Blue.b, mat.Blue.o) <= 0);
 
-	if (output) fclose(f);
+	if (output) KOLIBA_Close(f);
 
 	if (i) {
 		fprintf(stderr, "matspan: Could not write the output matrix.\n");
