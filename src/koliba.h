@@ -5476,7 +5476,7 @@ inline KOLIBA_ABGR32PIXEL * KOLIBA_Abgr32PixelLumidux(KOLIBA_ABGR32PIXEL *pixelo
 #include <stdio.h>
 
 typedef int (*KOLIBA_FPRINTF)(FILE *, const char *, ...);
-KLBDC KOLIBA_FPRINTF const KOLIBA_Fprintf;
+KLBDC extern KOLIBA_FPRINTF const KOLIBA_Fprintf;
 
 // File open and close routines to be used only with
 // the "OpenFile" routines in the library.
