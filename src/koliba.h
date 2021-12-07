@@ -5481,8 +5481,8 @@ KLBDC extern KOLIBA_FPRINTF const KOLIBA_Fprintf;
 // File open and close routines to be used only with
 // the "OpenFile" routines in the library.
 
-KLBDC FILE * KOLIBA_OpenToRead(const char const *filename);
-KLBDC FILE * KOLIBA_OpenToWrite(const char const *filename);
+KLBDC FILE * KOLIBA_OpenToRead(const char * filename);
+KLBDC FILE * KOLIBA_OpenToWrite(const char * filename);
 KLBDC FILE * KOLIBA_StdOut(void);
 KLBDC int KOLIBA_Close(FILE *f);
 
