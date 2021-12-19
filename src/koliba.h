@@ -3836,6 +3836,10 @@ KLBDC KOLIBA_ANGLE *  KOLIBA_AngleSet(
 	KOLIBA_ANGLEUNITS units
 );
 
+KLBDC KOLIBA_ANGLE * KOLIBA_AngleNormalize(
+	KOLIBA_ANGLE * kAngle
+);
+
 #ifdef	NOKLINLIN
 #define KOLIBA_AngleSetDegrees(kAng,angle)	KOLIBA_AngleSet(kAng, angle, KAU_degrees)
 #define KOLIBA_AngleSetRadians(kAng,angle)	KOLIBA_AngleSet(kAng, angle, KAU_radians)
