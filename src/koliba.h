@@ -3840,6 +3840,12 @@ KLBDC KOLIBA_ANGLE * KOLIBA_AngleNormalize(
 	KOLIBA_ANGLE * kAngle
 );
 
+// Area of a circular arc sector.
+KLBDC double  KOLIBA_CircularArcSectorArea(
+	const KOLIBA_ANGLE * const kAngle,
+	double radius
+);
+
 #ifdef	NOKLINLIN
 #define KOLIBA_AngleSetDegrees(kAng,angle)	KOLIBA_AngleSet(kAng, angle, KAU_degrees)
 #define KOLIBA_AngleSetRadians(kAng,angle)	KOLIBA_AngleSet(kAng, angle, KAU_radians)
