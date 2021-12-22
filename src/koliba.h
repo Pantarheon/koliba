@@ -3850,6 +3850,8 @@ KLBDC KOLIBA_ANGLE * KOLIBA_AngleNormalize(
 #define KOLIBA_AngleSetRadians(kAng,angle)	KOLIBA_AngleSet(kAng, angle, KAU_radians)
 #define KOLIBA_AngleSetTurns(kAng,angle)	KOLIBA_AngleSet(kAng, angle, KAU_turns)
 #define KOLIBA_AngleSetPis(kAng,angle)	KOLIBA_AngleSet(kAng, angle, KAU_pis)
+#define	KOLIBA_AngleVersine(kAng)	(1.0-KOLIBA_AngleCosine(kAng))
+#define KOLIBA_AngleHaversine(kAng)	(KOLIBA_AngleVersine(kAng)/2.0)
 #else
 inline KOLIBA_ANGLE *  KOLIBA_AngleSetDegrees(KOLIBA_ANGLE *kAng, double angle) {
 	return KOLIBA_AngleSet(kAng, angle, KAU_degrees);
@@ -3865,6 +3867,14 @@ inline KOLIBA_ANGLE *  KOLIBA_AngleSetTurns(KOLIBA_ANGLE *kAng, double angle) {
 
 inline KOLIBA_ANGLE *  KOLIBA_AngleSetPis(KOLIBA_ANGLE *kAng, double angle) {
 	return KOLIBA_AngleSet(kAng, angle, KAU_pis);
+}
+
+inline double KOLIBA_AngleVersine(const KOLIBA_ANGLE * const kAng) {
+	return (1.0 - KOLIBA_AngleCosine(kAng));
+}
+
+inline double KOLIBA_AngleHaversine(const KOLIBA_ANGLE * const kAng) {
+	return (KOLIBA_AngleVersine(kAng)/2.0);
 }
 #endif
 
