@@ -3830,6 +3830,11 @@ KLBDC double KOLIBA_AnglePis(const KOLIBA_ANGLE * const kAng);
 KLBDC double KOLIBA_AngleSine(const KOLIBA_ANGLE * const kAng);
 KLBDC double KOLIBA_AngleCosine(const KOLIBA_ANGLE * const kAng);
 
+// Extract canonical angle from a KOLIBA_ANGLE.
+// Mostly for internal use by the library.
+KLBDC double  KOLIBA_CanonicalAngle(const KOLIBA_ANGLE * const kAngle);
+
+
 KLBDC KOLIBA_ANGLE *  KOLIBA_AngleSet(
 	KOLIBA_ANGLE * kAng,
 	double angle,
@@ -3838,12 +3843,6 @@ KLBDC KOLIBA_ANGLE *  KOLIBA_AngleSet(
 
 KLBDC KOLIBA_ANGLE * KOLIBA_AngleNormalize(
 	KOLIBA_ANGLE * kAngle
-);
-
-// Area of a circular arc sector.
-KLBDC double  KOLIBA_CircularArcSectorArea(
-	const KOLIBA_ANGLE * const kAngle,
-	double radius
 );
 
 #ifdef	NOKLINLIN
@@ -3868,6 +3867,21 @@ inline KOLIBA_ANGLE *  KOLIBA_AngleSetPis(KOLIBA_ANGLE *kAng, double angle) {
 	return KOLIBA_AngleSet(kAng, angle, KAU_pis);
 }
 #endif
+
+// The Arc "class" function, where Arc could be a derived class
+// of the Angle class.
+
+// Area of a circular arc sector.
+KLBDC double  KOLIBA_CircularArcSectorArea(
+	const KOLIBA_ANGLE * const kAngle,
+	double radius
+);
+
+// Length of a circular arc.
+KLBDC double  KOLIBA_CircularArcLength(
+	const KOLIBA_ANGLE * const kAngle,
+	double radius
+);
 
 
 
