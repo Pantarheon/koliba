@@ -3903,6 +3903,12 @@ KLBDC double  KOLIBA_CircularArcLength(
 	double radius
 );
 
+// Length of a circular chord.
+KLBDC double  KOLIBA_CircularChordLength(
+	const KOLIBA_ANGLE * const kAngle,
+	double radius
+);
+
 
 
 
