@@ -3852,6 +3852,8 @@ KLBDC KOLIBA_ANGLE * KOLIBA_AngleNormalize(
 #define KOLIBA_AngleSetPis(kAng,angle)	KOLIBA_AngleSet(kAng, angle, KAU_pis)
 #define	KOLIBA_AngleVersine(kAng)	(1.0-KOLIBA_AngleCosine(kAng))
 #define KOLIBA_AngleHaversine(kAng)	(KOLIBA_AngleVersine(kAng)/2.0)
+#define	KOLIBA_AngleVercosine(kAng)	(1.0+KOLIBA_AngleCosine(kAng))
+#define KOLIBA_AngleHavercosine(kAng)	(KOLIBA_AngleVercosine(kAng)/2.0)
 #else
 inline KOLIBA_ANGLE *  KOLIBA_AngleSetDegrees(KOLIBA_ANGLE *kAng, double angle) {
 	return KOLIBA_AngleSet(kAng, angle, KAU_degrees);
@@ -3875,6 +3877,14 @@ inline double KOLIBA_AngleVersine(const KOLIBA_ANGLE * const kAng) {
 
 inline double KOLIBA_AngleHaversine(const KOLIBA_ANGLE * const kAng) {
 	return (KOLIBA_AngleVersine(kAng)/2.0);
+}
+
+inline double KOLIBA_AngleVercosine(const KOLIBA_ANGLE * const kAng) {
+	return (1.0 + KOLIBA_AngleCosine(kAng));
+}
+
+inline double KOLIBA_AngleHavercosine(const KOLIBA_ANGLE * const kAng) {
+	return (KOLIBA_AngleVercosine(kAng)/2.0);
 }
 #endif
 
