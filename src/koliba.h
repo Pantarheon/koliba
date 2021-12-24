@@ -3829,10 +3829,8 @@ KLBDC double KOLIBA_AngleTurns(const KOLIBA_ANGLE * const kAng);
 KLBDC double KOLIBA_AnglePis(const KOLIBA_ANGLE * const kAng);
 KLBDC double KOLIBA_AngleSine(const KOLIBA_ANGLE * const kAng);
 KLBDC double KOLIBA_AngleCosine(const KOLIBA_ANGLE * const kAng);
-
-// Extract canonical angle from a KOLIBA_ANGLE.
-// Mostly for internal use by the library.
-KLBDC double  KOLIBA_CanonicalAngle(const KOLIBA_ANGLE * const kAngle);
+KLBDC double KOLIBA_MonocyclicalAngle(const KOLIBA_ANGLE * const kAng);
+KLBDC double KOLIBA_CanonicalAngle(const KOLIBA_ANGLE * const kAng);
 
 
 KLBDC KOLIBA_ANGLE *  KOLIBA_AngleSet(
@@ -3842,7 +3840,7 @@ KLBDC KOLIBA_ANGLE *  KOLIBA_AngleSet(
 );
 
 KLBDC KOLIBA_ANGLE * KOLIBA_AngleNormalize(
-	KOLIBA_ANGLE * kAngle
+	KOLIBA_ANGLE * kAng
 );
 
 #ifdef	NOKLINLIN
