@@ -3856,6 +3856,13 @@ KLBDC KOLIBA_ANGLE * KOLIBA_AngleAdd(
 	const KOLIBA_ANGLE * const addend
 );
 
+// Convert a frame/frames into turns of a circular angle.
+KLBDC KOLIBA_ANGLE * KOLIBA_AngleFromFrame(
+	KOLIBA_ANGLE * kAng,
+	int frame,
+	int frames		// Must be > 0
+);
+
 #ifdef	NOKLINLIN
 #define KOLIBA_AngleSetDegrees(kAng,angle)	KOLIBA_AngleSet(kAng, angle, KAU_degrees)
 #define KOLIBA_AngleSetRadians(kAng,angle)	KOLIBA_AngleSet(kAng, angle, KAU_radians)
