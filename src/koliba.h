@@ -3832,6 +3832,12 @@ KLBDC double KOLIBA_AngleCosine(const KOLIBA_ANGLE * const kAng);
 KLBDC double KOLIBA_MonocyclicalAngle(const KOLIBA_ANGLE * const kAng);
 KLBDC double KOLIBA_CanonicalAngle(const KOLIBA_ANGLE * const kAng);
 
+// Get an angle in requested units.
+KLBDC double  KOLIBA_AngleGet(
+	const KOLIBA_ANGLE * const kAng,
+	KOLIBA_ANGLEUNITS units
+);
+
 
 KLBDC KOLIBA_ANGLE *  KOLIBA_AngleSet(
 	KOLIBA_ANGLE * kAng,
