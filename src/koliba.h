@@ -3856,6 +3856,13 @@ KLBDC KOLIBA_ANGLE * KOLIBA_AngleAdd(
 	const KOLIBA_ANGLE * const addend
 );
 
+// Subtract an angle from another angle.
+KLBDC KOLIBA_ANGLE * KOLIBA_AngleSubtract(
+	KOLIBA_ANGLE * kAng,
+	const KOLIBA_ANGLE * const minuend,
+	const KOLIBA_ANGLE * const subtrahend
+);
+
 // Convert a frame/frames into turns of a circular angle.
 KLBDC KOLIBA_ANGLE * KOLIBA_AngleFromFrame(
 	KOLIBA_ANGLE * kAng,
