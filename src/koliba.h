@@ -3849,6 +3849,13 @@ KLBDC KOLIBA_ANGLE * KOLIBA_AngleNormalize(
 	KOLIBA_ANGLE * kAng
 );
 
+// Add two angles.
+KLBDC KOLIBA_ANGLE * KOLIBA_AngleAdd(
+	KOLIBA_ANGLE * result,
+	const KOLIBA_ANGLE * const augend,
+	const KOLIBA_ANGLE * const addend
+);
+
 #ifdef	NOKLINLIN
 #define KOLIBA_AngleSetDegrees(kAng,angle)	KOLIBA_AngleSet(kAng, angle, KAU_degrees)
 #define KOLIBA_AngleSetRadians(kAng,angle)	KOLIBA_AngleSet(kAng, angle, KAU_radians)
