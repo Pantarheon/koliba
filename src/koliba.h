@@ -3828,7 +3828,11 @@ KLBDC double KOLIBA_AngleRadians(const KOLIBA_ANGLE * const kAng);
 KLBDC double KOLIBA_AngleTurns(const KOLIBA_ANGLE * const kAng);
 KLBDC double KOLIBA_AnglePis(const KOLIBA_ANGLE * const kAng);
 KLBDC double KOLIBA_AngleSine(const KOLIBA_ANGLE * const kAng);
+KLBDC double KOLIBA_AngleSineSquared(const KOLIBA_ANGLE * const kAng);
+KLBDC double KOLIBA_AngleFactorSine(const KOLIBA_ANGLE * const kAng, double factor);
 KLBDC double KOLIBA_AngleCosine(const KOLIBA_ANGLE * const kAng);
+KLBDC double KOLIBA_AngleCosineSquared(const KOLIBA_ANGLE * const kAng);
+KLBDC double KOLIBA_AngleFactorCosine(const KOLIBA_ANGLE * const kAng, double factor);
 KLBDC double KOLIBA_MonocyclicalAngle(const KOLIBA_ANGLE * const kAng);
 KLBDC double KOLIBA_CanonicalAngle(const KOLIBA_ANGLE * const kAng);
 
