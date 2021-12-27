@@ -3888,6 +3888,13 @@ KLBDC KOLIBA_ANGLE * KOLIBA_AngleFromFrameWithShift(
 	double shift
 );
 
+// Calculate midpoint "shift", i.e., the exponent needed
+// to shift a midpoint from 0.5 to another value.
+//
+// Only inputs 0 < midpoint < 1 are accepted, anything
+// else returns 1 (i.e., no shift).
+KLBDC double KOLIBA_MidpointShift(double midpoint);
+
 #ifdef	NOKLINLIN
 #define KOLIBA_AngleSetDegrees(kAng,angle)	KOLIBA_AngleSet(kAng, angle, KAU_degrees)
 #define KOLIBA_AngleSetRadians(kAng,angle)	KOLIBA_AngleSet(kAng, angle, KAU_radians)
