@@ -3874,6 +3874,14 @@ KLBDC KOLIBA_ANGLE * KOLIBA_AngleMultiply(
 	double multiplier
 );
 
+// Raise the turns of an angle to a power, optionally normalizing first.
+KLBDC KOLIBA_ANGLE * KOLIBA_AnglePower(
+	KOLIBA_ANGLE * kAng,
+	const KOLIBA_ANGLE * const base,
+	double exponent,
+	bool normalize
+);
+
 // Convert a frame/frames into turns of a circular angle.
 KLBDC KOLIBA_ANGLE * KOLIBA_AngleFromFrame(
 	KOLIBA_ANGLE * kAng,
