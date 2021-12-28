@@ -3867,6 +3867,13 @@ KLBDC KOLIBA_ANGLE * KOLIBA_AngleSubtract(
 	const KOLIBA_ANGLE * const subtrahend
 );
 
+// Multiply an angle by a constant.
+KLBDC KOLIBA_ANGLE * KOLIBA_AngleMultiply(
+	KOLIBA_ANGLE * kAng,
+	const KOLIBA_ANGLE * const multiplicand,
+	double multiplier
+);
+
 // Convert a frame/frames into turns of a circular angle.
 KLBDC KOLIBA_ANGLE * KOLIBA_AngleFromFrame(
 	KOLIBA_ANGLE * kAng,
