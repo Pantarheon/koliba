@@ -3882,6 +3882,15 @@ KLBDC KOLIBA_ANGLE * KOLIBA_AnglePower(
 	bool normalize
 );
 
+// Divide an angle by a constant.
+// If floored, do it in degrees.
+KLBDC KOLIBA_ANGLE * KOLIBA_AngleDivide(
+	KOLIBA_ANGLE * kAng,
+	const KOLIBA_ANGLE * const dividend,
+	double divisor,
+	bool floored
+);
+
 // Convert a frame/frames into turns of a circular angle.
 KLBDC KOLIBA_ANGLE * KOLIBA_AngleFromFrame(
 	KOLIBA_ANGLE * kAng,
