@@ -3830,9 +3830,13 @@ KLBDC double KOLIBA_AnglePis(const KOLIBA_ANGLE * const kAng);
 KLBDC double KOLIBA_AngleSine(const KOLIBA_ANGLE * const kAng);
 KLBDC double KOLIBA_AngleSineSquared(const KOLIBA_ANGLE * const kAng);
 KLBDC double KOLIBA_AngleFactorSine(const KOLIBA_ANGLE * const kAng, double factor);
+KLBDC double KOLIBA_AngleNormalizedSine(const KOLIBA_ANGLE * const angle);
+KLBDC double KOLIBA_AngleFactorNormalizedSine(const KOLIBA_ANGLE * const angle, double factor);
 KLBDC double KOLIBA_AngleCosine(const KOLIBA_ANGLE * const kAng);
 KLBDC double KOLIBA_AngleCosineSquared(const KOLIBA_ANGLE * const kAng);
 KLBDC double KOLIBA_AngleFactorCosine(const KOLIBA_ANGLE * const kAng, double factor);
+KLBDC double KOLIBA_AngleNormalizedCosine(const KOLIBA_ANGLE * const angle);
+KLBDC double KOLIBA_AngleFactorNormalizedCosine(const KOLIBA_ANGLE * const angle, double factor);
 KLBDC double KOLIBA_MonocyclicalAngle(const KOLIBA_ANGLE * const kAng);
 KLBDC double KOLIBA_CanonicalAngle(const KOLIBA_ANGLE * const kAng);
 
@@ -3926,8 +3930,10 @@ KLBDC double KOLIBA_MidpointShift(double midpoint);
 #define KOLIBA_AngleSetPis(kAng,angle)	KOLIBA_AngleSet(kAng, angle, KAU_pis)
 #define	KOLIBA_AngleVersine(kAng)	(1.0-KOLIBA_AngleCosine(kAng))
 #define KOLIBA_AngleHaversine(kAng)	(KOLIBA_AngleVersine(kAng)/2.0)
+#define	KOLIBA_AnglePolsine(kAng)	((1.0-KOLIBA_AngleFactorNormalizedCosine(kAng,0.5))/2.0)
 #define	KOLIBA_AngleVercosine(kAng)	(1.0+KOLIBA_AngleCosine(kAng))
 #define KOLIBA_AngleHavercosine(kAng)	(KOLIBA_AngleVercosine(kAng)/2.0)
+#define	KOLIBA_AnglePolcosine(kAng)	((1.0+KOLIBA_AngleFactorNormalizedCosine(kAng,0.5))/2.0)
 #define	KOLIBA_AngleFactorVersine(kAng,factor)	(1.0-KOLIBA_AngleFactorCosine(kAng,factor))
 #define KOLIBA_AngleFactorHaversine(kAng,factor)	(KOLIBA_AngleFactorVersine(kAng,factor)/2.0)
 #define	KOLIBA_AngleFactorVercosine(kAng,factor)	(1.0+KOLIBA_AngleFactorCosine(kAng,factor))
@@ -3957,12 +3963,20 @@ inline double KOLIBA_AngleHaversine(const KOLIBA_ANGLE * const kAng) {
 	return (KOLIBA_AngleVersine(kAng)/2.0);
 }
 
+inline double KOLIBA_AnglePolsine(const KOLIBA_ANGLE * const kAng) {
+	return (1.0 - KOLIBA_AngleFactorNormalizedCosine(kAng, 0.5)) / 2.0;
+}
+
 inline double KOLIBA_AngleVercosine(const KOLIBA_ANGLE * const kAng) {
 	return (1.0 + KOLIBA_AngleCosine(kAng));
 }
 
 inline double KOLIBA_AngleHavercosine(const KOLIBA_ANGLE * const kAng) {
 	return (KOLIBA_AngleVercosine(kAng)/2.0);
+}
+
+inline double KOLIBA_AnglePolcosine(const KOLIBA_ANGLE * const kAng) {
+	return (1.0 + KOLIBA_AngleFactorNormalizedCosine(kAng, 0.5)) / 2.0;
 }
 
 inline double KOLIBA_AngleFactorVersine(const KOLIBA_ANGLE * const kAng, double factor) {
