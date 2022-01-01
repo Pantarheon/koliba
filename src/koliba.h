@@ -3903,21 +3903,23 @@ KLBDC KOLIBA_ANGLE * KOLIBA_AngleFromFrame(
 );
 
 // The "shift" is the exponent needed to shift
-// the midpoint from 0.5 to some value m, i.e.,
-// shift = log(m)/log(0.5) = -l2(m), where l2
+// the midpoint from some value m to 0.5, i.e.,
+// shift = log(0.5)/log(m) = -1/l2(m), where l2
 // is logarithm base 2.
 //
 // While it is not enforced (since it may be called
 // millions of times in a row), 0 < shift <= 1 is
 // generally expected.
 KLBDC KOLIBA_ANGLE * KOLIBA_AngleFromFrameWithShift(
-	KOLIBA_ANGLE * kAng, int frame,
+	KOLIBA_ANGLE * kAng,
+	int frame,
 	int frames,		// Must be > 0
 	double shift
 );
 
 // Calculate midpoint "shift", i.e., the exponent needed
-// to shift a midpoint from 0.5 to another value.
+// to shift a new midpoint m to 0.5 by raising it to
+// the power of shift.
 //
 // Only inputs 0 < midpoint < 1 are accepted, anything
 // else returns 1 (i.e., no shift).
