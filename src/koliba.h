@@ -3908,6 +3908,13 @@ KLBDC KOLIBA_ANGLE * KOLIBA_AngleFromFrame(
 	int frames		// Must be > 0
 );
 
+// Convert a "t" into turns of a circular angle.
+KLBDC KOLIBA_ANGLE * KOLIBA_AngleFromT(
+	KOLIBA_ANGLE * kAng,
+	double t,
+	double exponent
+);
+
 // The "shift" is the exponent needed to shift
 // the midpoint from some value m to 0.5, i.e.,
 // shift = log(0.5)/log(m) = -1/l2(m), where l2
@@ -3921,6 +3928,12 @@ KLBDC KOLIBA_ANGLE * KOLIBA_AngleFromFrameWithShift(
 	int frame,
 	int frames,		// Must be > 0
 	double shift
+);
+
+KLBDC KOLIBA_ANGLE * KOLIBA_AngleMonocycleFromT(
+	KOLIBA_ANGLE * kAng,
+	double t,
+	double exponent
 );
 
 // Calculate midpoint "shift", i.e., the exponent needed
