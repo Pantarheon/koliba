@@ -3863,6 +3863,10 @@ KLBDC KOLIBA_ANGLE * KOLIBA_AngleNormalize(
 	KOLIBA_ANGLE * kAng
 );
 
+KLBDC KOLIBA_ANGLE *  KOLIBA_AngleMonocycle(
+	KOLIBA_ANGLE * kAng
+);
+
 // Add two angles.
 KLBDC KOLIBA_ANGLE * KOLIBA_AngleAdd(
 	KOLIBA_ANGLE * result,
