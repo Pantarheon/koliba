@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
 			return 3;
 		}
 	}
-	else if (is !=0) fprintf(stderr, "%s may be converted to a matrix\nwith no loss of precision.\n");
+	else if (is !=0) fprintf(stderr, "%s may be converted to a matrix\nwith no loss of precision.\n", argv[1]);
 
 	return 0;
 }
